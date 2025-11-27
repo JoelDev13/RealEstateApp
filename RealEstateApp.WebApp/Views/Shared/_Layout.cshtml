@@ -23,7 +23,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Agents" asp-action="Index">Agentes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Únete a la app</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
                         </li>
                     </ul>
                 </div>
@@ -32,6 +38,12 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="alert alert-info mb-3" role="alert">
+                    Bienvenido, @User.Identity.Name
+                </div>
+            }
             @RenderBody()
         </main>
     </div>
