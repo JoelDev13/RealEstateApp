@@ -8,11 +8,12 @@
 
   <ItemGroup>
     <Folder Include="Context\" />
-    <Folder Include="Services\" />
+    <Folder Include="Mappings\" />
     <Folder Include="Seeds\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.22" />
