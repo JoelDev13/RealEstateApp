@@ -1,10 +1,18 @@
+using RealEstateApp.Application;
 using RealEstateApp.Infraestructure.Identity;
+using RealEstateApp.Infrastructure.Persistence;
+using RealEstateApp.Web.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
+
+//IoC
+builder.Services.AddPersistenceLayerIoc(builder.Configuration);
+builder.Services.AddApplicationLayerIoc();
+builder.Services.AddAutoMapper(typeof(WebMappingProfile));
 
 var app = builder.Build();
 

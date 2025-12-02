@@ -1,0 +1,37 @@
+﻿@model RealEstateApp.Web.Models.Admin.Improvements.ImprovementCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Crear mejora";
+}
+
+<h2 class="mb-4">Crear mejora</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label fw-bold"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label fw-bold"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-4">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label fw-bold"></label>
+    </div>
+
+    <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-primary px-4">Guardar</button>
+        <a asp-action="Index" class="btn btn-secondary px-4">Volver</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
