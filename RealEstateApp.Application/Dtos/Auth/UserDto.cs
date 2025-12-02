@@ -10,6 +10,7 @@ namespace RealEstateApp.Application.Dtos.Auth
         public string? PhoneNumber { get; set; }
         public string? ProfilePicture { get; set; }
         public string? UserType { get; set; }
+        public string? Role { get; set; }
         public bool IsActive { get; set; }
         public bool EmailConfirmed { get; set; }
         public DateTime? CreatedAt { get; set; }

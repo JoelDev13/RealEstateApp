@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Context\" />
-    <Folder Include="Services\" />
+    <Folder Include="Mappings\" />
     <Folder Include="Seeds\" />
   </ItemGroup>
 

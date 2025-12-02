@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RealEstateApp.Infraestructure.Identity.Context;
 using RealEstateApp.Infraestructure.Identity.Entities;
+using RealEstateApp.Infraestructure.Identity.Mappings;
 
 namespace RealEstateApp.Infraestructure.Identity
 {
@@ -40,10 +41,8 @@ namespace RealEstateApp.Infraestructure.Identity
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
 
-            // Registrar HttpContextAccessor (requerido por SignInManager)
             services.AddHttpContextAccessor();
 
-            // Configurar autenticación con cookies
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -51,11 +50,12 @@ namespace RealEstateApp.Infraestructure.Identity
             })
             .AddIdentityCookies();
 
-            // Registrar SignInManager explícitamente
             services.AddScoped<SignInManager<AppUser>>();
 
-            // Registra el servicio de Identity
-            services.AddScoped<Application.Interfaces.Identity.IIdentityService, Services.IdentityService>();
+            services.AddAutoMapper(typeof(UserMappingProfile));
+
+            services.AddScoped<Application.Interfaces.IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
+            services.AddScoped<Application.Interfaces.IAccountServiceForWebApp, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApp>();
             #endregion
 
             return services;

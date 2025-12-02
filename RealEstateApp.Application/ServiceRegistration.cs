@@ -18,7 +18,9 @@ namespace RealEstateApp.Application
             services.AddValidatorsFromAssembly(assembly);
 
             services.AddAutoMapper(assembly);
-
+            // Registra el AutoMapper
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            
             return services;
         }
     }

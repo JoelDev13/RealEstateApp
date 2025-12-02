@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Acceso Denegado";
+}
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full text-center">
+        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-100 mb-6">
+            <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Acceso Denegado</h1>
+        <p class="text-gray-600 mb-8">
+            No tienes permisos para acceder a esta página. Por favor contacta al administrador si crees que esto es un error.
+        </p>
+        
+        <div class="space-y-4">
+            <a asp-action="Index" asp-controller="Home" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                Ir al inicio
+            </a>
+            
+            <form asp-action="Logout" asp-controller="Account" method="post" class="inline-block">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
