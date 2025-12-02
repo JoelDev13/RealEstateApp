@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RealEstateApp.Application.Interfaces;
 using RealEstateApp.Domain.Entities;
 
-namespace RealEstateApp.Infraestructure.Persistence
+namespace RealEstateApp.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : DbContext, IApplicationDbContext
+    public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContext(
+            DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
@@ -14,16 +14,15 @@ namespace RealEstateApp.Infraestructure.Persistence
         public DbSet<PropertyType> PropertyTypes => Set<PropertyType>();
         public DbSet<SaleType> SaleTypes => Set<SaleType>();
         public DbSet<Improvement> Improvements => Set<Improvement>();
+        public DbSet<Property> Properties => Set<Property>();
+        public DbSet<PropertyImage> PropertyImages => Set<PropertyImage>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            return base.SaveChangesAsync(cancellationToken);
+            modelBuilder.ApplyConfigurationsFromAssembly(
+                typeof(ApplicationDbContext).Assembly);
         }
     }
 }

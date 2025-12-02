@@ -1,22 +1,21 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Application.Features.PropertyTypes.Commands.UpdatePropertyType
 {
     public class UpdatePropertyTypeCommandHandler
         : IRequestHandler<UpdatePropertyTypeCommand, Unit>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IPropertyTypeRepository _propertyTypeRepository;
 
-        public UpdatePropertyTypeCommandHandler(IApplicationDbContext context)
+        public UpdatePropertyTypeCommandHandler(IPropertyTypeRepository propertyTypeRepository)
         {
-            _context = context;
+            _propertyTypeRepository = propertyTypeRepository;
         }
+
         public async Task<Unit> Handle(UpdatePropertyTypeCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.PropertyTypes
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var entity = await _propertyTypeRepository.GetByIdAsync(request.Id);
 
             if (entity == null)
                 throw new KeyNotFoundException($"PropertyType con Id {request.Id} no existe.");
@@ -26,7 +25,7 @@ namespace RealEstateApp.Application.Features.PropertyTypes.Commands.UpdateProper
             entity.IsActive = request.IsActive;
             entity.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await _propertyTypeRepository.UpdateAsync(entity);
 
             return Unit.Value;
         }

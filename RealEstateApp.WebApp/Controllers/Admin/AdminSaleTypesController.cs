@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateApp.Application.Features.SaleTypes.Commands.CreateSaleType;
-using RealEstateApp.Application.Features.SaleTypes.Commands.DeleteSaleType;
-using RealEstateApp.Application.Features.SaleTypes.Commands.ToggleSaleTypeStatus;
-using RealEstateApp.Application.Features.SaleTypes.Commands.UpdateSaleType;
-using RealEstateApp.Application.Features.SaleTypes.Queries.GetSaleTypeById;
-using RealEstateApp.Application.Features.SaleTypes.Queries.GetSaleTypes;
+using RealEstateApp.Application.Dtos.SaleTypes;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Web.Models.Admin.SaleTypes;
 
 namespace RealEstateApp.Web.Controllers
@@ -15,28 +10,25 @@ namespace RealEstateApp.Web.Controllers
     [Authorize(Roles = "Administrador")]
     public class AdminSaleTypesController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly ISaleTypeService _saleTypeService;
         private readonly IMapper _mapper;
 
-        public AdminSaleTypesController(IMediator mediator, IMapper mapper)
+        public AdminSaleTypesController(ISaleTypeService saleTypeService, IMapper mapper)
         {
-            _mediator = mediator;
+            _saleTypeService = saleTypeService;
             _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
-            var result = await _mediator.Send(new GetSaleTypesQuery());
-
+            var result = await _saleTypeService.GetAllAsync();
             var vm = _mapper.Map<List<SaleTypeViewModel>>(result);
-
             return View("Admin/SaleTypes/Index", vm);
         }
 
         public IActionResult Create()
         {
-            var vm = new SaleTypeCreateEditViewModel();
-            return View("Admin/SaleTypes/Create", vm);
+            return View("Admin/SaleTypes/Create", new SaleTypeCreateEditViewModel());
         }
 
         [HttpPost]
@@ -46,19 +38,19 @@ namespace RealEstateApp.Web.Controllers
             if (!ModelState.IsValid)
                 return View("Admin/SaleTypes/Create", model);
 
-            var command = _mapper.Map<CreateSaleTypeCommand>(model);
-
-            await _mediator.Send(command);
+            var dto = _mapper.Map<SaleTypeDto>(model);
+            await _saleTypeService.CreateAsync(dto);
 
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var dto = await _mediator.Send(new GetSaleTypeByIdQuery { Id = id });
+            var dto = await _saleTypeService.GetByIdAsync(id);
+            if (dto == null)
+                return NotFound();
 
             var vm = _mapper.Map<SaleTypeCreateEditViewModel>(dto);
-
             return View("Admin/SaleTypes/Edit", vm);
         }
 
@@ -72,9 +64,8 @@ namespace RealEstateApp.Web.Controllers
             if (!ModelState.IsValid)
                 return View("Admin/SaleTypes/Edit", model);
 
-            var command = _mapper.Map<UpdateSaleTypeCommand>(model);
-
-            await _mediator.Send(command);
+            var dto = _mapper.Map<SaleTypeDto>(model);
+            await _saleTypeService.UpdateAsync(dto);
 
             return RedirectToAction(nameof(Index));
         }
@@ -83,16 +74,15 @@ namespace RealEstateApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleStatus(int id)
         {
-            await _mediator.Send(new ToggleSaleTypeStatusCommand { Id = id });
+            await _saleTypeService.ToggleStatusAsync(id);
             return RedirectToAction(nameof(Index));
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _mediator.Send(new DeleteSaleTypeCommand { Id = id });
+            await _saleTypeService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

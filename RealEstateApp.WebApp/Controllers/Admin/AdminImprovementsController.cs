@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateApp.Application.Features.Improvements.Commands.CreateImprovement;
-using RealEstateApp.Application.Features.Improvements.Commands.DeleteImprovement;
-using RealEstateApp.Application.Features.Improvements.Commands.ToggleImprovementStatus;
-using RealEstateApp.Application.Features.Improvements.Commands.UpdateImprovement;
-using RealEstateApp.Application.Features.Improvements.Queries.GetImprovementById;
-using RealEstateApp.Application.Features.Improvements.Queries.GetImprovements;
+using RealEstateApp.Application.Dtos.Improvements;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Web.Models.Admin.Improvements;
 
 namespace RealEstateApp.Web.Controllers
@@ -15,18 +10,18 @@ namespace RealEstateApp.Web.Controllers
     [Authorize(Roles = "Administrador")]
     public class AdminImprovementsController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly IImprovementService _improvementService;
         private readonly IMapper _mapper;
 
-        public AdminImprovementsController(IMediator mediator, IMapper mapper)
+        public AdminImprovementsController(IImprovementService improvementService, IMapper mapper)
         {
-            _mediator = mediator;
+            _improvementService = improvementService;
             _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
-            var result = await _mediator.Send(new GetImprovementsQuery());
+            var result = await _improvementService.GetAllAsync();
             var vm = _mapper.Map<List<ImprovementViewModel>>(result);
 
             return View("Admin/Improvements/Index", vm);
@@ -45,15 +40,19 @@ namespace RealEstateApp.Web.Controllers
             if (!ModelState.IsValid)
                 return View("Admin/Improvements/Create", model);
 
-            var command = _mapper.Map<CreateImprovementCommand>(model);
-            await _mediator.Send(command);
+            var dto = _mapper.Map<ImprovementDto>(model);
+            await _improvementService.CreateAsync(dto);
 
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var dto = await _mediator.Send(new GetImprovementByIdQuery { Id = id });
+            var dto = await _improvementService.GetByIdAsync(id);
+
+            if (dto == null)
+                return NotFound();
+
             var vm = _mapper.Map<ImprovementCreateEditViewModel>(dto);
 
             return View("Admin/Improvements/Edit", vm);
@@ -69,8 +68,8 @@ namespace RealEstateApp.Web.Controllers
             if (!ModelState.IsValid)
                 return View("Admin/Improvements/Edit", model);
 
-            var command = _mapper.Map<UpdateImprovementCommand>(model);
-            await _mediator.Send(command);
+            var dto = _mapper.Map<ImprovementDto>(model);
+            await _improvementService.UpdateAsync(dto);
 
             return RedirectToAction(nameof(Index));
         }
@@ -79,7 +78,7 @@ namespace RealEstateApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleStatus(int id)
         {
-            await _mediator.Send(new ToggleImprovementStatusCommand { Id = id });
+            await _improvementService.ToggleStatusAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -87,7 +86,7 @@ namespace RealEstateApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _mediator.Send(new DeleteImprovementCommand { Id = id });
+            await _improvementService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

@@ -7,14 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mapping\**" />
     <Compile Remove="ViewModels\**" />
+    <EmbeddedResource Remove="Mapping\**" />
     <EmbeddedResource Remove="ViewModels\**" />
+    <None Remove="Mapping\**" />
     <None Remove="ViewModels\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Interfaces\Identity\" />
-    <Folder Include="Behaviors\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +24,7 @@
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="FluentAssertions" Version="8.8.0" />
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
     <PackageReference Include="MediatR" Version="13.0.0" />
@@ -33,7 +36,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-    <Folder Include="Mapping\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,7 +46,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RealEstateApp.Domain\RealEstateApp.Domain.csproj" />
-    <ProjectReference Include="..\RealEstateApp.Infraestructure.Persistence\RealEstateApp.Infraestructure.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

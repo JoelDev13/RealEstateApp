@@ -1,25 +1,22 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Dtos.PropertyTypes;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Application.Features.PropertyTypes.Queries.GetPropertyTypeById
 {
     public class GetPropertyTypeByIdQueryHandler
         : IRequestHandler<GetPropertyTypeByIdQuery, PropertyTypeDto>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IPropertyTypeRepository _propertyTypeRepository;
 
-        public GetPropertyTypeByIdQueryHandler(IApplicationDbContext context)
+        public GetPropertyTypeByIdQueryHandler(IPropertyTypeRepository propertyTypeRepository)
         {
-            _context = context;
+            _propertyTypeRepository = propertyTypeRepository;
         }
 
         public async Task<PropertyTypeDto> Handle(GetPropertyTypeByIdQuery request, CancellationToken cancellationToken)
         {
-            var entity = await _context.PropertyTypes
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var entity = await _propertyTypeRepository.GetByIdAsync(request.Id);
 
             if (entity == null)
                 throw new KeyNotFoundException($"PropertyType con Id {request.Id} no existe.");

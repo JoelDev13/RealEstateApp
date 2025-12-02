@@ -1,25 +1,22 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Dtos.Improvements;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Application.Features.Improvements.Queries.GetImprovementById
 {
     public class GetImprovementByIdQueryHandler
         : IRequestHandler<GetImprovementByIdQuery, ImprovementDto>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IImprovementRepository _improvementRepository;
 
-        public GetImprovementByIdQueryHandler(IApplicationDbContext context)
+        public GetImprovementByIdQueryHandler(IImprovementRepository improvementRepository)
         {
-            _context = context;
+            _improvementRepository = improvementRepository;
         }
 
         public async Task<ImprovementDto> Handle(GetImprovementByIdQuery request, CancellationToken cancellationToken)
         {
-            var entity = await _context.Improvements
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var entity = await _improvementRepository.GetByIdAsync(request.Id);
 
             if (entity == null)
                 throw new KeyNotFoundException($"Improvement con Id {request.Id} no existe.");

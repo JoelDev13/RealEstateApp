@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using RealEstateApp.Application;
 using RealEstateApp.Application.Dtos.Auth;
-using RealEstateApp.Application.Interfaces;
-using RealEstateApp.Infraestructure.Identity.Entities;
+using RealEstateApp.Application.Interfaces.Services;
+using RealEstateApp.Infrastructure.Identity.Entities;
 
 namespace RealEstateApp.Infraestructure.Identity.Services
 {

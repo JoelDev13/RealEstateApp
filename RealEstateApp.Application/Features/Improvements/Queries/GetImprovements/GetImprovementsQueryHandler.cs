@@ -1,24 +1,28 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Dtos.Improvements;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Application.Features.Improvements.Queries.GetImprovements
 {
     public class GetImprovementsQueryHandler
         : IRequestHandler<GetImprovementsQuery, List<ImprovementDto>>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IImprovementRepository _improvementRepository;
 
-        public GetImprovementsQueryHandler(IApplicationDbContext context)
+        public GetImprovementsQueryHandler(IImprovementRepository improvementRepository)
         {
-            _context = context;
+            _improvementRepository = improvementRepository;
         }
 
         public async Task<List<ImprovementDto>> Handle(GetImprovementsQuery request, CancellationToken cancellationToken)
         {
-            var list = await _context.Improvements
+            var list = await _improvementRepository
+                .Query()
                 .OrderBy(i => i.Name)
+                .ToListAsync(cancellationToken);
+
+            return list
                 .Select(i => new ImprovementDto
                 {
                     Id = i.Id,
@@ -26,9 +30,7 @@ namespace RealEstateApp.Application.Features.Improvements.Queries.GetImprovement
                     Description = i.Description,
                     IsActive = i.IsActive
                 })
-                .ToListAsync(cancellationToken);
-
-            return list;
+                .ToList();
         }
     }
 }

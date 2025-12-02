@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using RealEstateApp.Domain.Enums;
-using RealEstateApp.Infraestructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Identity.Entities;
 
 namespace RealEstateApp.Infraestructure.Identity.Seeds
 {
@@ -14,6 +14,7 @@ namespace RealEstateApp.Infraestructure.Identity.Seeds
                 UserName = "admin",
                 Email = "admin@realestateapp.com",
                 EmailConfirmed = true,
+                Cedula = "00100000001",
                 FirstName = "Admin",
                 LastName = "Sistema",
                 UserType = "Administrador",
@@ -39,6 +40,7 @@ namespace RealEstateApp.Infraestructure.Identity.Seeds
                 EmailConfirmed = true,
                 FirstName = "Juan",
                 LastName = "Pérez",
+                Cedula = "00200000002",
                 UserType = "Agente",
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
@@ -62,6 +64,7 @@ namespace RealEstateApp.Infraestructure.Identity.Seeds
                 EmailConfirmed = true,
                 FirstName = "Cliente",
                 LastName = "Ejemplo",
+                Cedula = "00300000003",
                 UserType = "Cliente",
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow

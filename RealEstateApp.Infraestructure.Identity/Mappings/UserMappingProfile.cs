@@ -1,6 +1,6 @@
 using AutoMapper;
 using RealEstateApp.Application.Dtos.Auth;
-using RealEstateApp.Infraestructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Identity.Entities;
 
 namespace RealEstateApp.Infraestructure.Identity.Mappings
 {

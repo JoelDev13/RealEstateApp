@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateApp.Application.Features.PropertyTypes.Commands.CreatePropertyType;
-using RealEstateApp.Application.Features.PropertyTypes.Commands.DeletePropertyType;
-using RealEstateApp.Application.Features.PropertyTypes.Commands.TogglePropertyTypeStatus;
-using RealEstateApp.Application.Features.PropertyTypes.Commands.UpdatePropertyType;
-using RealEstateApp.Application.Features.PropertyTypes.Queries.GetPropertyTypeById;
-using RealEstateApp.Application.Features.PropertyTypes.Queries.GetPropertyTypes;
+using RealEstateApp.Application.Dtos.PropertyTypes;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Web.Models.Admin.PropertyTypes;
 
 namespace RealEstateApp.Web.Controllers
@@ -15,25 +10,25 @@ namespace RealEstateApp.Web.Controllers
     [Authorize(Roles = "Administrador")]
     public class AdminPropertyTypesController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly IPropertyTypeService _propertyTypeService;
         private readonly IMapper _mapper;
 
-        public AdminPropertyTypesController(IMediator mediator, IMapper mapper)
+        public AdminPropertyTypesController(IPropertyTypeService propertyTypeService, IMapper mapper)
         {
-            _mediator = mediator;
+            _propertyTypeService = propertyTypeService;
             _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
-            var result = await _mediator.Send(new GetPropertyTypesQuery());
+            var result = await _propertyTypeService.GetAllAsync();
 
             var viewModel = _mapper.Map<List<PropertyTypeViewModel>>(result);
 
             return View("Admin/PropertyTypes/Index", viewModel);
         }
 
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             var vm = new PropertyTypeCreateEditViewModel();
             return View("Admin/PropertyTypes/Create", vm);
@@ -46,16 +41,19 @@ namespace RealEstateApp.Web.Controllers
             if (!ModelState.IsValid)
                 return View("Admin/PropertyTypes/Create", model);
 
-            var command = _mapper.Map<CreatePropertyTypeCommand>(model);
+            var dto = _mapper.Map<PropertyTypeDto>(model);
 
-            await _mediator.Send(command);
+            await _propertyTypeService.CreateAsync(dto);
 
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var dto = await _mediator.Send(new GetPropertyTypeByIdQuery { Id = id });
+            var dto = await _propertyTypeService.GetByIdAsync(id);
+
+            if (dto == null)
+                return NotFound();
 
             var vm = _mapper.Map<PropertyTypeCreateEditViewModel>(dto);
 
@@ -72,9 +70,9 @@ namespace RealEstateApp.Web.Controllers
             if (!ModelState.IsValid)
                 return View("Admin/PropertyTypes/Edit", model);
 
-            var command = _mapper.Map<UpdatePropertyTypeCommand>(model);
+            var dto = _mapper.Map<PropertyTypeDto>(model);
 
-            await _mediator.Send(command);
+            await _propertyTypeService.UpdateAsync(dto);
 
             return RedirectToAction(nameof(Index));
         }
@@ -83,7 +81,7 @@ namespace RealEstateApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleStatus(int id)
         {
-            await _mediator.Send(new TogglePropertyTypeStatusCommand { Id = id });
+            await _propertyTypeService.ToggleStatusAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -91,7 +89,7 @@ namespace RealEstateApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _mediator.Send(new DeletePropertyTypeCommand { Id = id });
+            await _propertyTypeService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

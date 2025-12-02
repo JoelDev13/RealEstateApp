@@ -1,34 +1,36 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Dtos.PropertyTypes;
-using RealEstateApp.Application.Features.PropertyTypes.Queries.GetPropertyTypeById;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 
-public class GetPropertyTypeByIdQueryHandler
-    : IRequestHandler<GetPropertyTypeByIdQuery, PropertyTypeDto>
+namespace RealEstateApp.Application.Features.PropertyTypes.Queries.GetPropertyTypes
 {
-    private readonly IApplicationDbContext _context;
-
-    public GetPropertyTypeByIdQueryHandler(IApplicationDbContext context)
+    public class GetPropertyTypesQueryHandler
+        : IRequestHandler<GetPropertyTypesQuery, List<PropertyTypeDto>>
     {
-        _context = context;
-    }
+        private readonly IPropertyTypeRepository _propertyTypeRepository;
 
-    public async Task<PropertyTypeDto> Handle(GetPropertyTypeByIdQuery request, CancellationToken cancellationToken)
-    {
-        var entity = await _context.PropertyTypes
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-
-        if (entity == null)
-            throw new KeyNotFoundException($"PropertyType con Id {request.Id} no existe.");
-
-        return new PropertyTypeDto
+        public GetPropertyTypesQueryHandler(IPropertyTypeRepository propertyTypeRepository)
         {
-            Id = entity.Id,
-            Name = entity.Name,
-            Description = entity.Description,
-            IsActive = entity.IsActive
-        };
+            _propertyTypeRepository = propertyTypeRepository;
+        }
+
+        public async Task<List<PropertyTypeDto>> Handle(GetPropertyTypesQuery request, CancellationToken cancellationToken)
+        {
+            var list = await _propertyTypeRepository
+                .Query()
+                .OrderBy(pt => pt.Name)
+                .ToListAsync(cancellationToken);
+
+            return list
+                .Select(pt => new PropertyTypeDto
+                {
+                    Id = pt.Id,
+                    Name = pt.Name,
+                    Description = pt.Description,
+                    IsActive = pt.IsActive
+                })
+                .ToList();
+        }
     }
 }

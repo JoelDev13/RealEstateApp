@@ -1,8 +1,7 @@
-using RealEstateApp.Application;
 using RealEstateApp.Application.Dtos.Auth;
 using RealEstateApp.Domain.Enums;
 
-namespace RealEstateApp.Application.Interfaces
+namespace RealEstateApp.Application.Interfaces.Services
 {
     public interface IBaseAccountService
     {

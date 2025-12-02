@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Domain.Entities;
 
 namespace RealEstateApp.Application.Features.Improvements.Commands.CreateImprovement
@@ -7,11 +7,11 @@ namespace RealEstateApp.Application.Features.Improvements.Commands.CreateImprove
     public class CreateImprovementCommandHandler
         : IRequestHandler<CreateImprovementCommand, int>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IImprovementRepository _improvementRepository;
 
-        public CreateImprovementCommandHandler(IApplicationDbContext context)
+        public CreateImprovementCommandHandler(IImprovementRepository improvementRepository)
         {
-            _context = context;
+            _improvementRepository = improvementRepository;
         }
 
         public async Task<int> Handle(CreateImprovementCommand request, CancellationToken cancellationToken)
@@ -24,9 +24,7 @@ namespace RealEstateApp.Application.Features.Improvements.Commands.CreateImprove
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.Improvements.Add(entity);
-
-            await _context.SaveChangesAsync(cancellationToken);
+            await _improvementRepository.AddAsync(entity);
 
             return entity.Id;
         }

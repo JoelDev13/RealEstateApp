@@ -1,23 +1,21 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Application.Features.SaleTypes.Commands.ToggleSaleTypeStatus
 {
     public class ToggleSaleTypeStatusCommandHandler
         : IRequestHandler<ToggleSaleTypeStatusCommand, Unit>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISaleTypeRepository _saleTypeRepository;
 
-        public ToggleSaleTypeStatusCommandHandler(IApplicationDbContext context)
+        public ToggleSaleTypeStatusCommandHandler(ISaleTypeRepository saleTypeRepository)
         {
-            _context = context;
+            _saleTypeRepository = saleTypeRepository;
         }
 
         public async Task<Unit> Handle(ToggleSaleTypeStatusCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.SaleTypes
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var entity = await _saleTypeRepository.GetByIdAsync(request.Id);
 
             if (entity == null)
                 throw new KeyNotFoundException($"SaleType con Id {request.Id} no existe.");
@@ -25,7 +23,7 @@ namespace RealEstateApp.Application.Features.SaleTypes.Commands.ToggleSaleTypeSt
             entity.IsActive = !entity.IsActive;
             entity.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await _saleTypeRepository.UpdateAsync(entity);
 
             return Unit.Value;
         }

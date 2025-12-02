@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Settings;
 using RealEstateApp.Infraestructure.Shared.Service;
 

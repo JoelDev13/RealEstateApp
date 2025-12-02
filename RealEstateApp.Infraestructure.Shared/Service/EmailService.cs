@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using MimeKit;
 using RealEstateApp.Application.Dtos.Email;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Settings;
 
 namespace RealEstateApp.Infraestructure.Shared.Service

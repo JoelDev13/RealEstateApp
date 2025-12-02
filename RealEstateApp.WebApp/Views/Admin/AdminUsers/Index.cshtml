@@ -1,0 +1,78 @@
+﻿@model List<RealEstateApp.WebApp.Models.Admin.AdminUsers.AdminUserViewModel>
+
+@{
+    ViewData["Title"] = "Administradores";
+    var currentUserId = ViewBag.CurrentUserId as string;
+}
+
+<h2 class="mb-3">Mantenimiento de Administradores</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Crear administrador
+    </a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Usuario</th>
+            <th>Cédula</th>
+            <th>Correo</th>
+            <th>Estado</th>
+            <th style="width:160px;">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var admin in Model)
+        {
+            <tr>
+                <td>@admin.FirstName</td>
+                <td>@admin.LastName</td>
+                <td>@admin.UserName</td>
+                <td>@admin.Cedula</td>
+                <td>@admin.Email</td>
+                <td>
+                    @if (admin.IsActive)
+                    {
+                        <span class="badge bg-success">Activo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inactivo</span>
+                    }
+                </td>
+                <td>
+                    @{
+                        bool isCurrent = (admin.Id == currentUserId);
+                    }
+
+                    <a asp-action="Edit" asp-route-id="@admin.Id"
+                       class="btn btn-warning btn-sm @(isCurrent ? "disabled" : "")">
+                        Editar
+                    </a>
+
+                    <form asp-action="ToggleStatus"
+                          method="post"
+                          class="d-inline"
+                          onsubmit="return confirm('¿Está seguro que desea cambiar el estado de este administrador?');">
+                        <input type="hidden" name="id" value="@admin.Id" />
+                        <input type="hidden" name="activate" value="@(admin.IsActive ? false : true)" />
+
+                        <button type="submit" class="btn btn-sm @(admin.IsActive ? "btn-danger" : "btn-success")"
+                                @(isCurrent ? "disabled" : null)>
+                            @(admin.IsActive ? "Inactivar" : "Activar")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

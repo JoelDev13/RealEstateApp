@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Domain.Entities;
 
 namespace RealEstateApp.Application.Features.SaleTypes.Commands.CreateSaleType
@@ -7,14 +7,16 @@ namespace RealEstateApp.Application.Features.SaleTypes.Commands.CreateSaleType
     public class CreateSaleTypeCommandHandler
         : IRequestHandler<CreateSaleTypeCommand, int>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISaleTypeRepository _saleTypeRepository;
 
-        public CreateSaleTypeCommandHandler(IApplicationDbContext context)
+        public CreateSaleTypeCommandHandler(ISaleTypeRepository saleTypeRepository)
         {
-            _context = context;
+            _saleTypeRepository = saleTypeRepository;
         }
 
-        public async Task<int> Handle(CreateSaleTypeCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(
+            CreateSaleTypeCommand request,
+            CancellationToken cancellationToken)
         {
             var entity = new SaleType
             {
@@ -24,9 +26,7 @@ namespace RealEstateApp.Application.Features.SaleTypes.Commands.CreateSaleType
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.SaleTypes.Add(entity);
-
-            await _context.SaveChangesAsync(cancellationToken);
+            await _saleTypeRepository.AddAsync(entity);
 
             return entity.Id;
         }

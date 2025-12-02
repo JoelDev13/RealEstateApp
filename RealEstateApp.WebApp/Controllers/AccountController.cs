@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using RealEstateApp.Application.Dtos.Auth;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Enums;
 using RealEstateApp.WebApp.Handlers;
 using System.Text;

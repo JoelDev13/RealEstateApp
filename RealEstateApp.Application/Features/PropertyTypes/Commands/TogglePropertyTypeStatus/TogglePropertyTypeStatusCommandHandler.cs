@@ -1,22 +1,21 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Application.Features.PropertyTypes.Commands.TogglePropertyTypeStatus
 {
     public class TogglePropertyTypeStatusCommandHandler
         : IRequestHandler<TogglePropertyTypeStatusCommand, Unit>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IPropertyTypeRepository _propertyTypeRepository;
 
-        public TogglePropertyTypeStatusCommandHandler(IApplicationDbContext context)
+        public TogglePropertyTypeStatusCommandHandler(IPropertyTypeRepository propertyTypeRepository)
         {
-            _context = context;
+            _propertyTypeRepository = propertyTypeRepository;
         }
+
         public async Task<Unit> Handle(TogglePropertyTypeStatusCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.PropertyTypes
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var entity = await _propertyTypeRepository.GetByIdAsync(request.Id);
 
             if (entity == null)
                 throw new KeyNotFoundException($"PropertyType con Id {request.Id} no existe.");
@@ -24,10 +23,9 @@ namespace RealEstateApp.Application.Features.PropertyTypes.Commands.ToggleProper
             entity.IsActive = !entity.IsActive;
             entity.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await _propertyTypeRepository.UpdateAsync(entity);
 
             return Unit.Value;
         }
-
     }
 }

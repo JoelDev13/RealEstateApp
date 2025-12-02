@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RealEstateApp.Infraestructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Identity.Entities;
 
 namespace RealEstateApp.Infraestructure.Identity.Context
 {

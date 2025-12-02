@@ -1,25 +1,22 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Dtos.SaleTypes;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Application.Features.SaleTypes.Queries.GetSaleTypeById
 {
     public class GetSaleTypeByIdQueryHandler
         : IRequestHandler<GetSaleTypeByIdQuery, SaleTypeDto>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISaleTypeRepository _saleTypeRepository;
 
-        public GetSaleTypeByIdQueryHandler(IApplicationDbContext context)
+        public GetSaleTypeByIdQueryHandler(ISaleTypeRepository saleTypeRepository)
         {
-            _context = context;
+            _saleTypeRepository = saleTypeRepository;
         }
 
         public async Task<SaleTypeDto> Handle(GetSaleTypeByIdQuery request, CancellationToken cancellationToken)
         {
-            var entity = await _context.SaleTypes
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var entity = await _saleTypeRepository.GetByIdAsync(request.Id);
 
             if (entity == null)
                 throw new KeyNotFoundException($"SaleType con Id {request.Id} no existe.");

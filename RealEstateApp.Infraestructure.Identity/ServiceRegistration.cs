@@ -2,11 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RealEstateApp.Application.Interfaces.Repositories;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Infraestructure.Identity.Context;
-using RealEstateApp.Infraestructure.Identity.Entities;
 using RealEstateApp.Infraestructure.Identity.Mappings;
+using RealEstateApp.Infrastructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Identity.Repositories;
 
-namespace RealEstateApp.Infraestructure.Identity
+namespace RealEstateApp.Infrastructure.Identity
 {
     public static class ServiceRegistration
     {
@@ -20,42 +23,28 @@ namespace RealEstateApp.Infraestructure.Identity
             #endregion
 
             #region Identity
-            services.AddIdentityCore<AppUser>(options =>
+            services.AddIdentity<AppUser, IdentityRole>(options =>
             {
-                // Configuracion de contraseñas
-                options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
+                options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
-
-                // Configuracion de bloqueo de usuario
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
-                options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.AllowedForNewUsers = true;
-
-                // Configuracion de usuario
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
                 options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
             })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<IdentityContext>()
+            .AddDefaultTokenProviders();
 
             services.AddHttpContextAccessor();
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })
-            .AddIdentityCookies();
 
             services.AddScoped<SignInManager<AppUser>>();
 
             services.AddAutoMapper(typeof(UserMappingProfile));
+            services.AddScoped<IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
+            services.AddScoped<IAccountServiceForWebApp, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApp>();
+            services.AddScoped<IAdminUserRepository, AdminUserRepository>();
 
-            services.AddScoped<Application.Interfaces.IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
-            services.AddScoped<Application.Interfaces.IAccountServiceForWebApp, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApp>();
             #endregion
 
             return services;

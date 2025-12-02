@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Domain.Entities;
 
 namespace RealEstateApp.Application.Features.PropertyTypes.Commands.CreatePropertyType
@@ -7,11 +7,11 @@ namespace RealEstateApp.Application.Features.PropertyTypes.Commands.CreateProper
     public class CreatePropertyTypeCommandHandler
         : IRequestHandler<CreatePropertyTypeCommand, int>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IPropertyTypeRepository _propertyTypeRepository;
 
-        public CreatePropertyTypeCommandHandler(IApplicationDbContext context)
+        public CreatePropertyTypeCommandHandler(IPropertyTypeRepository propertyTypeRepository)
         {
-            _context = context;
+            _propertyTypeRepository = propertyTypeRepository;
         }
 
         public async Task<int> Handle(CreatePropertyTypeCommand request, CancellationToken cancellationToken)
@@ -24,8 +24,7 @@ namespace RealEstateApp.Application.Features.PropertyTypes.Commands.CreateProper
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.PropertyTypes.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _propertyTypeRepository.AddAsync(entity);
 
             return entity.Id;
         }
