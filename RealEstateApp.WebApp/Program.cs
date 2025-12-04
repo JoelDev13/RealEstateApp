@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application;
-using RealEstateApp.Domain.Enums;
 using RealEstateApp.Infraestructure.Identity;
-using RealEstateApp.Infraestructure.Identity.Context;
 using RealEstateApp.Infraestructure.Identity.Entities;
 using RealEstateApp.Infraestructure.Identity.Seeds;
 using RealEstateApp.Infraestructure.Shared;

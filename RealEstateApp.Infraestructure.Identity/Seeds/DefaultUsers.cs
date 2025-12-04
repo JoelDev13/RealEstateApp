@@ -17,6 +17,9 @@ namespace RealEstateApp.Infraestructure.Identity.Seeds
                 FirstName = "Admin",
                 LastName = "Sistema",
                 UserType = "Administrador",
+                Cedula = "00000000000",
+                PhoneNumber = "809-000-0000",
+                ProfilePicture = "",
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
@@ -40,6 +43,9 @@ namespace RealEstateApp.Infraestructure.Identity.Seeds
                 FirstName = "Juan",
                 LastName = "Pérez",
                 UserType = "Agente",
+                Cedula = "12345678901",
+                PhoneNumber = "809-123-4567",
+                ProfilePicture = "",
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
@@ -63,6 +69,9 @@ namespace RealEstateApp.Infraestructure.Identity.Seeds
                 FirstName = "Cliente",
                 LastName = "Ejemplo",
                 UserType = "Cliente",
+                Cedula = "98765432109",
+                PhoneNumber = "809-987-6543",
+                ProfilePicture = "",
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };

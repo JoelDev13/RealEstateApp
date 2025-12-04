@@ -21,7 +21,8 @@ namespace RealEstateApp.Infraestructure.Identity.Mappings
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => src.EmailConfirmed))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt))
+                .ForMember(dest => dest.Cedula, opt => opt.MapFrom(src => src.Cedula));
 
             // RegisterDto => AppUser
             CreateMap<RegisterDto, AppUser>()
@@ -29,6 +30,7 @@ namespace RealEstateApp.Infraestructure.Identity.Mappings
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName ?? string.Empty))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName ?? string.Empty))
+                .ForMember(dest => dest.Cedula, opt => opt.MapFrom(src => src.Cedula ?? string.Empty))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.UserType, opt => opt.MapFrom(src => src.UserType))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => false)) // Se crea inactivo
@@ -56,6 +58,7 @@ namespace RealEstateApp.Infraestructure.Identity.Mappings
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName ?? string.Empty))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName ?? string.Empty))
+                .ForMember(dest => dest.Cedula, opt => opt.MapFrom(src => src.Cedula ?? string.Empty))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => src.ProfilePicture))
                 .ForMember(dest => dest.UserType, opt => opt.MapFrom(src => src.UserType))

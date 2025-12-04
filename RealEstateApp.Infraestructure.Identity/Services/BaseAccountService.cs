@@ -33,17 +33,41 @@ namespace RealEstateApp.Infraestructure.Identity.Services
 
         public virtual async Task<Result<UserDto>> RegisterUser(UserSaveDto saveDto, string? origin, bool? isApi = false)
         {
+            // Valida que la cédula tenga exactamente 11 digitos
+            if (string.IsNullOrWhiteSpace(saveDto.Cedula))
+            {
+                return Result<UserDto>.Fail("La cédula es requerida.");
+            }
+
+            // Remueve los guiones o espacios si los tiene
+            string cedulaClean = saveDto.Cedula.Replace("-", "").Replace(" ", "").Trim();
+            
+            if (cedulaClean.Length != 11 || !cedulaClean.All(char.IsDigit))
+            {
+                return Result<UserDto>.Fail("La cédula debe tener exactamente 11 dígitos numéricos");
+            }
+
+            // Verifica si ya existe un usuario con esta cedula
+            var userWithSameCedula = await _userManager.Users.FirstOrDefaultAsync(u => u.Cedula == cedulaClean);
+            if (userWithSameCedula != null)
+            {
+                return Result<UserDto>.Fail($"Ya existe un usuario registrado con la cédula: {cedulaClean}.");
+            }
+
             var userWithSameUserName = await _userManager.FindByNameAsync(saveDto.UserName);
             if (userWithSameUserName != null)
             {
-                return Result<UserDto>.Fail($"El nombre de usuario: {saveDto.UserName} ya está en uso.");
+                return Result<UserDto>.Fail($"El nombre de usuario: {saveDto.UserName} ya está en uso");
             }
 
             var userWithSameEmail = await _userManager.FindByEmailAsync(saveDto.Email);
             if (userWithSameEmail != null)
             {
-                return Result<UserDto>.Fail($"El correo electrónico: {saveDto.Email} ya está en uso.");
+                return Result<UserDto>.Fail($"El correo electrónico: {saveDto.Email} ya está en uso");
             }
+
+            // limpieza de cedula
+            saveDto.Cedula = cedulaClean;
 
             // Clientes y agentes se crean inactivos. Los clientes reciben correos, los agentes no
             // Los administradores se crean activos, no reciben correos
@@ -114,6 +138,27 @@ namespace RealEstateApp.Infraestructure.Identity.Services
             if (user == null)
             {
                 return Result<UserDto>.Fail("No existe una cuenta registrada con este usuario");
+            }
+
+            // Validar cédula si se está actualizando
+            if (!string.IsNullOrWhiteSpace(saveDto.Cedula))
+            {
+                string cedulaClean = saveDto.Cedula.Replace("-", "").Replace(" ", "").Trim();
+                
+                if (cedulaClean.Length != 11 || !cedulaClean.All(char.IsDigit))
+                {
+                    return Result<UserDto>.Fail("La cédula debe tener exactamente 11 dígitos numéricos.");
+                }
+
+                // Verificar si otra cédula ya existe (excluyendo el usuario actual)
+                var userWithSameCedula = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.Cedula == cedulaClean && u.Id != saveDto.Id);
+                if (userWithSameCedula != null)
+                {
+                    return Result<UserDto>.Fail($"Ya existe un usuario registrado con la cédula: {cedulaClean}.");
+                }
+
+                user.Cedula = cedulaClean;
             }
 
             user.FirstName = saveDto.FirstName ?? user.FirstName;

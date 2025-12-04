@@ -7,6 +7,7 @@ namespace RealEstateApp.Application.Dtos.Auth
         public string? Email { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public string? Cedula { get; set; }
         public string? PhoneNumber { get; set; }
         public string? ProfilePicture { get; set; }
         public string? UserType { get; set; }

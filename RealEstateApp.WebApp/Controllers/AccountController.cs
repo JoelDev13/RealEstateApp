@@ -54,6 +54,22 @@ namespace RealEstateApp.WebApp.Controllers
                         return View(model);
                     }
 
+                    // Valida cédula - debe tener exactamente 11 digitos
+                    if (string.IsNullOrWhiteSpace(model.Cedula))
+                    {
+                        ModelState.AddModelError("Cedula", "La cédula es requerida");
+                        return View(model);
+                    }
+
+                    string cedulaClean = model.Cedula.Replace("-", "").Replace(" ", "").Trim();
+                    if (cedulaClean.Length != 11 || !cedulaClean.All(char.IsDigit))
+                    {
+                        ModelState.AddModelError("Cedula", "La cédula debe tener exactamente 11 dígitos numéricos");
+                        return View(model);
+                    }
+
+                    model.Cedula = cedulaClean;
+
                     // Registra el usuario sin imagen primero para obtener el ID
                     var origin = Request.Scheme + "://" + Request.Host.Value;
                     var result = await _accountService.RegisterUser(model, origin);
