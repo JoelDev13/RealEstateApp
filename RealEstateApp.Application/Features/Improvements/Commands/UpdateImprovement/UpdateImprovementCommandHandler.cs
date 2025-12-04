@@ -1,33 +1,37 @@
 ﻿using MediatR;
+using RealEstateApp.Application.Dtos.Improvements;
 using RealEstateApp.Application.Interfaces.Repositories;
 
-namespace RealEstateApp.Application.Features.Improvements.Commands.UpdateImprovement
+public class UpdateImprovementCommandHandler
+    : IRequestHandler<UpdateImprovementCommand, ImprovementDto>
 {
-    public class UpdateImprovementCommandHandler
-        : IRequestHandler<UpdateImprovementCommand, Unit>
+    private readonly IImprovementRepository _improvementRepository;
+
+    public UpdateImprovementCommandHandler(IImprovementRepository improvementRepository)
     {
-        private readonly IImprovementRepository _improvementRepository;
+        _improvementRepository = improvementRepository;
+    }
 
-        public UpdateImprovementCommandHandler(IImprovementRepository improvementRepository)
+    public async Task<ImprovementDto> Handle(UpdateImprovementCommand request, CancellationToken cancellationToken)
+    {
+        var entity = await _improvementRepository.GetByIdAsync(request.Id);
+
+        if (entity == null)
+            throw new KeyNotFoundException($"Improvement con Id {request.Id} no existe.");
+
+        entity.Name = request.Name;
+        entity.Description = request.Description;
+        entity.IsActive = request.IsActive;
+        entity.UpdatedAt = DateTime.UtcNow;
+
+        await _improvementRepository.UpdateAsync(entity);
+
+        return new ImprovementDto
         {
-            _improvementRepository = improvementRepository;
-        }
-
-        public async Task<Unit> Handle(UpdateImprovementCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _improvementRepository.GetByIdAsync(request.Id);
-
-            if (entity == null)
-                throw new KeyNotFoundException($"Improvement con Id {request.Id} no existe.");
-
-            entity.Name = request.Name;
-            entity.Description = request.Description;
-            entity.IsActive = request.IsActive;
-            entity.UpdatedAt = DateTime.UtcNow;
-
-            await _improvementRepository.UpdateAsync(entity);
-
-            return Unit.Value;
-        }
+            Id = entity.Id,
+            Name = entity.Name,
+            Description = entity.Description,
+            IsActive = entity.IsActive
+        };
     }
 }

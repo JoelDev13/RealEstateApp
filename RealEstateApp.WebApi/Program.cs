@@ -33,14 +33,12 @@ builder.Services.AddPersistenceServicesIoC(builder.Configuration);
 builder.Services.AddApplicationServicesIoC();
 builder.Services.AddSharedInfrastructure(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
-
-// Versionado y Swagger
 builder.Services.AddAppiVersioningExtension();
 builder.Services.AddSwaggerExtension();
-
-// Cache y sesiones
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+builder.Services.AddHealthChecks();
+
 
 // Global Exception Handler
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

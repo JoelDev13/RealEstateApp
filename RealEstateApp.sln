@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealStateApp.Unit.Tests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.WebApi", "RealEstateApp.WebApi\RealEstateApp.WebApi.csproj", "{9CD43421-5572-40E4-A3A8-8E6AB8ED85B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Api", "RealEstateApp.WebApi\RealEstateApp.Api.csproj", "{9CD43421-5572-40E4-A3A8-8E6AB8ED85B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -49,9 +49,12 @@ namespace RealEstateApp.WebApi.Extensions
                             Scheme = "Bearer",
                             Name = "Bearer",
                             In = ParameterLocation.Header
-                        }, new List<string>()
+                        },
+                        new List<string>()
                     }
                 });
+
+                options.EnableAnnotations();
             });
         }
 
