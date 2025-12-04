@@ -7,9 +7,20 @@
 
 <h2 class="mb-3">Mantenimiento de Administradores</h2>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 }
 
 <div class="mb-3">
@@ -62,15 +73,20 @@
                     <form asp-action="ToggleStatus"
                           method="post"
                           class="d-inline"
-                          onsubmit="return confirm('¿Está seguro que desea cambiar el estado de este administrador?');">
-                        <input type="hidden" name="id" value="@admin.Id" />
-                        <input type="hidden" name="activate" value="@(admin.IsActive ? false : true)" />
+                          onsubmit="return confirm('¿Está seguro que desea @(admin.IsActive ? "inactivar" : "activar") este administrador?');">
 
-                        <button type="submit" class="btn btn-sm @(admin.IsActive ? "btn-danger" : "btn-success")"
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="id" value="@admin.Id" />
+                        <input type="hidden" name="activate" value="@(admin.IsActive ? "false" : "true")" />
+
+                        <button type="submit"
+                                class="btn btn-sm @(admin.IsActive ? "btn-danger" : "btn-success")"
                                 @(isCurrent ? "disabled" : null)>
                             @(admin.IsActive ? "Inactivar" : "Activar")
                         </button>
                     </form>
+
                 </td>
             </tr>
         }

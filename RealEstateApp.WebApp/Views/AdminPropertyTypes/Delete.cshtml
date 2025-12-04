@@ -1,0 +1,16 @@
+@model RealEstateApp.Web.Models.Admin.PropertyTypes.PropertyTypeViewModel
+
+<h3 class="text-danger">¿Está seguro que desea eliminar este tipo de propiedad y TODAS las propiedades asociadas?</h3>
+
+<div class="mb-3">
+    <strong>@Model.Name</strong><br />
+    @Model.Description
+</div>
+
+<form asp-action="ConfirmDelete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+</form>

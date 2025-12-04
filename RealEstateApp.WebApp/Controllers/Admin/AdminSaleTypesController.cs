@@ -23,12 +23,12 @@ namespace RealEstateApp.Web.Controllers
         {
             var result = await _saleTypeService.GetAllAsync();
             var vm = _mapper.Map<List<SaleTypeViewModel>>(result);
-            return View("Admin/SaleTypes/Index", vm);
+            return View(vm);
         }
 
         public IActionResult Create()
         {
-            return View("Admin/SaleTypes/Create", new SaleTypeCreateEditViewModel());
+            return View(new SaleTypeCreateEditViewModel());
         }
 
         [HttpPost]
@@ -36,7 +36,7 @@ namespace RealEstateApp.Web.Controllers
         public async Task<IActionResult> Create(SaleTypeCreateEditViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("Admin/SaleTypes/Create", model);
+                return View(model);
 
             var dto = _mapper.Map<SaleTypeDto>(model);
             await _saleTypeService.CreateAsync(dto);
@@ -51,7 +51,7 @@ namespace RealEstateApp.Web.Controllers
                 return NotFound();
 
             var vm = _mapper.Map<SaleTypeCreateEditViewModel>(dto);
-            return View("Admin/SaleTypes/Edit", vm);
+            return View(vm);
         }
 
         [HttpPost]
@@ -62,7 +62,7 @@ namespace RealEstateApp.Web.Controllers
                 return BadRequest();
 
             if (!ModelState.IsValid)
-                return View("Admin/SaleTypes/Edit", model);
+                return View(model);
 
             var dto = _mapper.Map<SaleTypeDto>(model);
             await _saleTypeService.UpdateAsync(dto);

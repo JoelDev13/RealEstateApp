@@ -5,7 +5,6 @@ using RealEstateApp.Infraestructure.Shared;
 using RealEstateApp.Infrastructure.Identity;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using RealEstateApp.Infrastructure.Persistence;
-using RealEstateApp.Web.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +14,7 @@ builder.Services.AddControllersWithViews();
 //IoC
 builder.Services.AddPersistenceServicesIoC(builder.Configuration);
 builder.Services.AddApplicationServicesIoC();
-builder.Services.AddAutoMapper(typeof(WebMappingProfile));
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddSharedInfrastructure(builder.Configuration);
 

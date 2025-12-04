@@ -24,13 +24,13 @@ namespace RealEstateApp.Web.Controllers
             var result = await _improvementService.GetAllAsync();
             var vm = _mapper.Map<List<ImprovementViewModel>>(result);
 
-            return View("Admin/Improvements/Index", vm);
+            return View(vm);
         }
 
         public IActionResult Create()
         {
             var vm = new ImprovementCreateEditViewModel();
-            return View("Admin/Improvements/Create", vm);
+            return View(vm);
         }
 
         [HttpPost]
@@ -38,7 +38,7 @@ namespace RealEstateApp.Web.Controllers
         public async Task<IActionResult> Create(ImprovementCreateEditViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("Admin/Improvements/Create", model);
+                return View(model);
 
             var dto = _mapper.Map<ImprovementDto>(model);
             await _improvementService.CreateAsync(dto);
@@ -55,7 +55,7 @@ namespace RealEstateApp.Web.Controllers
 
             var vm = _mapper.Map<ImprovementCreateEditViewModel>(dto);
 
-            return View("Admin/Improvements/Edit", vm);
+            return View(vm);
         }
 
         [HttpPost]
@@ -66,7 +66,7 @@ namespace RealEstateApp.Web.Controllers
                 return BadRequest();
 
             if (!ModelState.IsValid)
-                return View("Admin/Improvements/Edit", model);
+                return View(model);
 
             var dto = _mapper.Map<ImprovementDto>(model);
             await _improvementService.UpdateAsync(dto);

@@ -1,0 +1,86 @@
+﻿@model List<RealEstateApp.WebApp.Models.Admin.DeveloperUser.DevUserViewModel>
+
+@{
+    ViewData["Title"] = "Mantenimiento de Desarrolladores";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-3">Mantenimiento de Desarrolladores</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Crear desarrollador
+        </a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Usuario</th>
+                <th>Cédula</th>
+                <th>Correo</th>
+                <th>Estado</th>
+                <th style="width:160px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model != null && Model.Any())
+            {
+                foreach (var dev in Model)
+                {
+                    <tr>
+                        <td>@dev.FirstName</td>
+                        <td>@dev.LastName</td>
+                        <td>@dev.UserName</td>
+                        <td>@dev.Cedula</td>
+                        <td>@dev.Email</td>
+                        <td>
+                            @if (dev.IsActive)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactivo</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@dev.Id"
+                               class="btn btn-warning btn-sm">Editar</a>
+
+                            <form asp-action="ToggleStatus"
+                                  method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('¿Está seguro que desea cambiar el estado de este Desarrollador?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@dev.Id" />
+                                <input type="hidden" name="isActive" value="@(dev.IsActive ? "false" : "true")" />
+
+                                <button type="submit"
+                                        class="btn btn-sm @(dev.IsActive ? "btn-danger" : "btn-success")">
+                                    @(dev.IsActive ? "Inactivar" : "Activar")
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">No hay desarrolladores registrados.</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

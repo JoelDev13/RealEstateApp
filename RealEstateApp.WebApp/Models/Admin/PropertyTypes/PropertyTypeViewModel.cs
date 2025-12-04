@@ -10,9 +10,9 @@ namespace RealEstateApp.Web.Models.Admin.PropertyTypes
         public string Name { get; set; } = null!;
 
         [Display(Name = "Descripción")]
-        public string? Description { get; set; }
+        public string Description { get; set; } = null!;
 
-        [Display(Name = "Activo")]
-        public bool IsActive { get; set; }
+        [Display(Name = "Cantidad de propiedades")]
+        public int PropertiesCount { get; set; }
     }
 }

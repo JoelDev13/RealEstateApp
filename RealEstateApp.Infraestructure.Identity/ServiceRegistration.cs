@@ -4,10 +4,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Application.Interfaces.Services;
+using RealEstateApp.Application.Services;
+using RealEstateApp.Domain.Settings;
 using RealEstateApp.Infraestructure.Identity.Context;
 using RealEstateApp.Infraestructure.Identity.Mappings;
+using RealEstateApp.Infraestructure.Identity.Repositories;
+using RealEstateApp.Infraestructure.Identity.Services;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using RealEstateApp.Infrastructure.Identity.Repositories;
+using RealEstateApp.Infrastructure.Identity.Services;
 
 namespace RealEstateApp.Infrastructure.Identity
 {
@@ -44,7 +49,15 @@ namespace RealEstateApp.Infrastructure.Identity
             services.AddScoped<IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
             services.AddScoped<IAccountServiceForWebApp, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApp>();
             services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+            services.AddScoped<IAccountApiService, AccountApiService>();
+            services.AddScoped<IAgentAdminService, AgentAdminService>();
+            services.AddScoped<IDeveloperUserService, DeveloperUserService>();
+            services.AddScoped<IDeveloperUserRepository, DeveloperUserRepository>();
 
+            #endregion
+
+            #region Configurations
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             #endregion
 
             return services;

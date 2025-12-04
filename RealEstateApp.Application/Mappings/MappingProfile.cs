@@ -10,9 +10,14 @@ namespace RealEstateApp.Application.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<PropertyType, PropertyTypeDto>();
-            CreateMap<Improvement, ImprovementDto>();
-            CreateMap<SaleType, SaleTypeDto>();
+            CreateMap<PropertyType, PropertyTypeDto>()
+                .ReverseMap();
+
+            CreateMap<Improvement, ImprovementDto>()
+                .ReverseMap();
+
+            CreateMap<SaleType, SaleTypeDto>()
+                .ReverseMap();
         }
     }
 }

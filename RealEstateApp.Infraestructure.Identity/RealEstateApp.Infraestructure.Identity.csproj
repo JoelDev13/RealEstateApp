@@ -35,12 +35,13 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RealEstateApp.Application\RealEstateApp.Application.csproj" />
     <ProjectReference Include="..\RealEstateApp.Domain\RealEstateApp.Domain.csproj" />
+    <ProjectReference Include="..\RealEstateApp.Infraestructure.Persistence\RealEstateApp.Infraestructure.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using RealEstateApp.Application.Dtos.AdminUsers;
 using RealEstateApp.Application.Interfaces.Repositories;
+using RealEstateApp.Domain.Enums;
 using RealEstateApp.Infrastructure.Identity.Entities;
 
-namespace RealEstateApp.Infrastructure.Identity.Repositories
+namespace RealEstateApp.Infraestructure.Identity.Repositories
 {
     public class AdminUserRepository : IAdminUserRepository
     {
@@ -20,7 +21,9 @@ namespace RealEstateApp.Infrastructure.Identity.Repositories
 
         public async Task<List<AdminUserDto>> GetAllAdminsAsync()
         {
-            var admins = await _userManager.GetUsersInRoleAsync("Administrator");
+            var adminRoleName = Roles.Administrador.ToString();
+
+            var admins = await _userManager.GetUsersInRoleAsync(adminRoleName);
 
             return admins.Select(u => new AdminUserDto
             {
@@ -50,9 +53,10 @@ namespace RealEstateApp.Infrastructure.Identity.Repositories
                 IsActive = user.IsActive
             };
         }
-
         public async Task<string> CreateAdminAsync(AdminUserCreateDto dto)
         {
+            var adminRoleName = Roles.Administrador.ToString();
+
             var user = new AppUser
             {
                 FirstName = dto.FirstName,
@@ -60,7 +64,8 @@ namespace RealEstateApp.Infrastructure.Identity.Repositories
                 Cedula = dto.Cedula,
                 Email = dto.Email,
                 UserName = dto.UserName,
-                IsActive = true
+                IsActive = true,
+                UserType = adminRoleName
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
@@ -70,13 +75,13 @@ namespace RealEstateApp.Infrastructure.Identity.Repositories
                 throw new Exception($"Error creando administrador: {errors}");
             }
 
-            var roleExists = await _roleManager.RoleExistsAsync("Administrator");
+            var roleExists = await _roleManager.RoleExistsAsync(adminRoleName);
             if (!roleExists)
             {
-                await _roleManager.CreateAsync(new IdentityRole("Administrator"));
+                await _roleManager.CreateAsync(new IdentityRole(adminRoleName));
             }
 
-            await _userManager.AddToRoleAsync(user, "Administrator");
+            await _userManager.AddToRoleAsync(user, adminRoleName);
 
             return user.Id;
         }

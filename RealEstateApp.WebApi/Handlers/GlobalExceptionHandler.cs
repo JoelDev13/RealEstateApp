@@ -1,71 +1,60 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Exceptions;
-using System.Net;
 
-namespace RealEstateApp.Api.Handlers
+namespace RealEstateApp.WebApi.Handlers
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
-        public async ValueTask<bool> TryHandleAsync(
-            HttpContext httpContext,
-            Exception exception,
-            CancellationToken cancellationToken)
+        public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             string exceptionTitle = "An unexpected error occurred";
             string details = exception.Message;
-            int statusCode;
 
             switch (exception)
             {
                 case ApiException apiException:
-                    statusCode = apiException.StatusCode;
-                    switch (statusCode)
+                    switch (apiException.StatusCode)
                     {
-                        case (int)HttpStatusCode.BadRequest:
+                        case 400:
                             exceptionTitle = "Bad Request";
+                            httpContext.Response.StatusCode = 400;
                             break;
-                        case (int)HttpStatusCode.NotFound:
-                            exceptionTitle = "Not Found";
+                        case 404:
+                            exceptionTitle = "Not found";
+                            httpContext.Response.StatusCode = 404;
                             break;
                         default:
-                            exceptionTitle = "Server Error";
+                            httpContext.Response.StatusCode = 500;
                             break;
                     }
                     break;
-
                 case KeyNotFoundException:
-                    exceptionTitle = "Not Found";
-                    statusCode = (int)HttpStatusCode.NotFound;
+                    exceptionTitle = "Not found";
+                    httpContext.Response.StatusCode = 404;
                     break;
-
                 case ArgumentException:
                     exceptionTitle = "Bad Request";
-                    statusCode = (int)HttpStatusCode.BadRequest;
+                    httpContext.Response.StatusCode = 400;
                     break;
-
-                case RealEstateApp.Application.Exceptions.ValidationException validationException:
+                case ValidationException valEx:
                     exceptionTitle = "Bad Request";
-                    statusCode = (int)HttpStatusCode.BadRequest;
-                    details = validationException.Errors.Aggregate((a, b) => a + "; " + b);
+                    details = string.Join(", ", valEx.Errors);
+                    httpContext.Response.StatusCode = 400;
                     break;
-
                 default:
-                    statusCode = (int)HttpStatusCode.InternalServerError;
+                    httpContext.Response.StatusCode = 500;
                     break;
             }
 
-            httpContext.Response.StatusCode = statusCode;
-            httpContext.Response.ContentType = "application/problem+json";
-
-            var problemDetails = new ProblemDetails
+            var problemDetails = new
             {
                 Title = exceptionTitle,
-                Status = statusCode,
+                Status = httpContext.Response.StatusCode,
                 Detail = details,
                 Instance = httpContext.Request.Path
             };
 
+            httpContext.Response.ContentType = "application/problem+json";
             await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken: cancellationToken);
 
             return true;

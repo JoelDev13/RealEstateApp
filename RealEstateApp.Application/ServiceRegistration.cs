@@ -31,6 +31,7 @@ namespace RealEstateApp.Application
             services.AddScoped<IPropertyTypeService, PropertyTypeService>();
             services.AddScoped<IImprovementService, ImprovementService>();
             services.AddScoped<IAdminUserService, AdminUserService>();
+            services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 
             return services;
         }

@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace RealEstateApp.WebApp.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Administrador")]
     public class AdminUsersController : Controller
     {
         private readonly IAdminUserService _adminUserService;
@@ -64,9 +64,9 @@ namespace RealEstateApp.WebApp.Controllers
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Ocurrió un error al crear el administrador.");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
 
             return View(model);
@@ -115,9 +115,9 @@ namespace RealEstateApp.WebApp.Controllers
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Ocurrió un error al editar el administrador.");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
 
             return View(model);
@@ -127,22 +127,25 @@ namespace RealEstateApp.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleStatus(string id, bool activate)
         {
-            if (string.IsNullOrEmpty(id))
-                return BadRequest();
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                TempData["ErrorMessage"] = "El identificador del administrador es inválido.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var currentUserId = GetCurrentUserId();
 
             try
             {
                 await _adminUserService.SetActiveStatusAsync(id, activate, currentUserId!);
+
+                TempData["SuccessMessage"] = activate
+                    ? "El administrador se ha activado correctamente."
+                    : "El administrador se ha inactivado correctamente.";
             }
             catch (ApiException ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
-            }
-            catch (Exception)
-            {
-                TempData["ErrorMessage"] = "Ocurrió un error al cambiar el estado del administrador.";
             }
 
             return RedirectToAction(nameof(Index));
