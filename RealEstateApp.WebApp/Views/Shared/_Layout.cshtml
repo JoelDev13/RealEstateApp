@@ -3,65 +3,71 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="RealEstateApp - Tu plataforma de propiedades inmobiliarias" />
+    <meta name="description" content="RealEstateApp - Premium Real Estate Platform" />
     <title>@ViewData["Title"] - RealEstateApp</title>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <!-- Styles -->
+    <link rel="stylesheet" href="~/css/luxury-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luxury-components.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-    </style>
+    <!-- Page-specific styles -->
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="antialiased">
+<body>
     <div class="app-layout">
         <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a asp-controller="Home" asp-action="Index" class="sidebar-brand">
+                @{
+                    var (homeCtrl, homeAct) = User.IsInRole("Administrador")
+                    ? ("AdminHome", "Index")
+                    : User.IsInRole("Agente")
+                    ? ("Agent", "Dashboard")
+                    : ("Home", "Index");
+                }
+                <a asp-controller="@homeCtrl" asp-action="@homeAct" class="sidebar-brand">
                     <div class="sidebar-brand-icon">
-                        <i class="fas fa-building"></i>
+                        <img src="~/images/logo.png" alt="RealEstate Logo" class="sidebar-logo" />
                     </div>
                     <div class="sidebar-brand-text">
                         <span class="sidebar-brand-name">RealEstate</span>
-                        <span class="sidebar-brand-tagline">Propiedades Premium</span>
+                        <span class="sidebar-brand-tagline">Premium Properties</span>
                     </div>
                 </a>
+                <button type="button" class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebarCollapse()" title="Colapsar menú">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
             </div>
 
             <nav class="sidebar-nav">
                 @if (!User.Identity?.IsAuthenticated ?? true)
                 {
-                    <!-- Menu para visitantes no autenticados -->
                     <div class="nav-section">
                         <div class="nav-section-title">Explorar</div>
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-home"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                                   data-tooltip="Inicio">
+                                    <span class="nav-link-icon"><i class="fas fa-home"></i></span>
                                     <span class="nav-link-text">Inicio</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="Agents" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-user-tie"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                   data-tooltip="Agentes">
+                                    <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
                                     <span class="nav-link-text">Agentes</span>
                                 </a>
                             </li>
@@ -73,19 +79,17 @@
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Register"
-                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Register" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-user-plus"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Register" ? "active" : "")"
+                                   data-tooltip="Únete">
+                                    <span class="nav-link-icon"><i class="fas fa-user-plus"></i></span>
                                     <span class="nav-link-text">Únete a la App</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Login"
-                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Login" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-sign-in-alt"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Login" ? "active" : "")"
+                                   data-tooltip="Iniciar Sesión">
+                                    <span class="nav-link-icon"><i class="fas fa-sign-in-alt"></i></span>
                                     <span class="nav-link-text">Iniciar Sesión</span>
                                 </a>
                             </li>
@@ -94,25 +98,22 @@
                 }
                 else if (User.IsInRole("Cliente"))
                 {
-                    <!-- Menu para Clientes -->
                     <div class="nav-section">
                         <div class="nav-section-title">Principal</div>
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="Home" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-home"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                                   data-tooltip="Inicio">
+                                    <span class="nav-link-icon"><i class="fas fa-home"></i></span>
                                     <span class="nav-link-text">Inicio</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="Agents" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-user-tie"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                   data-tooltip="Agentes">
+                                    <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
                                     <span class="nav-link-text">Agentes</span>
                                 </a>
                             </li>
@@ -124,10 +125,9 @@
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="Favorites" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Favorites" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-heart"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Favorites" ? "active" : "")"
+                                   data-tooltip="Mis Favoritas">
+                                    <span class="nav-link-icon"><i class="fas fa-heart"></i></span>
                                     <span class="nav-link-text">Mis Favoritas</span>
                                 </a>
                             </li>
@@ -136,16 +136,14 @@
                 }
                 else if (User.IsInRole("Agente"))
                 {
-                    <!-- Menu para Agentes -->
                     <div class="nav-section">
                         <div class="nav-section-title">Dashboard</div>
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="Agent" asp-action="Dashboard"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agent" && ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-chart-line"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agent" && ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")"
+                                   data-tooltip="Mi Dashboard">
+                                    <span class="nav-link-icon"><i class="fas fa-chart-line"></i></span>
                                     <span class="nav-link-text">Mi Dashboard</span>
                                 </a>
                             </li>
@@ -157,19 +155,17 @@
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="AgentProperties" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProperties" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-building"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProperties" ? "active" : "")"
+                                   data-tooltip="Mis Propiedades">
+                                    <span class="nav-link-icon"><i class="fas fa-building"></i></span>
                                     <span class="nav-link-text">Mis Propiedades</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="AgentProperties" asp-action="Create"
-                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProperties" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-plus-circle"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProperties" ? "active" : "")"
+                                   data-tooltip="Nueva Propiedad">
+                                    <span class="nav-link-icon"><i class="fas fa-plus-circle"></i></span>
                                     <span class="nav-link-text">Nueva Propiedad</span>
                                 </a>
                             </li>
@@ -181,10 +177,9 @@
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="AgentProfile" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProfile" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-user-circle"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProfile" ? "active" : "")"
+                                   data-tooltip="Mi Perfil">
+                                    <span class="nav-link-icon"><i class="fas fa-user-circle"></i></span>
                                     <span class="nav-link-text">Mi Perfil</span>
                                 </a>
                             </li>
@@ -193,16 +188,14 @@
                 }
                 else if (User.IsInRole("Administrador"))
                 {
-                    <!-- Menu para Administradores -->
                     <div class="nav-section">
                         <div class="nav-section-title">Dashboard</div>
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="AdminHome" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminHome" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-tachometer-alt"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminHome" ? "active" : "")"
+                                   data-tooltip="Panel Principal">
+                                    <span class="nav-link-icon"><i class="fas fa-th-large"></i></span>
                                     <span class="nav-link-text">Panel Principal</span>
                                 </a>
                             </li>
@@ -214,28 +207,25 @@
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="Agents" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-user-tie"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                   data-tooltip="Agentes">
+                                    <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
                                     <span class="nav-link-text">Agentes</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="AdminUsers" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminUsers" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-user-shield"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminUsers" ? "active" : "")"
+                                   data-tooltip="Administradores">
+                                    <span class="nav-link-icon"><i class="fas fa-user-shield"></i></span>
                                     <span class="nav-link-text">Administradores</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="DeveloperUsers" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DeveloperUsers" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-code"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DeveloperUsers" ? "active" : "")"
+                                   data-tooltip="Desarrolladores">
+                                    <span class="nav-link-icon"><i class="fas fa-code"></i></span>
                                     <span class="nav-link-text">Desarrolladores</span>
                                 </a>
                             </li>
@@ -247,28 +237,25 @@
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
                                 <a asp-controller="AdminPropertyTypes" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminPropertyTypes" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-layer-group"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminPropertyTypes" ? "active" : "")"
+                                   data-tooltip="Tipos de Propiedad">
+                                    <span class="nav-link-icon"><i class="fas fa-building"></i></span>
                                     <span class="nav-link-text">Tipos de Propiedad</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="AdminSaleTypes" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminSaleTypes" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-tags"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminSaleTypes" ? "active" : "")"
+                                   data-tooltip="Tipos de Venta">
+                                    <span class="nav-link-icon"><i class="fas fa-tags"></i></span>
                                     <span class="nav-link-text">Tipos de Venta</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="AdminImprovements" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminImprovements" ? "active" : "")">
-                                    <span class="nav-link-icon">
-                                        <i class="fas fa-magic"></i>
-                                    </span>
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminImprovements" ? "active" : "")"
+                                   data-tooltip="Mejoras">
+                                    <span class="nav-link-icon"><i class="fas fa-star"></i></span>
                                     <span class="nav-link-text">Mejoras</span>
                                 </a>
                             </li>
@@ -277,7 +264,6 @@
                 }
             </nav>
 
-            <!-- Sidebar Footer -->
             <div class="sidebar-footer">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
@@ -293,42 +279,37 @@
                         <div class="user-info">
                             <div class="user-name">@User.Identity.Name</div>
                             <div class="user-role">
-                                @if (User.IsInRole("Administrator"))
+                                @if (User.IsInRole("Administrador"))
                                 {
                                     <text>Administrador</text>
                                 }
                                 else if (User.IsInRole("Agente"))
                                 {
-
                                     <text>Agente</text>
                                 }
                                 else if (User.IsInRole("Cliente"))
                                 {
-
                                     <text>Cliente</text>
                                 }
                             </div>
                         </div>
                     </div>
 
-                    <!-- Logout Form -->
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="mt-3">
+                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="logout-btn-full">
+                        <button type="button" class="logout-btn-full" onclick="document.getElementById('logoutForm').submit();" title="Cerrar Sesión">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Cerrar Sesión</span>
                         </button>
                     </form>
                 }
                 <div class="sidebar-copyright">
-                    © @DateTime.UtcNow.Year RealEstateApp. Todos los derechos reservados.
+                    © @DateTime.UtcNow.Year RealEstateApp
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content Wrapper -->
         <div class="main-wrapper">
-            <!-- Top Header -->
             <header class="top-header">
                 <div class="header-left">
                     <button type="button" class="mobile-menu-toggle" onclick="toggleSidebar()">
@@ -342,56 +323,43 @@
                 </div>
 
                 <div class="header-right">
-                    <!-- Search Bar -->
                     <div class="search-bar">
                         <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text"
-                               class="search-input"
-                               placeholder="Buscar por código de propiedad..."
-                               id="globalSearch" />
+                        <input type="text" class="search-input" placeholder="Buscar propiedad..." id="globalSearch" />
                     </div>
                 </div>
             </header>
 
-            <!-- Flash Messages / Alerts -->
             @if (TempData["Success"] != null || TempData["SuccessMessage"] != null)
             {
-                <div class="mx-8 mt-4">
-                    <div class="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800">
-                        <i class="fas fa-check-circle text-emerald-500"></i>
-                        <span>@(TempData["Success"] ?? TempData["SuccessMessage"])</span>
-                        <button type="button" class="ml-auto text-emerald-500 hover:text-emerald-700" onclick="this.parentElement.parentElement.remove()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+                <div class="alert-toast alert-toast-success animate-fade-in">
+                    <i class="fas fa-check-circle"></i>
+                    <span>@(TempData["Success"] ?? TempData["SuccessMessage"])</span>
+                    <button type="button" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             }
 
             @if (TempData["Error"] != null || TempData["ErrorMessage"] != null)
             {
-                <div class="mx-8 mt-4">
-                    <div class="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800">
-                        <i class="fas fa-exclamation-circle text-red-500"></i>
-                        <span>@(TempData["Error"] ?? TempData["ErrorMessage"])</span>
-                        <button type="button" class="ml-auto text-red-500 hover:text-red-700" onclick="this.parentElement.parentElement.remove()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+                <div class="alert-toast alert-toast-error animate-fade-in">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>@(TempData["Error"] ?? TempData["ErrorMessage"])</span>
+                    <button type="button" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             }
 
-            <!-- Main Content Area -->
             <main class="main-content" role="main">
                 @RenderBody()
             </main>
 
-            <!-- Footer -->
             <footer class="main-footer">
-                <div>
-                    © @DateTime.UtcNow.Year RealEstateApp - Propiedades Inmobiliarias
-                </div>
+                <div>© @DateTime.UtcNow.Year RealEstateApp — Premium Properties</div>
                 <div class="footer-links">
                     <a asp-controller="Home" asp-action="Privacy">Privacidad</a>
                     <a href="#">Términos</a>
@@ -401,33 +369,46 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script>
-        // Toggle Sidebar for Mobile
+        function toggleSidebarCollapse() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            const isCollapsed = sidebar. classList.contains('collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+        }
+
+        function expandSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('collapsed')) {
+                sidebar.classList.remove('collapsed');
+                localStorage.setItem('sidebarCollapsed', 'false');
+            }
+        }
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('open');
-            overlay.classList.toggle('open');
+            overlay. classList.toggle('open');
         }
 
-        // Close sidebar when pressing Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebarOverlay');
-                sidebar.classList.remove('open');
-                overlay.classList.remove('open');
-            }
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const isCollapsed = localStorage. getItem('sidebarCollapsed') === 'true';
 
-        // Global Search Handler
-        document.getElementById('globalSearch')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const code = this.value.trim();
-                if (code) {
-                    window.location.href = '/Home/Index?code=' + encodeURIComponent(code);
-                }
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+            }
+
+            const brandIcon = document.querySelector('.sidebar-brand-icon');
+            if (brandIcon) {
+                brandIcon. addEventListener('click', function(e) {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar.classList.contains('collapsed')) {
+                        e.preventDefault();
+                        expandSidebar();
+                    }
+                });
             }
         });
     </script>

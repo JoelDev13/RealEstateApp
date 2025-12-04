@@ -2,49 +2,184 @@
 
 @{
     ViewData["Title"] = "Mejoras";
+    var items = Model?.ToList() ?? new List<RealEstateApp.Web.Models.Admin.Improvements.ImprovementViewModel>();
+    var total = items.Count;
+    var active = items.Count(x => x.IsActive);
+    var inactive = items.Count(x => !x.IsActive);
 }
 
-<h2 class="mb-4">Mantenimiento de mejoras</h2>
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-header-title">
+            <h1>Mejoras</h1>
+            <p class="page-header-subtitle">Gestiona las mejoras disponibles para propiedades</p>
+        </div>
+        <div class="page-header-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                <span>Nueva Mejora</span>
+            </a>
+        </div>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Crear nueva mejora</a>
-</p>
+<!-- Stats Cards -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-gold">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@total</span>
+            <span class="stat-card-label">Total</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-success">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@active</span>
+            <span class="stat-card-label">Activas</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-error">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@inactive</span>
+            <span class="stat-card-label">Inactivas</span>
+        </div>
+    </div>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(m => m.First().Name)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Description)</th>
-            <th>@Html.DisplayNameFor(m => m.First().IsActive)</th>
-            <th class="text-end">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<!-- Table Card -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-star"></i>
+            Lista de Mejoras
+        </h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        @if (items.Any())
         {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
-                <td>@(item.IsActive ? "Sí" : "No")</td>
-                <td class="text-end">
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1">
-                        Editar
-                    </a>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in items)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="item-name">
+                                        <i class="fas fa-magic"></i>
+                                        <span>@item.Name</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="item-description">@item.Description</span>
+                                </td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle"></i>
+                                            Activa
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            <i class="fas fa-times-circle"></i>
+                                            Inactiva
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="action-btn action-btn-edit"
+                                           title="Editar">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
 
-                    <form asp-action="ToggleStatus" asp-route-id="@item.Id" method="post" style="display:inline">
-                        <button type="submit" class="btn btn-sm @(item.IsActive ? "btn-secondary" : "btn-success")">
-                            @(item.IsActive ? "Desactivar" : "Activar")
-                        </button>
-                    </form>
+                                        <form asp-action="ToggleStatus" asp-route-id="@item.Id" method="post" class="inline-form"
+                                              onsubmit="return confirm('¿Está seguro que desea @(item.IsActive ? "desactivar" : "activar") esta mejora?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"
+                                                    class="action-btn @(item.IsActive ? "action-btn-danger" : "action-btn-success")"
+                                                    title="@(item.IsActive ? "Desactivar" : "Activar")">
+                                                <i class="fas @(item.IsActive ? "fa-toggle-off" : "fa-toggle-on")"></i>
+                                            </button>
+                                        </form>
 
-                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline"
-                          onsubmit="return confirm('¿Seguro que deseas eliminar esta mejora?');">
-                        <button type="submit" class="btn btn-sm btn-danger ms-1">
-                            Eliminar
-                        </button>
-                    </form>
-                </td>
-            </tr>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="inline-form"
+                                              onsubmit="return confirm('¿Está seguro que desea eliminar esta mejora?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"
+                                                    class="action-btn action-btn-danger"
+                                                    title="Eliminar">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         }
-    </tbody>
-</table>
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h4 class="empty-state-title">No hay mejoras</h4>
+                <p class="empty-state-description">Comienza creando la primera mejora del sistema.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Crear Mejora
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .item-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+            .item-name i {
+                color: var(--luxury-gold);
+                font-size: 0.875rem;
+            }
+
+        .item-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+    </style>
+}

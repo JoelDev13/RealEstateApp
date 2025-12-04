@@ -1,30 +1,53 @@
 @{
     ViewData["Title"] = "Acceso Denegado";
+    Layout = null;
 }
 
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full text-center">
-        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-100 mb-6">
-            <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-            </svg>
-        </div>
-        
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">Acceso Denegado</h1>
-        <p class="text-gray-600 mb-8">
-            No tienes permisos para acceder a esta página. Por favor contacta al administrador si crees que esto es un error.
-        </p>
-        
-        <div class="space-y-4">
-            <a asp-action="Index" asp-controller="Home" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                Ir al inicio
-            </a>
-            
-            <form asp-action="Logout" asp-controller="Account" method="post" class="inline-block">
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                    Cerrar sesión
-                </button>
-            </form>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RealEstateApp</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <link rel="stylesheet" href="~/css/luxury-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luxury-auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luxury-components.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="access-denied-page">
+        <div class="access-denied-content">
+            <div class="access-denied-icon">
+                <i class="fas fa-ban"></i>
+            </div>
+
+            <h1 class="access-denied-title">Acceso Denegado</h1>
+
+            <p class="access-denied-message">
+                No tienes permisos para acceder a esta página. Si crees que esto es
+                un error, por favor contacta al administrador del sistema.
+            </p>
+
+            <div class="access-denied-actions">
+                <a asp-action="Index" asp-controller="Home" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    Ir al inicio
+                </a>
+
+                <form asp-action="Logout" asp-controller="Account" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Cerrar sesión
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+</body>
+</html>

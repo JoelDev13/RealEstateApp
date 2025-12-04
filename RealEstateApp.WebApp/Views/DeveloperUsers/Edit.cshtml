@@ -4,50 +4,130 @@
     ViewData["Title"] = "Editar Desarrollador";
 }
 
-<h2>Editar Desarrollador</h2>
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-header-title">
+            <nav class="breadcrumb-nav">
+                <a asp-action="Index" class="breadcrumb-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver a Desarrolladores
+                </a>
+            </nav>
+            <h1>Editar Desarrollador</h1>
+            <p class="page-header-subtitle">Modifica la información del desarrollador</p>
+        </div>
+    </div>
+</div>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-
-    <div class="mb-3">
-        <label asp-for="FirstName" class="form-label"></label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="LastName" class="form-label"></label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Cedula" class="form-label"></label>
-        <input asp-for="Cedula" class="form-control" />
-        <span asp-validation-for="Cedula" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="UserName" class="form-label"></label>
-        <input asp-for="UserName" class="form-control" />
-        <span asp-validation-for="UserName" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Password" class="form-label"></label>
-        <input asp-for="Password" class="form-control" type="password" placeholder="Dejar vacío si no se cambia" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="ConfirmPassword" class="form-label"></label>
-        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Confirmar contraseña" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+<!-- Form Card -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-user-edit"></i>
+            Información del Desarrollador
+        </h3>
     </div>
 
-    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-    <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
-</form>
+    <div class="card-body">
+        <form asp-action="Edit" method="post" class="form-luxury">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="form-validation-summary">
+                    <div asp-validation-summary="All"></div>
+                </div>
+            }
+
+            <!-- Sección: Información Personal -->
+            <div class="form-section">
+                <div class="form-section-header">
+                    <i class="fas fa-user"></i>
+                    <span>Información Personal</span>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="form-label">
+                            Nombre <span class="required">*</span>
+                        </label>
+                        <input asp-for="FirstName" class="form-input" placeholder="Ingresa el nombre" />
+                        <span asp-validation-for="FirstName" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LastName" class="form-label">
+                            Apellido <span class="required">*</span>
+                        </label>
+                        <input asp-for="LastName" class="form-input" placeholder="Ingresa el apellido" />
+                        <span asp-validation-for="LastName" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Cedula" class="form-label">
+                            Cédula <span class="required">*</span>
+                        </label>
+                        <input asp-for="Cedula" class="form-input" placeholder="000-0000000-0" />
+                        <span asp-validation-for="Cedula" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label">
+                            Correo electrónico <span class="required">*</span>
+                        </label>
+                        <input asp-for="Email" type="email" class="form-input" placeholder="correo@ejemplo.com" />
+                        <span asp-validation-for="Email" class="form-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Credenciales -->
+            <div class="form-section">
+                <div class="form-section-header">
+                    <i class="fas fa-lock"></i>
+                    <span>Credenciales de Acceso</span>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label asp-for="UserName" class="form-label">
+                            Nombre de usuario <span class="required">*</span>
+                        </label>
+                        <input asp-for="UserName" class="form-input" placeholder="nombredeusuario" />
+                        <span asp-validation-for="UserName" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label">Nueva contraseña</label>
+                        <input asp-for="Password" type="password" class="form-input" placeholder="Dejar vacío para mantener" />
+                        <span class="form-hint">Solo completa si deseas cambiar la contraseña actual</span>
+                        <span asp-validation-for="Password" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirmar nueva contraseña</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-input" placeholder="Repite la nueva contraseña" />
+                        <span asp-validation-for="ConfirmPassword" class="form-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

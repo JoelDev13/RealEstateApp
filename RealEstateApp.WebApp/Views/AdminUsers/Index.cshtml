@@ -3,92 +3,173 @@
 @{
     ViewData["Title"] = "Administradores";
     var currentUserId = ViewBag.CurrentUserId as string;
+    var totalUsers = Model.Count;
+    var activeUsers = Model.Count(u => u.IsActive);
+    var inactiveUsers = Model.Count(u => !u.IsActive);
 }
 
-<h2 class="mb-3">Mantenimiento de Administradores</h2>
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-header-title">
+            <h1>Administradores</h1>
+            <p class="page-header-subtitle">Gestiona los usuarios con rol de administrador</p>
+        </div>
+        <div class="page-header-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                <span>Nuevo Administrador</span>
+            </a>
+        </div>
     </div>
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-
-<div class="mb-3">
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Crear administrador
-    </a>
 </div>
 
-<table class="table table-bordered table-striped">
-    <thead class="table-light">
-        <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Usuario</th>
-            <th>Cédula</th>
-            <th>Correo</th>
-            <th>Estado</th>
-            <th style="width:160px;">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var admin in Model)
+<!-- Stats Cards -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-gold">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@totalUsers</span>
+            <span class="stat-card-label">Total</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-success">
+            <i class="fas fa-user-check"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@activeUsers</span>
+            <span class="stat-card-label">Activos</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-error">
+            <i class="fas fa-user-times"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@inactiveUsers</span>
+            <span class="stat-card-label">Inactivos</span>
+        </div>
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-user-shield"></i>
+            Lista de Administradores
+        </h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        @if (Model.Any())
         {
-            <tr>
-                <td>@admin.FirstName</td>
-                <td>@admin.LastName</td>
-                <td>@admin.UserName</td>
-                <td>@admin.Cedula</td>
-                <td>@admin.Email</td>
-                <td>
-                    @if (admin.IsActive)
-                    {
-                        <span class="badge bg-success">Activo</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">Inactivo</span>
-                    }
-                </td>
-                <td>
-                    @{
-                        bool isCurrent = (admin.Id == currentUserId);
-                    }
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Cédula</th>
+                            <th>Correo</th>
+                            <th>Estado</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var admin in Model)
+                        {
+                            var isCurrent = (admin.Id == currentUserId);
+                            var initials = $"{admin.FirstName?.FirstOrDefault()}{admin.LastName?.FirstOrDefault()}".ToUpper();
 
-                    <a asp-action="Edit" asp-route-id="@admin.Id"
-                       class="btn btn-warning btn-sm @(isCurrent ? "disabled" : "")">
-                        Editar
-                    </a>
+                            <tr class="@(isCurrent ? "current-user-row" : "")">
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-cell-avatar">@initials</div>
+                                        <div class="user-cell-info">
+                                            <span class="user-cell-name">
+                                                @admin.FirstName @admin.LastName
+                                                @if (isCurrent)
+                                                {
+                                                    <span class="current-user-badge">Tú</span>
+                                                }
+                                            </span>
+                                            <span class="user-cell-username">@@@admin.UserName</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@admin.Cedula</td>
+                                <td>@admin.Email</td>
+                                <td>
+                                    @if (admin.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle"></i>
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            <i class="fas fa-times-circle"></i>
+                                            Inactivo
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        @if (!isCurrent)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@admin.Id"
+                                               class="action-btn action-btn-edit"
+                                               title="Editar">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
 
-                    <form asp-action="ToggleStatus"
-                          method="post"
-                          class="d-inline"
-                          onsubmit="return confirm('¿Está seguro que desea @(admin.IsActive ? "inactivar" : "activar") este administrador?');">
-
-                        @Html.AntiForgeryToken()
-
-                        <input type="hidden" name="id" value="@admin.Id" />
-                        <input type="hidden" name="activate" value="@(admin.IsActive ? "false" : "true")" />
-
-                        <button type="submit"
-                                class="btn btn-sm @(admin.IsActive ? "btn-danger" : "btn-success")"
-                                @(isCurrent ? "disabled" : null)>
-                            @(admin.IsActive ? "Inactivar" : "Activar")
-                        </button>
-                    </form>
-
-                </td>
-            </tr>
+                                            <form asp-action="ToggleStatus" method="post" class="inline-form"
+                                                  onsubmit="return confirm('¿Está seguro que desea @(admin. IsActive ?  "inactivar" : "activar") este administrador?');">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@admin.Id" />
+                                                <input type="hidden" name="activate" value="@(admin.IsActive ? "false" : "true")" />
+                                                <button type="submit"
+                                                        class="action-btn @(admin.IsActive ? "action-btn-danger" : "action-btn-success")"
+                                                        title="@(admin.IsActive ? "Inactivar" : "Activar")"
+                                                        @(isCurrent ? "disabled" : null)>
+                                                    <i class="fas @(admin.IsActive ? "fa-user-slash" : "fa-user-check")"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="action-btn action-btn-disabled" title="No puedes editarte a ti mismo">
+                                                <i class="fas fa-pen"></i>
+                                            </span>
+                                            <span class="action-btn action-btn-disabled" title="No puedes desactivarte a ti mismo">
+                                                <i class="fas fa-user-slash"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         }
-    </tbody>
-</table>
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h4 class="empty-state-title">No hay administradores</h4>
+                <p class="empty-state-description">Comienza creando el primer administrador del sistema.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Crear Administrador
+                </a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,6 +1,7 @@
 ﻿using RealEstateApp.Application.Dtos.Dashboard;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Application.Interfaces.Services;
+using RealEstateApp.Domain.Enums;
 
 namespace RealEstateApp.Application.Services
 {
@@ -9,22 +10,38 @@ namespace RealEstateApp.Application.Services
         private readonly ISaleTypeRepository _saleTypeRepository;
         private readonly IPropertyTypeRepository _propertyTypeRepository;
         private readonly IImprovementRepository _improvementRepository;
+        private readonly IBaseAccountService _accountService;
 
         public AdminDashboardService(
             ISaleTypeRepository saleTypeRepository,
             IPropertyTypeRepository propertyTypeRepository,
-            IImprovementRepository improvementRepository)
+            IImprovementRepository improvementRepository,
+            IBaseAccountService accountService)
         {
             _saleTypeRepository = saleTypeRepository;
             _propertyTypeRepository = propertyTypeRepository;
             _improvementRepository = improvementRepository;
+            _accountService = accountService;
         }
 
-        public Task<AdminDashboardDto> GetDashboardAsync()
+        public async Task<AdminDashboardDto> GetDashboardAsync()
         {
             var saleTypesQuery = _saleTypeRepository.Query();
             var propertyTypesQuery = _propertyTypeRepository.Query();
             var improvementsQuery = _improvementRepository.Query();
+
+            // Obtener conteos de usuarios por rol
+            var totalAgents = await _accountService.CountUsers(Roles.Agente, null);
+            var activeAgents = await _accountService.CountUsers(Roles.Agente, true);
+            var inactiveAgents = await _accountService.CountUsers(Roles.Agente, false);
+
+            var totalClients = await _accountService.CountUsers(Roles.Cliente, null);
+            var activeClients = await _accountService.CountUsers(Roles.Cliente, true);
+            var inactiveClients = await _accountService.CountUsers(Roles.Cliente, false);
+
+            var totalDevelopers = await _accountService.CountUsers(Roles.Desarrollador, null);
+            var activeDevelopers = await _accountService.CountUsers(Roles.Desarrollador, true);
+            var inactiveDevelopers = await _accountService.CountUsers(Roles.Desarrollador, false);
 
             var dto = new AdminDashboardDto
             {
@@ -40,12 +57,24 @@ namespace RealEstateApp.Application.Services
                 ActiveImprovements = improvementsQuery.Count(x => x.IsActive),
                 InactiveImprovements = improvementsQuery.Count(x => !x.IsActive),
 
-                //Mientras creo modulos de Properties / Agents
+                TotalAgents = totalAgents,
+                ActiveAgents = activeAgents,
+                InactiveAgents = inactiveAgents,
+
+                TotalClients = totalClients,
+                ActiveClients = activeClients,
+                InactiveClients = inactiveClients,
+
+                TotalDevelopers = totalDevelopers,
+                ActiveDevelopers = activeDevelopers,
+                InactiveDevelopers = inactiveDevelopers,
+
                 TotalProperties = 0,
-                TotalAgents = 0
+                AvailableProperties = 0,
+                SoldProperties = 0
             };
 
-            return Task.FromResult(dto);
+            return dto;
         }
     }
 }

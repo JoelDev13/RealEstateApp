@@ -1,86 +1,160 @@
 ﻿@model List<RealEstateApp.WebApp.Models.Admin.DeveloperUser.DevUserViewModel>
 
 @{
-    ViewData["Title"] = "Mantenimiento de Desarrolladores";
+    ViewData["Title"] = "Desarrolladores";
+    var totalDevs = Model?.Count ?? 0;
+    var activeDevs = Model?.Count(d => d.IsActive) ?? 0;
+    var inactiveDevs = Model?.Count(d => !d.IsActive) ?? 0;
 }
 
-<div class="container mt-4">
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-header-title">
+            <h1>Desarrolladores</h1>
+            <p class="page-header-subtitle">Gestiona los usuarios con rol de desarrollador</p>
+        </div>
+        <div class="page-header-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                <span>Nuevo Desarrollador</span>
+            </a>
+        </div>
+    </div>
+</div>
 
-    <h2 class="mb-3">Mantenimiento de Desarrolladores</h2>
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-    }
-
-    <div class="mb-3">
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Crear desarrollador
-        </a>
+<!-- Stats Cards -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-gold">
+            <i class="fas fa-code"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@totalDevs</span>
+            <span class="stat-card-label">Total</span>
+        </div>
     </div>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-light">
-            <tr>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Usuario</th>
-                <th>Cédula</th>
-                <th>Correo</th>
-                <th>Estado</th>
-                <th style="width:160px;">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-success">
+            <i class="fas fa-user-check"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@activeDevs</span>
+            <span class="stat-card-label">Activos</span>
+        </div>
+    </div>
 
-            @if (Model != null && Model.Any())
-            {
-                foreach (var dev in Model)
-                {
-                    <tr>
-                        <td>@dev.FirstName</td>
-                        <td>@dev.LastName</td>
-                        <td>@dev.UserName</td>
-                        <td>@dev.Cedula</td>
-                        <td>@dev.Email</td>
-                        <td>
-                            @if (dev.IsActive)
-                            {
-                                <span class="badge bg-success">Activo</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Inactivo</span>
-                            }
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@dev.Id"
-                               class="btn btn-warning btn-sm">Editar</a>
+    <div class="stat-card">
+        <div class="stat-card-icon stat-icon-error">
+            <i class="fas fa-user-times"></i>
+        </div>
+        <div class="stat-card-content">
+            <span class="stat-card-value">@inactiveDevs</span>
+            <span class="stat-card-label">Inactivos</span>
+        </div>
+    </div>
+</div>
 
-                            <form asp-action="ToggleStatus"
-                                  method="post"
-                                  class="d-inline"
-                                  onsubmit="return confirm('¿Está seguro que desea cambiar el estado de este Desarrollador?');">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@dev.Id" />
-                                <input type="hidden" name="isActive" value="@(dev.IsActive ? "false" : "true")" />
+<!-- Table Card -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-code"></i> Lista de Desarrolladores
+        </h3>
+    </div>
 
-                                <button type="submit"
-                                        class="btn btn-sm @(dev.IsActive ? "btn-danger" : "btn-success")">
-                                    @(dev.IsActive ? "Inactivar" : "Activar")
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="7" class="text-center">No hay desarrolladores registrados.</td>
-                </tr>
-            }
+    <div class="card-body" style="padding: 0;">
+        @if (Model != null && Model.Any())
+        {
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Cédula</th>
+                            <th>Correo</th>
+                            <th>Estado</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
 
-        </tbody>
-    </table>
+                    <tbody>
+                        @foreach (var dev in Model)
+                        {
+                            var initials = $"{dev.FirstName?.FirstOrDefault()}{dev.LastName?.FirstOrDefault()}".ToUpper();
+
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-cell-avatar">@initials</div>
+                                        <div class="user-cell-info">
+                                            <span class="user-cell-name">@dev.FirstName @dev.LastName</span>
+                                            <span class="user-cell-username">@("@" + dev.UserName)</span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>@dev.Cedula</td>
+                                <td>@dev.Email</td>
+
+                                <td>
+                                    @if (dev.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle"></i> Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            <i class="fas fa-times-circle"></i> Inactivo
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Edit" asp-route-id="@dev.Id"
+                                           class="action-btn action-btn-edit" title="Editar">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+
+                                        <form asp-action="ToggleStatus" method="post" class="inline-form"
+                                              onsubmit="return confirm('¿Está seguro que desea @(dev.IsActive ? "inactivar" : "activar") este desarrollador?');">
+
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@dev.Id" />
+                                            <input type="hidden" name="isActive" value="@(dev.IsActive ? "false" : "true")" />
+
+                                            <button type="submit"
+                                                    class="action-btn @(dev.IsActive ? "action-btn-danger" : "action-btn-success")"
+                                                    title="@(dev.IsActive ? "Inactivar" : "Activar")">
+                                                <i class="fas @(dev.IsActive ? "fa-user-slash" : "fa-user-check")"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h4 class="empty-state-title">No hay desarrolladores</h4>
+                <p class="empty-state-description">Comienza creando el primer desarrollador del sistema.</p>
+
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Crear Desarrollador
+                </a>
+            </div>
+        }
+    </div>
 </div>

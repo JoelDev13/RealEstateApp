@@ -1,121 +1,182 @@
 @model RealEstateApp.Application.Dtos.Auth.UserSaveDto
 @{
     ViewData["Title"] = "Registro";
+    Layout = null;
 }
 
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div>
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                Crear cuenta
-            </h2>
-            <p class="mt-2 text-center text-sm text-gray-600">
-                Únete a RealEstateApp y encuentra tu propiedad ideal
-            </p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RealEstateApp</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <link rel="stylesheet" href="~/css/luxury-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luxury-auth.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="auth-page">
+        <!-- Left Branding Section -->
+        <div class="auth-branding">
+            <div class="auth-branding-content">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon">
+                        <img src="~/images/logo.png" alt="RealEstate Logo" class="auth-logo-img" />
+                    </div>
+                    <div class="auth-logo-text">
+                        <span class="auth-logo-name">RealEstate</span>
+                        <span class="auth-logo-tagline">Premium Properties</span>
+                    </div>
+                </div>
+
+                <h1 class="auth-headline">
+                    Únete a la plataforma <span>inmobiliaria</span> más exclusiva
+                </h1>
+
+                <p class="auth-description">
+                    Crea tu cuenta y accede a propiedades premium, contacta agentes
+                    certificados y encuentra el hogar de tus sueños.
+                </p>
+
+                <div class="auth-features">
+                    <div class="auth-feature">
+                        <i class="fas fa-heart"></i>
+                        <span>Guarda tus propiedades favoritas</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-comments"></i>
+                        <span>Chat directo con agentes</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-bell"></i>
+                        <span>Alertas de nuevas propiedades</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <form class="mt-8 space-y-6" asp-action="Register" asp-controller="Account" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm"></div>
-            
-            <!-- Información Personal -->
-            <div class="space-y-4">
-                <h3 class="text-lg font-medium text-gray-900 border-b pb-2">Información Personal</h3>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label asp-for="FirstName" class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input asp-for="FirstName" class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Tu nombre">
-                        <span asp-validation-for="FirstName" class="text-red-500 text-xs"></span>
+
+        <!-- Right Form Section -->
+        <div class="auth-form-section">
+            <div class="auth-form-container" style="max-width: 480px;">
+                <div class="auth-form-header">
+                    <div class="auth-form-icon">
+                        <i class="fas fa-user-plus"></i>
                     </div>
-                    
-                    <div>
-                        <label asp-for="LastName" class="block text-sm font-medium text-gray-700">Apellido</label>
-                        <input asp-for="LastName" class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Tu apellido">
-                        <span asp-validation-for="LastName" class="text-red-500 text-xs"></span>
+                    <h2 class="auth-form-title">Crear cuenta</h2>
+                    <p class="auth-form-subtitle">Completa tus datos para registrarte</p>
+                </div>
+
+                <form class="auth-form" asp-action="Register" asp-controller="Account" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="auth-alert auth-alert-error"></div>
+
+                    <!-- Información Personal -->
+                    <div class="auth-form-section-title">Información Personal</div>
+
+                    <div class="auth-form-grid">
+                        <div class="auth-form-group">
+                            <label asp-for="FirstName" class="auth-form-label">Nombre</label>
+                            <input asp-for="FirstName" class="auth-form-input no-icon" placeholder="Tu nombre">
+                            <span asp-validation-for="FirstName" class="auth-form-error"></span>
+                        </div>
+
+                        <div class="auth-form-group">
+                            <label asp-for="LastName" class="auth-form-label">Apellido</label>
+                            <input asp-for="LastName" class="auth-form-input no-icon" placeholder="Tu apellido">
+                            <span asp-validation-for="LastName" class="auth-form-error"></span>
+                        </div>
                     </div>
-                </div>
 
-                <div>
-                    <label asp-for="PhoneNumber" class="block text-sm font-medium text-gray-700">Teléfono</label>
-                    <input asp-for="PhoneNumber" class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="809-123-4567">
-                    <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs"></span>
-                </div>
+                    <div class="auth-form-group">
+                        <label asp-for="PhoneNumber" class="auth-form-label">Teléfono</label>
+                        <div class="auth-form-input-wrapper">
+                            <i class="fas fa-phone"></i>
+                            <input asp-for="PhoneNumber" class="auth-form-input" placeholder="809-123-4567">
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="auth-form-error"></span>
+                    </div>
 
-                <div>
-                    <label asp-for="ProfilePicture" class="block text-sm font-medium text-gray-700">Foto de perfil</label>
-                    <input type="file" name="profilePicture" accept="image/*" class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
-                    <p class="text-xs text-gray-500 mt-1">Formatos: JPG, PNG, GIF. Máximo 5MB</p>
-                </div>
-            </div>
+                    <div class="auth-form-group">
+                        <label class="auth-form-label">Foto de perfil</label>
+                        <input type="file" name="profilePicture" accept="image/*" class="auth-form-input no-icon" style="padding: 0.5rem 1rem;">
+                        <span class="auth-form-hint">Formatos: JPG, PNG, GIF. Máximo 5MB</span>
+                    </div>
 
-            <!-- Credenciales -->
-            <div class="space-y-4 pt-4">
-                <h3 class="text-lg font-medium text-gray-900 border-b pb-2">Credenciales</h3>
-                
-                <div>
-                    <label asp-for="UserName" class="block text-sm font-medium text-gray-700">Nombre de usuario</label>
-                    <input asp-for="UserName" class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="nombredeusuario">
-                    <span asp-validation-for="UserName" class="text-red-500 text-xs"></span>
-                </div>
+                    <!-- Credenciales -->
+                    <div class="auth-form-section-title">Credenciales</div>
 
-                <div>
-                    <label asp-for="Email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
-                    <input asp-for="Email" type="email" class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="correo@ejemplo.com">
-                    <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
-                </div>
+                    <div class="auth-form-group">
+                        <label asp-for="UserName" class="auth-form-label">Nombre de usuario</label>
+                        <div class="auth-form-input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input asp-for="UserName" class="auth-form-input" placeholder="nombredeusuario">
+                        </div>
+                        <span asp-validation-for="UserName" class="auth-form-error"></span>
+                    </div>
 
-                <div>
-                    <label asp-for="Password" class="block text-sm font-medium text-gray-700">Contraseña</label>
-                    <input asp-for="Password" type="password" class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Mínimo 8 caracteres">
-                    <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
-                </div>
+                    <div class="auth-form-group">
+                        <label asp-for="Email" class="auth-form-label">Correo electrónico</label>
+                        <div class="auth-form-input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input asp-for="Email" type="email" class="auth-form-input" placeholder="correo@ejemplo.com">
+                        </div>
+                        <span asp-validation-for="Email" class="auth-form-error"></span>
+                    </div>
 
-                <div>
-                    <label asp-for="ConfirmPassword" class="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
-                    <input asp-for="ConfirmPassword" type="password" class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Repite tu contraseña">
-                    <span asp-validation-for="ConfirmPassword" class="text-red-500 text-xs"></span>
-                </div>
-            </div>
+                    <div class="auth-form-grid">
+                        <div class="auth-form-group">
+                            <label asp-for="Password" class="auth-form-label">Contraseña</label>
+                            <input asp-for="Password" type="password" class="auth-form-input no-icon" placeholder="Mínimo 8 caracteres">
+                            <span asp-validation-for="Password" class="auth-form-error"></span>
+                        </div>
 
-            <!-- Tipo de Usuario -->
-            <div class="space-y-4 pt-4">
-                <h3 class="text-lg font-medium text-gray-900 border-b pb-2">Tipo de Usuario</h3>
-                
-                <div>
-                    <label asp-for="UserType" class="block text-sm font-medium text-gray-700">¿Cómo te registrarás?</label>
-                    <select asp-for="UserType" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        <option value="">Selecciona una opción</option>
-                        <option value="Cliente">Cliente - Buscar propiedades</option>
-                        <option value="Agente">Agente - Publicar propiedades</option>
-                    </select>
-                    <span asp-validation-for="UserType" class="text-red-500 text-xs"></span>
-                </div>
+                        <div class="auth-form-group">
+                            <label asp-for="ConfirmPassword" class="auth-form-label">Confirmar</label>
+                            <input asp-for="ConfirmPassword" type="password" class="auth-form-input no-icon" placeholder="Repite tu contraseña">
+                            <span asp-validation-for="ConfirmPassword" class="auth-form-error"></span>
+                        </div>
+                    </div>
 
-                <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
-                    <p class="text-xs text-blue-800">
+                    <!-- Tipo de Usuario -->
+                    <div class="auth-form-section-title">Tipo de Usuario</div>
+
+                    <div class="auth-form-group">
+                        <label asp-for="UserType" class="auth-form-label">¿Cómo te registrarás?</label>
+                        <select asp-for="UserType" class="auth-form-select">
+                            <option value="">Selecciona una opción</option>
+                            <option value="Cliente">Cliente - Buscar propiedades</option>
+                            <option value="Agente">Agente - Publicar propiedades</option>
+                        </select>
+                        <span asp-validation-for="UserType" class="auth-form-error"></span>
+                    </div>
+
+                    <div class="auth-info-box">
                         <strong>Cliente:</strong> Recibirás un email para activar tu cuenta.<br>
                         <strong>Agente:</strong> Tu cuenta será revisada por un administrador.
-                    </p>
-                </div>
-            </div>
+                    </div>
 
-            <div>
-                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                    Crear cuenta
-                </button>
-            </div>
+                    <button type="submit" class="auth-submit-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Crear cuenta
+                    </button>
 
-            <div class="text-center">
-                <p class="text-sm text-gray-600">
-                    ¿Ya tienes cuenta? 
-                    <a asp-action="Login" asp-controller="Account" class="font-medium text-indigo-600 hover:text-indigo-500">
-                        Inicia sesión
-                    </a>
-                </p>
+                    <div class="auth-form-footer">
+                        <p class="auth-form-link">
+                            ¿Ya tienes cuenta?
+                            <a asp-action="Login" asp-controller="Account">Inicia sesión</a>
+                        </p>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
