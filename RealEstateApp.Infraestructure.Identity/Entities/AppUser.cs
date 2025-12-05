@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace RealEstateApp.Infraestructure.Identity.Entities
+namespace RealEstateApp.Infrastructure.Identity.Entities
 {
     public class AppUser : IdentityUser
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Cedula { get; set; }
-        public override string PhoneNumber { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Cedula { get; set; } = string.Empty;
+        public override string? PhoneNumber { get; set; }
         public string? ProfilePicture { get; set; }
-        public string UserType { get; set; }
-        public bool IsActive { get; set; } = false;
+        public string UserType { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
     }

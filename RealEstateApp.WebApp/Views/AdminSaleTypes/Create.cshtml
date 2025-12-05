@@ -1,0 +1,157 @@
+﻿@model RealEstateApp.Web.Models.Admin.SaleTypes.SaleTypeCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Crear Tipo de Venta";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-header-title">
+            <nav class="breadcrumb-nav">
+                <a asp-action="Index" class="breadcrumb-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver a Tipos de Venta
+                </a>
+            </nav>
+            <h1>Crear Tipo de Venta</h1>
+            <p class="page-header-subtitle">Completa el formulario para agregar un nuevo tipo de operación</p>
+        </div>
+    </div>
+</div>
+
+<!-- Form Card -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-plus-circle"></i>
+            Información del Tipo de Venta
+        </h3>
+    </div>
+
+    <div class="card-body">
+        <form asp-action="Create" method="post" class="form-luxury">
+            @Html.AntiForgeryToken()
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="form-validation-summary">
+                    <div asp-validation-summary="All"></div>
+                </div>
+            }
+
+            <!-- Sección: Información General -->
+            <div class="form-section">
+                <div class="form-section-header">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Información General</span>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="Name" class="form-label">Nombre <span class="required">*</span></label>
+                        <input asp-for="Name" class="form-input" placeholder="Ej: Venta, Alquiler, etc." />
+                        <span asp-validation-for="Name" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <div class="form-toggle">
+                            <input asp-for="IsActive" type="checkbox" class="toggle-input" id="isActiveToggle" />
+                            <label for="isActiveToggle" class="toggle-label">
+                                <span class="toggle-switch"></span>
+                                <span class="toggle-text">Activo</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label asp-for="Description" class="form-label">Descripción</label>
+                        <textarea asp-for="Description"
+                                  class="form-input form-textarea"
+                                  rows="4"
+                                  placeholder="Descripción del tipo de operación..."></textarea>
+                        <span asp-validation-for="Description" class="form-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Crear Tipo de Venta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-toggle {
+            display: flex;
+            align-items: center;
+            padding-top: 0.5rem;
+        }
+
+        .toggle-input {
+            display: none;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 26px;
+            background: var(--border-medium);
+            border-radius: 13px;
+            position: relative;
+            transition: background var(--transition-fast);
+        }
+
+            .toggle-switch::after {
+                content: '';
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background: white;
+                border-radius: 50%;
+                top: 3px;
+                left: 3px;
+                transition: transform var(--transition-fast);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+
+        .toggle-input:checked + .toggle-label .toggle-switch {
+            background: var(--status-success);
+        }
+
+            .toggle-input:checked + .toggle-label .toggle-switch::after {
+                transform: translateX(22px);
+            }
+
+        .toggle-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

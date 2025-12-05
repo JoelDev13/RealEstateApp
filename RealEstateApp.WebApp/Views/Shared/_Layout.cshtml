@@ -1,53 +1,418 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - RealEstateApp.WebApp</title>
-    <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
+    <meta name="description" content="RealEstateApp - Premium Real Estate Platform" />
+    <title>@ViewData["Title"] - RealEstateApp</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="~/css/luxury-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luxury-components.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <!-- Page-specific styles -->
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <div class="min-h-screen bg-slate-100 flex">
-        <aside class="flex flex-col w-64 bg-slate-900 text-white">
-            <div class="px-6 py-6 border-b border-slate-800">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="text-lg font-semibold tracking-wide text-white hover:text-slate-300">RealEstateApp</a>
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                @{
+                    var (homeCtrl, homeAct) = User.IsInRole("Administrador")
+                    ? ("AdminHome", "Index")
+                    : User.IsInRole("Agente")
+                    ? ("Agent", "Dashboard")
+                    : ("Home", "Index");
+                }
+                <a asp-controller="@homeCtrl" asp-action="@homeAct" class="sidebar-brand">
+                    <div class="sidebar-brand-icon">
+                        <img src="~/images/logo.png" alt="RealEstate Logo" class="sidebar-logo" />
+                    </div>
+                    <div class="sidebar-brand-text">
+                        <span class="sidebar-brand-name">RealEstate</span>
+                        <span class="sidebar-brand-tagline">Premium Properties</span>
+                    </div>
+                </a>
+                <button type="button" class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebarCollapse()" title="Colapsar menú">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
             </div>
-            <nav class="flex-1 px-6 py-4 space-y-2 text-sm font-medium">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition text-white hover:text-slate-300">
-                    <span>Home</span>
-                </a>
-                <a asp-area="" asp-controller="Agents" asp-action="Index" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition text-white hover:text-slate-300">
-                    <span>Agentes</span>
-                </a>
-                <a asp-area="" asp-controller="Account" asp-action="Register" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition text-white hover:text-slate-300">
-                    <span>Únete a la app</span>
-                </a>
-                <a asp-area="" asp-controller="Account" asp-action="Login" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition text-white hover:text-slate-300">
-                    <span>Iniciar sesión</span>
-                </a>
+
+            <nav class="sidebar-nav">
+                @if (!User.Identity?.IsAuthenticated ?? true)
+                {
+                    <div class="nav-section">
+                        <div class="nav-section-title">Explorar</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="Home" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                                   data-tooltip="Inicio">
+                                    <span class="nav-link-icon"><i class="fas fa-home"></i></span>
+                                    <span class="nav-link-text">Inicio</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Agents" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                   data-tooltip="Agentes">
+                                    <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
+                                    <span class="nav-link-text">Agentes</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title">Cuenta</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="Register"
+                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Register" ? "active" : "")"
+                                   data-tooltip="Únete">
+                                    <span class="nav-link-icon"><i class="fas fa-user-plus"></i></span>
+                                    <span class="nav-link-text">Únete a la App</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="Login"
+                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Login" ? "active" : "")"
+                                   data-tooltip="Iniciar Sesión">
+                                    <span class="nav-link-icon"><i class="fas fa-sign-in-alt"></i></span>
+                                    <span class="nav-link-text">Iniciar Sesión</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else if (User.IsInRole("Cliente"))
+                {
+                    <div class="nav-section">
+                        <div class="nav-section-title">Principal</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="Home" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                                   data-tooltip="Inicio">
+                                    <span class="nav-link-icon"><i class="fas fa-home"></i></span>
+                                    <span class="nav-link-text">Inicio</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Agents" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                   data-tooltip="Agentes">
+                                    <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
+                                    <span class="nav-link-text">Agentes</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title">Mis Propiedades</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="Favorites" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Favorites" ? "active" : "")"
+                                   data-tooltip="Mis Favoritas">
+                                    <span class="nav-link-icon"><i class="fas fa-heart"></i></span>
+                                    <span class="nav-link-text">Mis Favoritas</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else if (User.IsInRole("Agente"))
+                {
+                    <div class="nav-section">
+                        <div class="nav-section-title">Dashboard</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="Agent" asp-action="Dashboard"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agent" && ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")"
+                                   data-tooltip="Mi Dashboard">
+                                    <span class="nav-link-icon"><i class="fas fa-chart-line"></i></span>
+                                    <span class="nav-link-text">Mi Dashboard</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title">Gestión</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="AgentProperties" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProperties" ? "active" : "")"
+                                   data-tooltip="Mis Propiedades">
+                                    <span class="nav-link-icon"><i class="fas fa-building"></i></span>
+                                    <span class="nav-link-text">Mis Propiedades</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="AgentProperties" asp-action="Create"
+                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProperties" ? "active" : "")"
+                                   data-tooltip="Nueva Propiedad">
+                                    <span class="nav-link-icon"><i class="fas fa-plus-circle"></i></span>
+                                    <span class="nav-link-text">Nueva Propiedad</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title">Mi Cuenta</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="AgentProfile" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProfile" ? "active" : "")"
+                                   data-tooltip="Mi Perfil">
+                                    <span class="nav-link-icon"><i class="fas fa-user-circle"></i></span>
+                                    <span class="nav-link-text">Mi Perfil</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else if (User.IsInRole("Administrador"))
+                {
+                    <div class="nav-section">
+                        <div class="nav-section-title">Dashboard</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="AdminHome" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminHome" ? "active" : "")"
+                                   data-tooltip="Panel Principal">
+                                    <span class="nav-link-icon"><i class="fas fa-th-large"></i></span>
+                                    <span class="nav-link-text">Panel Principal</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title">Usuarios</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="Agents" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                   data-tooltip="Agentes">
+                                    <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
+                                    <span class="nav-link-text">Agentes</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="AdminUsers" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminUsers" ? "active" : "")"
+                                   data-tooltip="Administradores">
+                                    <span class="nav-link-icon"><i class="fas fa-user-shield"></i></span>
+                                    <span class="nav-link-text">Administradores</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="DeveloperUsers" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DeveloperUsers" ? "active" : "")"
+                                   data-tooltip="Desarrolladores">
+                                    <span class="nav-link-icon"><i class="fas fa-code"></i></span>
+                                    <span class="nav-link-text">Desarrolladores</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title">Catálogos</div>
+                        <ul class="nav-list stagger-children">
+                            <li class="nav-item">
+                                <a asp-controller="AdminPropertyTypes" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminPropertyTypes" ? "active" : "")"
+                                   data-tooltip="Tipos de Propiedad">
+                                    <span class="nav-link-icon"><i class="fas fa-building"></i></span>
+                                    <span class="nav-link-text">Tipos de Propiedad</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="AdminSaleTypes" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminSaleTypes" ? "active" : "")"
+                                   data-tooltip="Tipos de Venta">
+                                    <span class="nav-link-icon"><i class="fas fa-tags"></i></span>
+                                    <span class="nav-link-text">Tipos de Venta</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="AdminImprovements" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminImprovements" ? "active" : "")"
+                                   data-tooltip="Mejoras">
+                                    <span class="nav-link-icon"><i class="fas fa-star"></i></span>
+                                    <span class="nav-link-text">Mejoras</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
             </nav>
-            <div class="px-6 py-4 border-t border-slate-800 text-xs text-slate-400">
-                &copy; @DateTime.UtcNow.Year RealEstateApp
+
+            <div class="sidebar-footer">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="user-card">
+                        <div class="user-avatar">
+                            @{
+                                var initials = User.Identity.Name?.Length > 0
+                                ? User.Identity.Name.Substring(0, 1).ToUpper()
+                                : "U";
+                            }
+                            @initials
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">@User.Identity.Name</div>
+                            <div class="user-role">
+                                @if (User.IsInRole("Administrador"))
+                                {
+                                    <text>Administrador</text>
+                                }
+                                else if (User.IsInRole("Agente"))
+                                {
+                                    <text>Agente</text>
+                                }
+                                else if (User.IsInRole("Cliente"))
+                                {
+                                    <text>Cliente</text>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="button" class="logout-btn-full" onclick="document.getElementById('logoutForm').submit();" title="Cerrar Sesión">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </form>
+                }
+                <div class="sidebar-copyright">
+                    © @DateTime.UtcNow.Year RealEstateApp
+                </div>
             </div>
         </aside>
 
-        <div class="flex-1 flex flex-col">
-            <main role="main" class="flex-1 px-4 md:px-8 py-6">
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    <div class="mb-6 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">
-                        Bienvenido, @User.Identity.Name
+        <div class="main-wrapper">
+            <header class="top-header">
+                <div class="header-left">
+                    <button type="button" class="mobile-menu-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    @if (ViewData["Title"] != null)
+                    {
+                        <h1 class="page-title">@ViewData["Title"]</h1>
+                    }
+                </div>
+
+                <div class="header-right">
+                    <div class="search-bar">
+                        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" class="search-input" placeholder="Buscar propiedad..." id="globalSearch" />
                     </div>
-                }
+                </div>
+            </header>
+
+            @if (TempData["Success"] != null || TempData["SuccessMessage"] != null)
+            {
+                <div class="alert-toast alert-toast-success animate-fade-in">
+                    <i class="fas fa-check-circle"></i>
+                    <span>@(TempData["Success"] ?? TempData["SuccessMessage"])</span>
+                    <button type="button" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null || TempData["ErrorMessage"] != null)
+            {
+                <div class="alert-toast alert-toast-error animate-fade-in">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>@(TempData["Error"] ?? TempData["ErrorMessage"])</span>
+                    <button type="button" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            }
+
+            <main class="main-content" role="main">
                 @RenderBody()
             </main>
-            <footer class="px-4 md:px-8 py-4 border-t border-slate-200 text-sm text-slate-500">
-                &copy; 2025 - RealEstateApp.WebApp - <a class="underline" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+            <footer class="main-footer">
+                <div>© @DateTime.UtcNow.Year RealEstateApp — Premium Properties</div>
+                <div class="footer-links">
+                    <a asp-controller="Home" asp-action="Privacy">Privacidad</a>
+                    <a href="#">Términos</a>
+                    <a href="#">Contacto</a>
+                </div>
             </footer>
         </div>
     </div>
-    
+
+    <script>
+        function toggleSidebarCollapse() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            const isCollapsed = sidebar. classList.contains('collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+        }
+
+        function expandSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('collapsed')) {
+                sidebar.classList.remove('collapsed');
+                localStorage.setItem('sidebarCollapsed', 'false');
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay. classList.toggle('open');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const isCollapsed = localStorage. getItem('sidebarCollapsed') === 'true';
+
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+            }
+
+            const brandIcon = document.querySelector('.sidebar-brand-icon');
+            if (brandIcon) {
+                brandIcon. addEventListener('click', function(e) {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar.classList.contains('collapsed')) {
+                        e.preventDefault();
+                        expandSidebar();
+                    }
+                });
+            }
+        });
+    </script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

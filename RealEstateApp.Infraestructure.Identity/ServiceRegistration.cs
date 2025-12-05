@@ -6,11 +6,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using RealEstateApp.Domain.Settings;
+using RealEstateApp.Application.Interfaces.Repositories;
+using RealEstateApp.Application.Interfaces.Services;
+using RealEstateApp.Application.Services;
+using RealEstateApp.Domain.Settings;
 using RealEstateApp.Infraestructure.Identity.Context;
-using RealEstateApp.Infraestructure.Identity.Entities;
 using RealEstateApp.Infraestructure.Identity.Mappings;
+using RealEstateApp.Infraestructure.Identity.Repositories;
+using RealEstateApp.Infraestructure.Identity.Services;
+using RealEstateApp.Infrastructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Identity.Repositories;
+using RealEstateApp.Infrastructure.Identity.Services;
 
-namespace RealEstateApp.Infraestructure.Identity
+namespace RealEstateApp.Infrastructure.Identity
 {
     public static class ServiceRegistration
     {
@@ -24,42 +32,36 @@ namespace RealEstateApp.Infraestructure.Identity
             #endregion
 
             #region Identity
-            services.AddIdentityCore<AppUser>(options =>
+            services.AddIdentity<AppUser, IdentityRole>(options =>
             {
-                // Configuracion de contraseñas
-                options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
+                options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
-
-                // Configuracion de bloqueo de usuario
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
-                options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.AllowedForNewUsers = true;
-
-                // Configuracion de usuario
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
                 options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
             })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<IdentityContext>()
+            .AddDefaultTokenProviders();
 
             services.AddHttpContextAccessor();
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })
-            .AddIdentityCookies();
 
             services.AddScoped<SignInManager<AppUser>>();
 
             services.AddAutoMapper(typeof(UserMappingProfile));
+            services.AddScoped<IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
+            services.AddScoped<IAccountServiceForWebApp, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApp>();
+            services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+            services.AddScoped<IAccountApiService, AccountApiService>();
+            services.AddScoped<IAgentAdminService, AgentAdminService>();
+            services.AddScoped<IDeveloperUserService, DeveloperUserService>();
+            services.AddScoped<IDeveloperUserRepository, DeveloperUserRepository>();
 
-            services.AddScoped<Application.Interfaces.IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
-            services.AddScoped<Application.Interfaces.IAccountServiceForWebApp, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApp>();
+            #endregion
+
+            #region Configurations
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             #endregion
 
             return services;

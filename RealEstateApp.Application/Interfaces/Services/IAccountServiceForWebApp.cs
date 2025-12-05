@@ -1,7 +1,6 @@
 using RealEstateApp.Application.Dtos.Auth;
-using RealEstateApp.Application;
 
-namespace RealEstateApp.Application.Interfaces
+namespace RealEstateApp.Application.Interfaces.Services
 {
     public interface IAccountServiceForWebApp : IBaseAccountService
     {

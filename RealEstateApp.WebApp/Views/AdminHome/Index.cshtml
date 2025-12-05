@@ -1,0 +1,212 @@
+﻿@model RealEstateApp.WebApp.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Panel de administración";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div>
+            <h1 class="page-header-title">Panel de Administración</h1>
+            <p class="page-header-subtitle">Resumen general del sistema</p>
+        </div>
+        <div class="page-header-actions">
+            <button type="button" class="btn btn-outline" onclick="window.location.reload();">
+                <i class="fas fa-sync-alt"></i>
+                Actualizar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ PROPIEDADES ============ -->
+<div class="dashboard-section">
+    <h2 class="section-title">
+        <i class="fas fa-building"></i>
+        Propiedades
+    </h2>
+    <div class="stats-grid stats-grid-half">
+        <!-- Propiedades Disponibles -->
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-success">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Disponibles</div>
+                <div class="stat-value">@Model.AvailableProperties</div>
+                <div class="stat-detail">
+                    <span class="stat-detail-item">
+                        <i class="fas fa-chart-pie"></i>
+                        de @Model.TotalProperties total
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Propiedades Vendidas -->
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-gold">
+                <i class="fas fa-handshake"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Vendidas</div>
+                <div class="stat-value">@Model.SoldProperties</div>
+                <div class="stat-detail">
+                    <span class="stat-detail-item">
+                        <i class="fas fa-chart-pie"></i>
+                        de @Model.TotalProperties total
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ USUARIOS ============ -->
+<div class="dashboard-section">
+    <h2 class="section-title">
+        <i class="fas fa-users"></i>
+        Usuarios del Sistema
+    </h2>
+    <div class="stats-grid">
+        <!-- Agentes -->
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-purple">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Agentes</div>
+                <div class="stat-value">@Model.TotalAgents</div>
+                <div class="stat-detail">
+                    <span class="stat-detail-item positive">
+                        <i class="fas fa-check-circle"></i>
+                        @Model.ActiveAgents activos
+                    </span>
+                    <span class="stat-detail-item negative">
+                        <i class="fas fa-times-circle"></i>
+                        @Model.InactiveAgents inactivos
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clientes -->
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-blue">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Clientes</div>
+                <div class="stat-value">@Model.TotalClients</div>
+                <div class="stat-detail">
+                    <span class="stat-detail-item positive">
+                        <i class="fas fa-check-circle"></i>
+                        @Model.ActiveClients activos
+                    </span>
+                    <span class="stat-detail-item negative">
+                        <i class="fas fa-times-circle"></i>
+                        @Model.InactiveClients inactivos
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desarrolladores -->
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-emerald">
+                <i class="fas fa-code"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Desarrolladores</div>
+                <div class="stat-value">@Model.TotalDevelopers</div>
+                <div class="stat-detail">
+                    <span class="stat-detail-item positive">
+                        <i class="fas fa-check-circle"></i>
+                        @Model.ActiveDevelopers activos
+                    </span>
+                    <span class="stat-detail-item negative">
+                        <i class="fas fa-times-circle"></i>
+                        @Model.InactiveDevelopers inactivos
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ CATÁLOGOS ============ -->
+<div class="dashboard-section">
+    <h2 class="section-title">
+        <i class="fas fa-cogs"></i>
+        Mantenimiento de Catálogos
+    </h2>
+    <div class="stats-grid">
+        <!-- Tipos de Venta -->
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-gold">
+                <i class="fas fa-tags"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Tipos de Venta</div>
+                <div class="stat-value">@Model.TotalSaleTypes</div>
+                <div class="stat-detail">
+                    <span class="stat-detail-item positive">
+                        <i class="fas fa-check-circle"></i>
+                        @Model.ActiveSaleTypes activos
+                    </span>
+                    <span class="stat-detail-item negative">
+                        <i class="fas fa-times-circle"></i>
+                        @Model.InactiveSaleTypes inactivos
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tipos de Propiedad -->
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-dark">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Tipos de Propiedad</div>
+                <div class="stat-value">@Model.TotalPropertyTypes</div>
+                <div class="stat-detail">
+                    <span class="stat-detail-item positive">
+                        <i class="fas fa-check-circle"></i>
+                        @Model.ActivePropertyTypes activos
+                    </span>
+                    <span class="stat-detail-item negative">
+                        <i class="fas fa-times-circle"></i>
+                        @Model.InactivePropertyTypes inactivos
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mejoras -->
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-blue">
+                <i class="fas fa-magic"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Mejoras</div>
+                <div class="stat-value">@Model.TotalImprovements</div>
+                <div class="stat-detail">
+                    <span class="stat-detail-item positive">
+                        <i class="fas fa-check-circle"></i>
+                        @Model.ActiveImprovements activos
+                    </span>
+                    <span class="stat-detail-item negative">
+                        <i class="fas fa-times-circle"></i>
+                        @Model.InactiveImprovements inactivos
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+}

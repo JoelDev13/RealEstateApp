@@ -4,7 +4,8 @@ namespace RealEstateApp.Domain.Enums
     {
         Administrador,
         Agente,
-        Cliente
+        Cliente,
+        Desarrollador
     }
 }
 

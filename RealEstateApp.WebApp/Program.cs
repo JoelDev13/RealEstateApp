@@ -4,14 +4,19 @@ using RealEstateApp.Infraestructure.Identity;
 using RealEstateApp.Infraestructure.Identity.Entities;
 using RealEstateApp.Infraestructure.Identity.Seeds;
 using RealEstateApp.Infraestructure.Shared;
+using RealEstateApp.Infrastructure.Identity;
+using RealEstateApp.Infrastructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Registrar servicios de todas las capas
-builder.Services.AddApplicationServices();
+//IoC
+builder.Services.AddPersistenceServicesIoC(builder.Configuration);
+builder.Services.AddApplicationServicesIoC();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddSharedInfrastructure(builder.Configuration);
 
@@ -25,7 +30,7 @@ using (var scope = app.Services.CreateScope())
     {
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<AppUser>>();
-        
+
         await DefaultRoles.SeedAsync(roleManager);
         await DefaultUsers.SeedAsync(userManager);
     }

@@ -1,26 +1,28 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using RealEstateApp.Application.Dtos.Auth;
-using RealEstateApp.Application.Interfaces;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Enums;
+using RealEstateApp.Infrastructure.Identity.Entities;
 using RealEstateApp.WebApp.Handlers;
-using System.Text;
 
 namespace RealEstateApp.WebApp.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IBaseAccountService _accountService;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly IMapper _mapper;
 
         public AccountController(
             IBaseAccountService accountService,
+            SignInManager<AppUser> signInManager,
             IMapper mapper)
         {
             _accountService = accountService;
+            _signInManager = signInManager;
             _mapper = mapper;
         }
 
@@ -80,13 +82,13 @@ namespace RealEstateApp.WebApp.Controllers
                         if (profilePicture != null && result.Data != null)
                         {
                             string imagePath = FileHandler.Upload(profilePicture, result.Data.Id, "avatars");
-                            
+
                             // Actualiza el usuario con la ruta de la imagen
                             model.Id = result.Data.Id;
                             model.ProfilePicture = imagePath;
                             model.Password = null; // No envia contraseña de nuevo
                             model.ConfirmPassword = null;
-                            
+
                             await _accountService.EditUser(model, origin);
                         }
 
@@ -155,7 +157,7 @@ namespace RealEstateApp.WebApp.Controllers
                     {
                         if (string.Equals(userDto.Role, nameof(Roles.Administrador), StringComparison.OrdinalIgnoreCase))
                         {
-                            return RedirectToAction("Index", "Admin");
+                            return RedirectToAction("Index", "AdminHome");
                         }
                         else if (string.Equals(userDto.Role, nameof(Roles.Agente), StringComparison.OrdinalIgnoreCase))
                         {
@@ -185,7 +187,7 @@ namespace RealEstateApp.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 

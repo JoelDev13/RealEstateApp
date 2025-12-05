@@ -1,14 +1,14 @@
-using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using RealEstateApp.Application;
 using RealEstateApp.Application.Dtos.Auth;
 using RealEstateApp.Application.Dtos.Email;
-using RealEstateApp.Application.Interfaces;
-using RealEstateApp.Application;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Enums;
-using RealEstateApp.Infraestructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Identity.Entities;
+using System.Text;
 
 namespace RealEstateApp.Infraestructure.Identity.Services
 {
@@ -211,7 +211,7 @@ namespace RealEstateApp.Infraestructure.Identity.Services
         public virtual async Task<Result<UserDto>> LoginAsync(LoginRequestDto request)
         {
             // Busca el usuario por username o email
-            var user = await _userManager.FindByNameAsync(request.UserName) ?? 
+            var user = await _userManager.FindByNameAsync(request.UserName) ??
                       await _userManager.FindByEmailAsync(request.UserName);
 
             if (user == null)
@@ -227,9 +227,9 @@ namespace RealEstateApp.Infraestructure.Identity.Services
 
             // Intenta el login
             var result = await _signInManager.PasswordSignInAsync(
-                user.UserName, 
-                request.Password, 
-                isPersistent: false, 
+                user.UserName,
+                request.Password,
+                isPersistent: false,
                 lockoutOnFailure: true);
 
             if (!result.Succeeded)

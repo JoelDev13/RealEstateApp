@@ -1,0 +1,176 @@
+@model RealEstateApp.Web.Models.Admin.PropertyTypes.PropertyTypeViewModel
+
+@{
+    ViewData["Title"] = "Eliminar Tipo de Propiedad";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-header-title">
+            <nav class="breadcrumb-nav">
+                <a asp-action="Index" class="breadcrumb-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver a Tipos de Propiedad
+                </a>
+            </nav>
+            <h1>Eliminar Tipo de Propiedad</h1>
+            <p class="page-header-subtitle">Esta acción no se puede deshacer</p>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Alert -->
+<div class="alert-card alert-card-danger">
+    <div class="alert-card-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="alert-card-content">
+        <h4 class="alert-card-title">¡Atención! Acción destructiva</h4>
+        <p class="alert-card-text">
+            ¿Está seguro que desea eliminar este tipo de propiedad?
+            <strong>Se eliminarán TODAS las propiedades asociadas.</strong>
+            Esta acción es permanente y no se puede deshacer.
+        </p>
+    </div>
+</div>
+
+<!-- Info Card -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-layer-group"></i>
+            Tipo de Propiedad a Eliminar
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="delete-info">
+            <div class="delete-info-row">
+                <span class="delete-info-label">Nombre</span>
+                <span class="delete-info-value">@Model.Name</span>
+            </div>
+            <div class="delete-info-row">
+                <span class="delete-info-label">Descripción</span>
+                <span class="delete-info-value">
+                    @(string.IsNullOrEmpty(Model.Description) ? "Sin descripción" : Model.Description)
+                </span>
+            </div>
+            <div class="delete-info-row">
+                <span class="delete-info-label">Propiedades asociadas</span>
+                <span class="delete-info-value">
+                    <span class="property-count-danger">@Model.PropertiesCount</span>
+                </span>
+            </div>
+        </div>
+
+        <form asp-action="ConfirmDelete" method="post" class="form-actions" style="justify-content: flex-start;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Cancelar
+            </a>
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i>
+                Eliminar Tipo de Propiedad
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .alert-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-card-danger {
+            background: var(--status-error-light);
+            border: 1px solid rgba(139, 58, 58, 0.2);
+        }
+
+        .alert-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            flex-shrink: 0;
+            background: rgba(139, 58, 58, 0.15);
+            color: var(--status-error);
+        }
+
+        .alert-card-content {
+            flex: 1;
+        }
+
+        .alert-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--status-error);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .alert-card-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .delete-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .delete-info-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .delete-info-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .delete-info-value {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .property-count-danger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+            background: var(--status-error-light);
+            color: var(--status-error);
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+        }
+
+        .btn-danger {
+            background: var(--status-error);
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background: #7a3333;
+            }
+    </style>
+}

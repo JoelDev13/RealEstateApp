@@ -1,0 +1,60 @@
+/* ========================================
+   Admin Users - Estilos adicionales
+   ======================================== */
+
+/* Stats Row mejorado */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    flex-shrink: 0;
+}
+
+.stat-icon-gold {
+    background: var(--luxury-gold-muted);
+    color: var(--luxury-gold);
+}
+
+.stat-icon-success {
+    background: var(--status-success-light);
+    color: var(--status-success);
+}
+
+.stat-icon-error {
+    background: var(--status-error-light);
+    color: var(--status-error);
+}
+
+/* Inline form para botones de acción */
+.inline-form {
+    display: inline;
+}
+
+/* Responsive Stats Row */
+@media (max-width: 768px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .table-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

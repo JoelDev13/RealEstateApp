@@ -5,7 +5,7 @@ namespace RealEstateApp.Application.Dtos.Auth
     public class RegisterDto
     {
         [Required(ErrorMessage = "El nombre de usuario es requerido")]
-        [StringLength(50, ErrorMessage = "El nombre de usuario debe tener entre {2} y {1} caracteres.", MinimumLength = 3)]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "El nombre de usuario debe tener entre {2} y {1} caracteres.")]
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "El correo electrónico es requerido")]
@@ -13,7 +13,7 @@ namespace RealEstateApp.Application.Dtos.Auth
         public string Email { get; set; }
 
         [Required(ErrorMessage = "La contraseña es requerida")]
-        [StringLength(100, ErrorMessage = "La contraseña debe tener al menos {2} caracteres.", MinimumLength = 6)]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "La contraseña debe tener al menos {2} caracteres.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
@@ -23,7 +23,7 @@ namespace RealEstateApp.Application.Dtos.Auth
         public string ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "El tipo de usuario es requerido")]
-        public string UserType { get; set; } // "Cliente" o "Agente"
+        public string UserType { get; set; } // "Cliente", "Agente", "Administrador", "Desarrollador"
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -34,6 +34,8 @@ namespace RealEstateApp.Application.Dtos.Auth
         public string Cedula { get; set; }
         
         public string? PhoneNumber { get; set; }
+
+        [Required(ErrorMessage = "La cédula es requerida")]
+        public string? Cedula { get; set; }
     }
 }
-

@@ -156,13 +156,17 @@ namespace RealEstateApp.Infraestructure.Identity.Migrations
                     b.ToTable("AspNetUserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("RealEstateApp.Infraestructure.Identity.Entities.AppUser", b =>
+            modelBuilder.Entity("RealEstateApp.Infrastructure.Identity.Entities.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Cedula")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -207,14 +211,12 @@ namespace RealEstateApp.Infraestructure.Identity.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("ProfilePicture")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
@@ -258,7 +260,7 @@ namespace RealEstateApp.Infraestructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("RealEstateApp.Infraestructure.Identity.Entities.AppUser", null)
+                    b.HasOne("RealEstateApp.Infrastructure.Identity.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -267,7 +269,7 @@ namespace RealEstateApp.Infraestructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("RealEstateApp.Infraestructure.Identity.Entities.AppUser", null)
+                    b.HasOne("RealEstateApp.Infrastructure.Identity.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -282,7 +284,7 @@ namespace RealEstateApp.Infraestructure.Identity.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RealEstateApp.Infraestructure.Identity.Entities.AppUser", null)
+                    b.HasOne("RealEstateApp.Infrastructure.Identity.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -291,7 +293,7 @@ namespace RealEstateApp.Infraestructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("RealEstateApp.Infraestructure.Identity.Entities.AppUser", null)
+                    b.HasOne("RealEstateApp.Infrastructure.Identity.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
