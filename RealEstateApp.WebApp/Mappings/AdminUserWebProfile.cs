@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using RealEstateApp.Application.Dtos.AdminUsers;
 using RealEstateApp.WebApp.Models.Admin.AdminUsers;
 
@@ -24,3 +24,4 @@ namespace RealEstateApp.WebApp.Mappings
         }
     }
 }
+

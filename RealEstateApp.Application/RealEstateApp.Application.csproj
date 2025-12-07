@@ -8,15 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Mapping\**" />
-    <Compile Remove="ViewModels\**" />
     <EmbeddedResource Remove="Mapping\**" />
-    <EmbeddedResource Remove="ViewModels\**" />
     <None Remove="Mapping\**" />
-    <None Remove="ViewModels\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Interfaces\Identity\" />
+    <Folder Include="Mappings\EntityToDto\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,7 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
   </ItemGroup>

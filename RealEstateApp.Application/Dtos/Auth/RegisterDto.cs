@@ -34,8 +34,5 @@ namespace RealEstateApp.Application.Dtos.Auth
         public string Cedula { get; set; }
         
         public string? PhoneNumber { get; set; }
-
-        [Required(ErrorMessage = "La cédula es requerida")]
-        public string? Cedula { get; set; }
     }
 }

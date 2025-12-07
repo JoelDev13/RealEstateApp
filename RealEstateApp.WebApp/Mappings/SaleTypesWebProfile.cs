@@ -1,8 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using RealEstateApp.Application.Dtos.SaleTypes;
 using RealEstateApp.Web.Models.Admin.SaleTypes;
 
-namespace RealEstateApp.Web.Mappings
+namespace RealEstateApp.WebApp.Mappings
 {
     public class SaleTypesWebProfile : Profile
     {
@@ -16,3 +16,4 @@ namespace RealEstateApp.Web.Mappings
         }
     }
 }
+

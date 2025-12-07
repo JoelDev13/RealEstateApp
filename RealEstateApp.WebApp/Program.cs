@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using RealEstateApp.Application;
-using RealEstateApp.Infraestructure.Identity;
-using RealEstateApp.Infraestructure.Identity.Entities;
 using RealEstateApp.Infraestructure.Identity.Seeds;
 using RealEstateApp.Infraestructure.Shared;
 using RealEstateApp.Infrastructure.Identity;
@@ -11,7 +9,19 @@ using RealEstateApp.Infrastructure.Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Configure maximum request body size (30MB for file uploads)
+    options.MaxModelBindingCollectionSize = 100;
+});
+
+// Configure form options for file uploads
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 30 * 1024 * 1024; // 30MB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
 //IoC
 builder.Services.AddPersistenceServicesIoC(builder.Configuration);

@@ -40,7 +40,7 @@ namespace RealEstateApp.WebApp.Handlers
                     httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                     break;
                 case ArgumentException:
-                case ValidationException:
+                case System.ComponentModel.DataAnnotations.ValidationException:
                     exceptionTitle = "Bad Request";
                     httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;

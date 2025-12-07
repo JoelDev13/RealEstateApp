@@ -1,25 +1,34 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RealEstateApp.Application;
 
-namespace InvestmentApi.Controllers
+namespace RealEstateApp.WebApi.Controllers
 {
-    /// <summary>
-    /// Base controller that provides access to MediatR for all derived API controllers.
-    /// </summary>
-    /// <remarks>
-    /// This controller serves as the base for all versioned API controllers and sets up the MediatR mediator 
-    /// through dependency injection using the current HTTP request scope.
-    /// </remarks>
+
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public abstract class BaseApiController : ControllerBase
     {
         private IMediator? _mediator;
-
-        /// <summary>
-        /// Provides access to the MediatR mediator instance from the current request services.
-        /// </summary>
         protected IMediator Mediator => _mediator ??= HttpContext!.RequestServices.GetService<IMediator>()!;
+        protected IActionResult BadRequest400WithErrorMessagesFromResult(Result result)
+        {
+            var errors = result.Errors ?? new List<string>();
+            if (!string.IsNullOrEmpty(result.Message))
+            {
+                errors.Add(result.Message);
+            }
+            return BadRequest(new { errors });
+        }
+
+        protected IActionResult BadRequest400WithErrorMessagesFromResult<T>(Result<T> result)
+        {
+            var errors = result.Errors ?? new List<string>();
+            if (!string.IsNullOrEmpty(result.Message))
+            {
+                errors.Add(result.Message);
+            }
+            return BadRequest(new { errors });
+        }
     }
 }
-// This code defines a base API controller for an ASP.NET Core application that uses MediatR for handling requests.

@@ -50,6 +50,13 @@ namespace RealEstateApp.Infrastructure.Persistence.Configurations
             builder.Property(p => p.IsActive)
                 .HasDefaultValue(true);
 
+            builder.Property(p => p.Code)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.Property(p => p.IsSold)
+                .HasDefaultValue(false);
+
             builder.Property(p => p.CreatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
         }

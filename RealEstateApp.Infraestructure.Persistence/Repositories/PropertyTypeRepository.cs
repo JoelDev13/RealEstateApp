@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Domain.Entities;
+using RealEstateApp.Infrastructure.Persistence;
 
 namespace RealEstateApp.Infrastructure.Persistence.Repositories
 {
-    public class PropertyTypeRepository
-        : Repository<PropertyType>, IPropertyTypeRepository
+    public class PropertyTypeRepository : Repository<PropertyType>, IPropertyTypeRepository
     {
-        public PropertyTypeRepository(ApplicationDbContext context)
-            : base(context)
+        public PropertyTypeRepository(ApplicationDbContext context) : base(context)
         {
         }
 

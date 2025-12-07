@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     <!-- Styles -->
+    <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/luxury-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/luxury-components.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -154,16 +155,16 @@
                         <div class="nav-section-title">Gestión</div>
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
-                                <a asp-controller="AgentProperties" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProperties" ? "active" : "")"
+                                <a asp-controller="Agent" asp-action="Properties"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agent" && ViewContext.RouteData.Values["action"]?.ToString() == "Properties" ? "active" : "")"
                                    data-tooltip="Mis Propiedades">
                                     <span class="nav-link-icon"><i class="fas fa-building"></i></span>
                                     <span class="nav-link-text">Mis Propiedades</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a asp-controller="AgentProperties" asp-action="Create"
-                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProperties" ? "active" : "")"
+                                <a asp-controller="Property" asp-action="Create"
+                                   class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Property" ? "active" : "")"
                                    data-tooltip="Nueva Propiedad">
                                     <span class="nav-link-icon"><i class="fas fa-plus-circle"></i></span>
                                     <span class="nav-link-text">Nueva Propiedad</span>
@@ -176,8 +177,8 @@
                         <div class="nav-section-title">Mi Cuenta</div>
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
-                                <a asp-controller="AgentProfile" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentProfile" ? "active" : "")"
+                                <a asp-controller="Agent" asp-action="Profile"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agent" && ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")"
                                    data-tooltip="Mi Perfil">
                                     <span class="nav-link-icon"><i class="fas fa-user-circle"></i></span>
                                     <span class="nav-link-text">Mi Perfil</span>

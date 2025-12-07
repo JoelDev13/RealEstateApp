@@ -13,6 +13,7 @@ namespace RealEstateApp.Infraestructure.Shared
 
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IFileHandler, FileHandler>();
 
             return services;
         }

@@ -1,8 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using RealEstateApp.Application.Dtos.Agents;
 using RealEstateApp.WebApp.Models.Agents;
 
-namespace RealEstateApp.WebApp.Profiles
+namespace RealEstateApp.WebApp.Mappings
 {
     public class AgentAdminWebProfile : Profile
     {
@@ -12,3 +12,4 @@ namespace RealEstateApp.WebApp.Profiles
         }
     }
 }
+

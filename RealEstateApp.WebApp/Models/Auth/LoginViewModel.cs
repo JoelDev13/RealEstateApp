@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RealEstateApp.WebApp.Models
+namespace RealEstateApp.Application.ViewModels.Auth
 {
     public class LoginViewModel
     {

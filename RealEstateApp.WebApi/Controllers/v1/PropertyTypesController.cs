@@ -1,5 +1,5 @@
 ﻿using Asp.Versioning;
-using InvestmentApi.Controllers;
+using RealEstateApp.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Dtos.PropertyTypes;

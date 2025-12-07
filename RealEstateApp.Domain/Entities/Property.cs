@@ -5,6 +5,7 @@ namespace RealEstateApp.Domain.Entities
     public class Property
     {
         public int Id { get; set; }
+        public string Code { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public string Description { get; set; } = null!;
         public double SizeInSquareMeters { get; set; }
@@ -24,8 +25,12 @@ namespace RealEstateApp.Domain.Entities
         public ICollection<PropertyImage> Images { get; set; }
             = new HashSet<PropertyImage>();
 
+        public bool IsSold { get; set; } = false;
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        // Propiedad de conveniencia para compatibilidad
+        public double Size => SizeInSquareMeters;
     }
 }

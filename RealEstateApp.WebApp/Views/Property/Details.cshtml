@@ -1,0 +1,197 @@
+@model RealEstateApp.WebApp.Models.Property.PropertyDetailViewModel
+@{
+    ViewData["Title"] = $"Detalles de Propiedad - {Model.Code}";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Menú del Agente</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="@Url.Action("Dashboard", "Agent")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-home"></i> Home del agente
+                    </a>
+                    <a href="@Url.Action("Profile", "Agent")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user"></i> Mi perfil
+                    </a>
+                    <a href="@Url.Action("Properties", "Agent")" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-building"></i> Mantenimiento de propiedades
+                    </a>
+                    <a href="@Url.Action("Logout", "Account")" class="list-group-item list-group-item-action text-danger">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>Detalles de Propiedad - @Model.Code</h4>
+                    @if (Model.IsSold)
+                    {
+                        <span class="badge bg-danger fs-6">VENDIDA</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success fs-6">DISPONIBLE</span>
+                    }
+                </div>
+                <div class="card-body">
+                    <!-- Slider de imágenes -->
+                    @if (Model.ImageUrls.Any())
+                    {
+                        <div id="propertyImages" class="carousel slide mb-4" data-bs-ride="carousel">
+                            <div class="carousel-indicators">
+                                @for (int i = 0; i < Model.ImageUrls.Count; i++)
+                                {
+                                    <button type="button" data-bs-target="#propertyImages" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                                }
+                            </div>
+                            <div class="carousel-inner">
+                                @for (int i = 0; i < Model.ImageUrls.Count; i++)
+                                {
+                                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                                        <img src="@(Model.ImageUrls[i])" class="d-block w-100" alt="Imagen @(i + 1)" style="height: 400px; object-fit: cover;">
+                                    </div>
+                                }
+                            </div>
+                            @if (Model.ImageUrls.Count > 1)
+                            {
+                                <button class="carousel-control-prev" type="button" data-bs-target="#propertyImages" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#propertyImages" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+                            }
+                        </div>
+                    }
+
+                    <!-- Información de la propiedad -->
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h5>@Model.PropertyType - @Model.SaleType</h5>
+                            <h3 class="text-primary">@Model.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</h3>
+                            
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <i class="fas fa-bed"></i> @Model.Bedrooms hab
+                                </div>
+                                <div class="col-4">
+                                    <i class="fas fa-bath"></i> @Model.Bathrooms baños
+                                </div>
+                                <div class="col-4">
+                                    <i class="fas fa-ruler-combined"></i> @Model.Size m²
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6>Descripción</h6>
+                                <p>@Model.Description</p>
+                            </div>
+
+                            @if (Model.Improvements.Any())
+                            {
+                                <div class="mb-3">
+                                    <h6>Mejoras</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach (var improvement in Model.Improvements)
+                                        {
+                                            <span class="badge bg-secondary">@improvement</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Información del Agente</h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    @if (!string.IsNullOrEmpty(Model.AgentProfilePicture))
+                                    {
+                                        <img src="@Model.AgentProfilePicture" class="rounded-circle mb-3" alt="Agente" style="width: 100px; height: 100px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
+                                            <i class="fas fa-user fa-2x text-white"></i>
+                                        </div>
+                                    }
+                                    
+                                    <h6>@Model.AgentName</h6>
+                                    <p class="mb-1">
+                                        <i class="fas fa-phone"></i> @Model.AgentPhone
+                                    </p>
+                                    <p class="mb-0">
+                                        <i class="fas fa-envelope"></i> @Model.AgentEmail
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-between">
+                        <a href="@Url.Action("Properties", "Agent")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        @if (!Model.IsSold)
+                        {
+                            <div>
+                                <a href="@Url.Action("Edit", "Property", new { id = Model.Id })" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <form asp-action="Delete" asp-controller="Property" method="post" style="display: inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <button type="button" class="btn btn-danger" onclick="confirmDelete('@Model.Id', '@Model.Code')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea eliminar la propiedad <strong id="propertyCode"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Aceptar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(propertyId, propertyCode) {
+            document.getElementById('propertyCode').textContent = propertyCode;
+            document.getElementById('deleteForm').action = '/Property/Delete/' + propertyId;
+            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+    </script>
+}

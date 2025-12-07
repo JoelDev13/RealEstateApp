@@ -1,10 +1,14 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RealEstateApp.Application.Behaviors;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Services;
+using RealEstateApp.Application.Interfaces.Repositories;
+using RealEstateApp.Application.Mappings;
 using System.Reflection;
+using RealEstateApp.Domain.Entities;
 
 namespace RealEstateApp.Application
 {
@@ -25,13 +29,16 @@ namespace RealEstateApp.Application
 
             services.AddValidatorsFromAssembly(assembly);
 
-            //Services
+            //Services - Solo mapeos Entity <-> DTO (los mapeos DTO <-> ViewModel están en WebApp)
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            
+            // Services (Los repositorios se registran en Infrastructure.Persistence)
             services.AddScoped<ISaleTypeService, SaleTypeService>();
             services.AddScoped<IPropertyTypeService, PropertyTypeService>();
             services.AddScoped<IImprovementService, ImprovementService>();
             services.AddScoped<IAdminUserService, AdminUserService>();
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            services.AddScoped<IPropertyService, PropertyService>();
 
             return services;
         }

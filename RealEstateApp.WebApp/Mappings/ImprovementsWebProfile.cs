@@ -1,8 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using RealEstateApp.Application.Dtos.Improvements;
 using RealEstateApp.Web.Models.Admin.Improvements;
 
-namespace RealEstateApp.Web.Mappings
+namespace RealEstateApp.WebApp.Mappings
 {
     public class ImprovementsWebProfile : Profile
     {
@@ -16,3 +16,4 @@ namespace RealEstateApp.Web.Mappings
         }
     }
 }
+

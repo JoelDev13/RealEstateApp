@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using RealEstateApp.Domain.Settings;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Application.Interfaces.Services;
-using RealEstateApp.Application.Services;
 using RealEstateApp.Domain.Settings;
 using RealEstateApp.Infraestructure.Identity.Context;
 using RealEstateApp.Infraestructure.Identity.Mappings;
@@ -17,6 +16,7 @@ using RealEstateApp.Infraestructure.Identity.Services;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using RealEstateApp.Infrastructure.Identity.Repositories;
 using RealEstateApp.Infrastructure.Identity.Services;
+using RealEstateApp.Application.Services;
 
 namespace RealEstateApp.Infrastructure.Identity
 {
@@ -55,6 +55,7 @@ namespace RealEstateApp.Infrastructure.Identity
             services.AddScoped<IAdminUserRepository, AdminUserRepository>();
             services.AddScoped<IAccountApiService, AccountApiService>();
             services.AddScoped<IAgentAdminService, AgentAdminService>();
+            services.AddScoped<IAgentService, AgentService>();
             services.AddScoped<IDeveloperUserService, DeveloperUserService>();
             services.AddScoped<IDeveloperUserRepository, DeveloperUserRepository>();
 
@@ -137,7 +138,7 @@ namespace RealEstateApp.Infrastructure.Identity
             #endregion
 
             #region Services
-            services.AddScoped<Application.Interfaces.IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
+            services.AddScoped<Application.Interfaces.Services.IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
             services.AddScoped<Application.Interfaces.IAccountServiceForWebApi, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApi>();
             #endregion
 

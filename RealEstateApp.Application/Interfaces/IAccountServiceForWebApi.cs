@@ -1,4 +1,5 @@
 ﻿using RealEstateApp.Application.Dtos.Auth;
+using RealEstateApp.Application.Interfaces.Services;
 
 namespace RealEstateApp.Application.Interfaces
 {

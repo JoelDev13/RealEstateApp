@@ -81,15 +81,18 @@ namespace RealEstateApp.WebApp.Controllers
                         // Si se registro correctamente y hay una imagen, subirla
                         if (profilePicture != null && result.Data != null)
                         {
-                            string imagePath = FileHandler.Upload(profilePicture, result.Data.Id, "avatars");
+                            string? imagePath = await FileHandler.UploadAsync(profilePicture, result.Data.Id, "avatars");
 
-                            // Actualiza el usuario con la ruta de la imagen
-                            model.Id = result.Data.Id;
-                            model.ProfilePicture = imagePath;
-                            model.Password = null; // No envia contraseña de nuevo
-                            model.ConfirmPassword = null;
+                            if (!string.IsNullOrEmpty(imagePath))
+                            {
+                                // Actualiza el usuario con la ruta de la imagen
+                                model.Id = result.Data.Id;
+                                model.ProfilePicture = imagePath;
+                                model.Password = null; // No envia contraseña de nuevo
+                                model.ConfirmPassword = null;
 
-                            await _accountService.EditUser(model, origin);
+                                await _accountService.EditUser(model, origin);
+                            }
                         }
 
                         // Mensaje segun el tipo de usuario

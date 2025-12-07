@@ -1,14 +1,18 @@
-﻿using AutoMapper;
+using AutoMapper;
 using RealEstateApp.Application.Dtos.DeveloperUsers;
 using RealEstateApp.WebApp.Models.Admin.DeveloperUser;
 
-public class DeveloperUserMappingProfile : Profile
+namespace RealEstateApp.WebApp.Mappings
 {
-    public DeveloperUserMappingProfile()
+    public class DeveloperUserMappingProfile : Profile
     {
-        CreateMap<DeveloperUserDto, DevUserViewModel>().ReverseMap();
-        CreateMap<DeveloperUserCreateDto, DevUserCreateViewModel>().ReverseMap();
-        CreateMap<DeveloperUserUpdateDto, DevUserEditViewModel>().ReverseMap();
-        CreateMap<DeveloperUserDto, DevUserEditViewModel>();
+        public DeveloperUserMappingProfile()
+        {
+            CreateMap<DeveloperUserDto, DevUserViewModel>().ReverseMap();
+            CreateMap<DeveloperUserCreateDto, DevUserCreateViewModel>().ReverseMap();
+            CreateMap<DeveloperUserUpdateDto, DevUserEditViewModel>().ReverseMap();
+            CreateMap<DeveloperUserDto, DevUserEditViewModel>();
+        }
     }
 }
+

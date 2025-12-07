@@ -1,0 +1,130 @@
+@model RealEstateApp.WebApp.Models.Agents.AgentDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard del Agente";
+}
+
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Dashboard del Agente</h1>
+                    <p class="mt-2 text-sm text-gray-600">Gestiona tus propiedades inmobiliarias</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                        <i class="fas fa-building mr-2"></i>
+                        @Model.Properties.Count propiedades
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <nav class="flex flex-wrap gap-2">
+                    <a href="@Url.Action("Dashboard", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-home mr-2"></i>
+                        Home del agente
+                    </a>
+                    <a href="@Url.Action("Profile", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-user mr-2"></i>
+                        Mi perfil
+                    </a>
+                    <a href="@Url.Action("Properties", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-building mr-2"></i>
+                        Mantenimiento de propiedades
+                    </a>
+                    <a href="@Url.Action("Logout", "Account")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-red-700 bg-white border border-red-300 hover:bg-red-50 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Cerrar sesión
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Properties Section -->
+        <div>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-900">Mis Propiedades</h2>
+            </div>
+
+            @if (!Model.Properties.Any())
+            {
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                    <div class="max-w-md mx-auto">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                            <i class="fas fa-info-circle text-2xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes propiedades registradas</h3>
+                        <p class="text-sm text-gray-500 mb-6">Comienza gestionando tus propiedades</p>
+                        <a href="@Url.Action("Properties", "Agent")" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-plus mr-2"></i>
+                            Gestionar Propiedades
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach (var property in Model.Properties)
+                    {
+                        <div class="bg-white rounded-lg shadow-sm border @(property.IsSold ? "border-red-300" : "border-gray-200") overflow-hidden hover:shadow-md transition-shadow">
+                            @if (property.IsSold)
+                            {
+                                <div class="bg-red-600 text-white text-center py-2">
+                                    <span class="font-semibold text-sm">VENDIDA</span>
+                                </div>
+                            }
+                            
+                            <div class="relative">
+                                <img src="@(property.MainImageUrl)" 
+                                     alt="@property.Code" 
+                                     class="w-full h-48 object-cover">
+                                @if (property.IsSold)
+                                {
+                                    <div class="absolute top-2 right-2">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-600 text-white">
+                                            Vendida
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                            
+                            <div class="p-5">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">@property.Code</h3>
+                                <div class="space-y-2 mb-4">
+                                    <p class="text-sm text-gray-600">
+                                        <span class="font-medium">@property.PropertyType</span> - 
+                                        <span class="font-medium">@property.SaleType</span>
+                                    </p>
+                                    <p class="text-xl font-bold text-blue-600">
+                                        @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))
+                                    </p>
+                                    <p class="text-sm text-gray-500">
+                                        <i class="fas fa-bed mr-1"></i>@property.Bedrooms hab • 
+                                        <i class="fas fa-bath mr-1"></i>@property.Bathrooms baños • 
+                                        <i class="fas fa-ruler-combined mr-1"></i>@property.Size m²
+                                    </p>
+                                </div>
+                                <a href="@Url.Action("Details", "Property", new { id = property.Id })" 
+                                   class="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                    <i class="fas fa-eye mr-2"></i>
+                                    Ver detalles
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

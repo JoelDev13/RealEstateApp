@@ -1,8 +1,10 @@
-﻿namespace RealEstateApp.WebApp.Handlers
+﻿using Microsoft.AspNetCore.Http;
+
+namespace RealEstateApp.WebApp.Handlers
 {
     public class FileHandler
     {
-        public static string? Upload(IFormFile? file, string id, string folderName, bool isEditMode = false,
+        public static async Task<string?> UploadAsync(IFormFile? file, string id, string folderName, bool isEditMode = false,
         string? imagePath = "")
         {
             if (isEditMode && file == null)
@@ -15,37 +17,70 @@
                 return string.Empty;
             }
 
-            string basePath = Path.Combine("Images", folderName, id);
-            string physicalPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", basePath);
-
-            if (!Directory.Exists(physicalPath))
+            // Validate file size (max 5MB)
+            const long maxFileSize = 5 * 1024 * 1024; // 5MB
+            if (file.Length > maxFileSize)
             {
-                Directory.CreateDirectory(physicalPath);
+                System.Diagnostics.Debug.WriteLine($"File size {file.Length} exceeds maximum allowed size of {maxFileSize} bytes");
+                return null;
             }
 
-            Guid guid = Guid.NewGuid();
-            FileInfo fileInfo = new(file.FileName);
-            string fileName = guid + fileInfo.Extension;
-
-            string fullFilePath = Path.Combine(physicalPath, fileName);
-
-            using (var stream = new FileStream(fullFilePath, FileMode.Create))
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+            var fileExtension = Path.GetExtension(file.FileName)?.ToLowerInvariant();
+            if (string.IsNullOrEmpty(fileExtension) || !allowedExtensions.Contains(fileExtension))
             {
-                file.CopyTo(stream);
+                System.Diagnostics.Debug.WriteLine($"File extension {fileExtension} is not allowed");
+                return null;
             }
 
-            if (isEditMode && !string.IsNullOrWhiteSpace(imagePath))
+            try
             {
-                string normalizedOldPath = imagePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString());
-                string completeOldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", normalizedOldPath);
+                string basePath = Path.Combine("Images", folderName, id);
+                string physicalPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", basePath);
 
-                if (File.Exists(completeOldPath))
+                if (!Directory.Exists(physicalPath))
                 {
-                    File.Delete(completeOldPath);
+                    Directory.CreateDirectory(physicalPath);
                 }
-            }
 
-            return $"/Images/{folderName}/{id}/{fileName}";
+                Guid guid = Guid.NewGuid();
+                FileInfo fileInfo = new(file.FileName);
+                string fileName = guid + fileInfo.Extension;
+
+                string fullFilePath = Path.Combine(physicalPath, fileName);
+
+                using (var stream = new FileStream(fullFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
+                {
+                    await file.CopyToAsync(stream);
+                    await stream.FlushAsync();
+                }
+
+                if (isEditMode && !string.IsNullOrWhiteSpace(imagePath))
+                {
+                    string normalizedOldPath = imagePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString());
+                    string completeOldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", normalizedOldPath);
+
+                    if (File.Exists(completeOldPath))
+                    {
+                        File.Delete(completeOldPath);
+                    }
+                }
+
+                return $"/Images/{folderName}/{id}/{fileName}";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error uploading file: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                return null;
+            }
+        }
+        
+        [Obsolete("Use UploadAsync instead")]
+        public static string? Upload(IFormFile? file, string id, string folderName, bool isEditMode = false,
+        string? imagePath = "")
+        {
+            return UploadAsync(file, id, folderName, isEditMode, imagePath).GetAwaiter().GetResult();
         }
 
         public static bool Delete(string id, string folderName)

@@ -17,8 +17,8 @@ namespace RealEstateApp.Application.Exceptions
         }
         public ApiException(string message, params object[] args)
             : base(String.Format(CultureInfo.CurrentCulture, message, args))
-        {
-            StatusCode = statusCode;
+        {            StatusCode = 500; 
+
         }
     }
 }

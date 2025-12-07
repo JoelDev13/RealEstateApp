@@ -1,0 +1,112 @@
+@model RealEstateApp.WebApp.Models.Agents.AgentProfileViewModel
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Mi Perfil</h1>
+            <p class="mt-2 text-sm text-gray-600">Actualiza tu información personal</p>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <nav class="flex flex-wrap gap-2">
+                    <a href="@Url.Action("Dashboard", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-home mr-2"></i>
+                        Home del agente
+                    </a>
+                    <a href="@Url.Action("Profile", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-user mr-2"></i>
+                        Mi perfil
+                    </a>
+                    <a href="@Url.Action("Properties", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-building mr-2"></i>
+                        Mantenimiento de propiedades
+                    </a>
+                    <a href="@Url.Action("Logout", "Account")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-red-700 bg-white border border-red-300 hover:bg-red-50 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Cerrar sesión
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-5 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Información del Perfil</h3>
+            </div>
+            <div class="px-6 py-5">
+                <form asp-action="Profile" method="post" enctype="multipart/form-data" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label asp-for="FirstName" class="block text-sm font-medium text-gray-700 mb-2">
+                                Nombre
+                            </label>
+                            <input asp-for="FirstName" 
+                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border" 
+                                   required />
+                            <span asp-validation-for="FirstName" class="mt-1 text-sm text-red-600"></span>
+                        </div>
+                        <div>
+                            <label asp-for="LastName" class="block text-sm font-medium text-gray-700 mb-2">
+                                Apellido
+                            </label>
+                            <input asp-for="LastName" 
+                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border" 
+                                   required />
+                            <span asp-validation-for="LastName" class="mt-1 text-sm text-red-600"></span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label asp-for="PhoneNumber" class="block text-sm font-medium text-gray-700 mb-2">
+                                Teléfono
+                            </label>
+                            <input asp-for="PhoneNumber" 
+                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border" 
+                                   required />
+                            <span asp-validation-for="PhoneNumber" class="mt-1 text-sm text-red-600"></span>
+                        </div>
+                        <div>
+                            <label asp-for="ProfileImage" class="block text-sm font-medium text-gray-700 mb-2">
+                                Foto de usuario
+                            </label>
+                            <input asp-for="ProfileImage" 
+                                   type="file" 
+                                   accept="image/*"
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                            <span asp-validation-for="ProfileImage" class="mt-1 text-sm text-red-600"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                        <a href="@Url.Action("Dashboard", "Agent")" 
+                           class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Volver
+                        </a>
+                        <button type="submit" 
+                                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            <i class="fas fa-save mr-2"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

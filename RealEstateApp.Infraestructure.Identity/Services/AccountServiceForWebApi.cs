@@ -10,7 +10,8 @@ using RealEstateApp.Application.Dtos.Auth;
 using RealEstateApp.Application.Interfaces;
 using RealEstateApp.Domain.Enums;
 using RealEstateApp.Domain.Settings;
-using RealEstateApp.Infraestructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Identity.Entities;
+using RealEstateApp.Application.Interfaces.Services;
 
 namespace RealEstateApp.Infraestructure.Identity.Services
 {

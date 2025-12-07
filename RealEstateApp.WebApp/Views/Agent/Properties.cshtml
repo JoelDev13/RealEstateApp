@@ -1,0 +1,172 @@
+@model RealEstateApp.WebApp.Models.Agents.AgentPropertiesViewModel
+@{
+    ViewData["Title"] = "Mantenimiento de Propiedades";
+}
+
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Mantenimiento de Propiedades</h1>
+                    <p class="mt-2 text-sm text-gray-600">Gestiona y administra tus propiedades inmobiliarias</p>
+                </div>
+                <a href="@Url.Action("Create", "Property")" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>
+                    Crear Nueva Propiedad
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <nav class="flex flex-wrap gap-2">
+                    <a href="@Url.Action("Dashboard", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-home mr-2"></i>
+                        Home del agente
+                    </a>
+                    <a href="@Url.Action("Profile", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-user mr-2"></i>
+                        Mi perfil
+                    </a>
+                    <a href="@Url.Action("Properties", "Agent")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-building mr-2"></i>
+                        Mantenimiento de propiedades
+                    </a>
+                    <a href="@Url.Action("Logout", "Account")" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-red-700 bg-white border border-red-300 hover:bg-red-50 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Cerrar sesión
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Properties Section -->
+        <div>
+            @if (!Model.Properties.Any())
+            {
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                    <div class="max-w-md mx-auto">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                            <i class="fas fa-info-circle text-2xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes propiedades disponibles</h3>
+                        <p class="text-sm text-gray-500 mb-6">Pronto podrás crear y gestionar propiedades</p>
+                        <a href="@Url.Action("Create", "Property")" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-plus mr-2"></i>
+                            Crear Primera Propiedad
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach (var property in Model.Properties)
+                    {
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="relative">
+                                <img src="@(property.MainImageUrl)" 
+                                     alt="@property.Code" 
+                                     class="w-full h-48 object-cover">
+                            </div>
+                            
+                            <div class="p-5">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">@property.Code</h3>
+                                <div class="space-y-2 mb-4">
+                                    <p class="text-sm text-gray-600">
+                                        <span class="font-medium">@property.PropertyType</span> - 
+                                        <span class="font-medium">@property.SaleType</span>
+                                    </p>
+                                    <p class="text-xl font-bold text-blue-600">
+                                        @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))
+                                    </p>
+                                    <p class="text-sm text-gray-500">
+                                        <i class="fas fa-bed mr-1"></i>@property.Bedrooms hab • 
+                                        <i class="fas fa-bath mr-1"></i>@property.Bathrooms baños • 
+                                        <i class="fas fa-ruler-combined mr-1"></i>@property.Size m²
+                                    </p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="@Url.Action("Edit", "Property", new { id = property.Id })" 
+                                       class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">
+                                        <i class="fas fa-edit mr-2"></i>
+                                        Editar
+                                    </a>
+                                    <button type="button" 
+                                            onclick="confirmDelete('@property.Id', '@property.Code')"
+                                            class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                        <i class="fas fa-trash mr-2"></i>
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div id="deleteModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal()"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fas fa-exclamation-triangle text-red-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Confirmar Eliminación
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                ¿Está seguro que desea eliminar la propiedad <strong id="propertyCode"></strong>?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" 
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Aceptar
+                    </button>
+                </form>
+                <button type="button" 
+                        onclick="closeModal()"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(propertyId, propertyCode) {
+            document.getElementById('propertyCode').textContent = propertyCode;
+            document.getElementById('deleteForm').action = '/Property/Delete/' + propertyId;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+    </script>
+}

@@ -1,0 +1,136 @@
+@model RealEstateApp.WebApp.Models.Property.CreatePropertyViewModel
+@{
+    ViewData["Title"] = "Crear Nueva Propiedad";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Menú del Agente</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="@Url.Action("Dashboard", "Agent")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-home"></i> Home del agente
+                    </a>
+                    <a href="@Url.Action("Profile", "Agent")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user"></i> Mi perfil
+                    </a>
+                    <a href="@Url.Action("Properties", "Agent")" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-building"></i> Mantenimiento de propiedades
+                    </a>
+                    <a href="@Url.Action("Logout", "Account")" class="list-group-item list-group-item-action text-danger">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Crear Nueva Propiedad</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+                        </div>
+                    }
+
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="PropertyTypeId" class="form-label">Tipo de Propiedad</label>
+                                    <select asp-for="PropertyTypeId" asp-items="Model.PropertyTypes" class="form-select">
+                                        <option value="">Seleccione...</option>
+                                    </select>
+                                    <span asp-validation-for="PropertyTypeId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="SaleTypeId" class="form-label">Tipo de Venta</label>
+                                    <select asp-for="SaleTypeId" asp-items="Model.SaleTypes" class="form-select">
+                                        <option value="">Seleccione...</option>
+                                    </select>
+                                    <span asp-validation-for="SaleTypeId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Price" class="form-label">Precio (DOP)</label>
+                                    <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Size" class="form-label">Tamaño (m²)</label>
+                                    <input asp-for="Size" class="form-control" type="number" step="0.01" />
+                                    <span asp-validation-for="Size" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Bedrooms" class="form-label">Habitaciones</label>
+                                    <input asp-for="Bedrooms" class="form-control" type="number" />
+                                    <span asp-validation-for="Bedrooms" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Bathrooms" class="form-label">Baños</label>
+                                    <input asp-for="Bathrooms" class="form-control" type="number" />
+                                    <span asp-validation-for="Bathrooms" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Descripción</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SelectedImprovementIds" class="form-label">Mejoras</label>
+                            <select asp-for="SelectedImprovementIds" asp-items="Model.Improvements" class="form-select" multiple>
+                            </select>
+                            <small class="text-muted">Mantenga presionado Ctrl para seleccionar múltiples opciones</small>
+                            <span asp-validation-for="SelectedImprovementIds" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Images" class="form-label">Imágenes (1-4 imágenes)</label>
+                            <input asp-for="Images" class="form-control" type="file" multiple accept="image/*" />
+                            <span asp-validation-for="Images" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Properties", "Agent")" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Crear Propiedad
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,23 @@
+namespace RealEstateApp.WebApp.Models.Property
+{
+    public class PropertyDetailViewModel
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public string PropertyType { get; set; } = string.Empty;
+        public string SaleType { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public int Bedrooms { get; set; }
+        public int Bathrooms { get; set; }
+        public decimal Size { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public bool IsSold { get; set; }
+        public List<string> ImageUrls { get; set; } = new();
+        public List<string> Improvements { get; set; } = new();
+        public string AgentName { get; set; } = string.Empty;
+        public string AgentPhone { get; set; } = string.Empty;
+        public string AgentEmail { get; set; } = string.Empty;
+        public string AgentProfilePicture { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+    }
+}
