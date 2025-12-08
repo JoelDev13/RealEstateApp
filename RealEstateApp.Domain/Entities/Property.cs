@@ -25,12 +25,19 @@ namespace RealEstateApp.Domain.Entities
         public ICollection<PropertyImage> Images { get; set; }
             = new HashSet<PropertyImage>();
 
-        public bool IsSold { get; set; } = false;
+        public ICollection<FavoriteProperty> FavoriteProperties { get; set; }
+            = new HashSet<FavoriteProperty>();
+
+        public ICollection<Offer> Offers { get; set; }
+            = new HashSet<Offer>();
+
+        public PropertyStatus Status { get; set; } = PropertyStatus.Disponible;
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
         // Propiedad de conveniencia para compatibilidad
         public double Size => SizeInSquareMeters;
+        public bool IsSold => Status == PropertyStatus.Vendida;
     }
 }

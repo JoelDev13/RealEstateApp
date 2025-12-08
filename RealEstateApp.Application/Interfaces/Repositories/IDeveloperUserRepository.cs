@@ -1,10 +1,13 @@
 ﻿using RealEstateApp.Application.Dtos.DeveloperUsers;
 
-public interface IDeveloperUserRepository
+namespace RealEstateApp.Application.Interfaces.Repositories
 {
-    Task<List<DeveloperUserDto>> GetAllDevelopersAsync();
-    Task<DeveloperUserDto?> GetByIdAsync(string id);
-    Task<string> CreateDeveloperAsync(DeveloperUserCreateDto dto);
-    Task UpdateDeveloperAsync(DeveloperUserUpdateDto dto);
-    Task SetActiveStatusAsync(string id, bool isActive);
+    public interface IDeveloperUserRepository
+    {
+        Task<List<DeveloperUserDto>> GetAllDevelopersAsync();
+        Task<DeveloperUserDto?> GetByIdAsync(string id);
+        Task<string> CreateDeveloperAsync(DeveloperUserCreateDto dto);
+        Task UpdateDeveloperAsync(DeveloperUserUpdateDto dto);
+        Task SetActiveStatusAsync(string id, bool isActive);
+    }
 }

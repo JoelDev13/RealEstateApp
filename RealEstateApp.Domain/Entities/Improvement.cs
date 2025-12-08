@@ -13,5 +13,8 @@ namespace RealEstateApp.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? UpdatedAt { get; set; }
+
+        public ICollection<Property> Properties { get; set; }
+            = new HashSet<Property>();
     }
 }

@@ -1,4 +1,4 @@
-﻿using RealEstateApp.Application.Dtos.DeveloperUsers;
+using RealEstateApp.Application.Dtos.DeveloperUsers;
 
 namespace RealEstateApp.Application.Interfaces.Services
 {

@@ -7,10 +7,13 @@ namespace RealEstateApp.Application.Interfaces.Services
     {
         Task<List<Property>> GetPropertiesByAgentAsync(string agentId);
         Task<List<Property>> GetAvailablePropertiesByAgentAsync(string agentId);
+        Task<List<Property>> GetSoldPropertiesByAgentAsync(string agentId);
         Task<Property?> GetPropertyByIdAsync(string id);
-        Task<Property> CreatePropertyAsync(CreatePropertyDto dto);
-        Task<Property> UpdatePropertyAsync(UpdatePropertyDto dto);
-        Task<bool> DeletePropertyAsync(string id);
+        Task<Property> CreatePropertyAsync(CreatePropertyDto dto, string agentId);
+        Task<Property> UpdatePropertyAsync(int propertyId, UpdatePropertyDto dto, string agentId);
+        Task<bool> DeletePropertyAsync(int propertyId, string agentId);
+        Task<Property> GetPropertyDetailAsync(int propertyId);
         Task<string> GenerateUniquePropertyCodeAsync();
+        Task<bool> IsPropertyOwnedByAgentAsync(int propertyId, string agentId);
     }
 }

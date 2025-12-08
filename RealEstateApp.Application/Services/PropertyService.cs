@@ -2,6 +2,7 @@ using RealEstateApp.Application.Dtos.Property;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Entities;
+using RealEstateApp.Domain.Enums;
 
 namespace RealEstateApp.Application.Services
 {
@@ -11,17 +12,20 @@ namespace RealEstateApp.Application.Services
         private readonly IPropertyTypeRepository _propertyTypeRepository;
         private readonly ISaleTypeRepository _saleTypeRepository;
         private readonly IImprovementRepository _improvementRepository;
+        private readonly IOfferRepository _offerRepository;
 
         public PropertyService(
             IPropertyRepository propertyRepository,
             IPropertyTypeRepository propertyTypeRepository,
             ISaleTypeRepository saleTypeRepository,
-            IImprovementRepository improvementRepository)
+            IImprovementRepository improvementRepository,
+            IOfferRepository offerRepository)
         {
             _propertyRepository = propertyRepository;
             _propertyTypeRepository = propertyTypeRepository;
             _saleTypeRepository = saleTypeRepository;
             _improvementRepository = improvementRepository;
+            _offerRepository = offerRepository;
         }
 
         public async Task<List<Property>> GetPropertiesByAgentAsync(string agentId)
@@ -34,6 +38,12 @@ namespace RealEstateApp.Application.Services
             return await _propertyRepository.GetAvailableByAgentAsync(agentId);
         }
 
+        public async Task<List<Property>> GetSoldPropertiesByAgentAsync(string agentId)
+        {
+            var allProperties = await _propertyRepository.GetByAgentAsync(agentId);
+            return allProperties.Where(p => p.Status == PropertyStatus.Vendida).ToList();
+        }
+
         public async Task<Property?> GetPropertyByIdAsync(string id)
         {
             if (int.TryParse(id, out int propertyId))
@@ -43,18 +53,9 @@ namespace RealEstateApp.Application.Services
             return null;
         }
 
-        public async Task<bool> DeletePropertyAsync(string id)
+        public async Task<Property> CreatePropertyAsync(CreatePropertyDto dto, string agentId)
         {
-            if (int.TryParse(id, out int propertyId))
-            {
-                return await _propertyRepository.DeleteAsync(propertyId);
-            }
-            return false;
-        }
-
-        public async Task<Property> CreatePropertyAsync(CreatePropertyDto dto)
-        {
-            // Validar que existan los tipos
+            // Convertir IDs a números
             if (!int.TryParse(dto.PropertyTypeId, out int propertyTypeId))
             {
                 throw new InvalidOperationException("ID de tipo de propiedad inválido");
@@ -64,20 +65,13 @@ namespace RealEstateApp.Application.Services
                 throw new InvalidOperationException("ID de tipo de venta inválido");
             }
 
-            var propertyType = await _propertyTypeRepository.GetByIdAsync(propertyTypeId);
-            var saleType = await _saleTypeRepository.GetByIdAsync(saleTypeId);
+            // Obtener mejoras
+            var improvementIds = dto.ImprovementIds
+                .Where(id => int.TryParse(id, out _))
+                .Select(id => int.Parse(id))
+                .ToList();
 
-            if (propertyType == null || saleType == null)
-            {
-                throw new InvalidOperationException("No hay tipo de propiedades o tipo de ventas creadas");
-            }
-
-            // Valida que existan las mejoras
             var improvements = await _improvementRepository.GetByIdsAsync(dto.ImprovementIds);
-            if (!improvements.Any())
-            {
-                throw new InvalidOperationException("No hay mejoras creadas");
-            }
 
             var property = new Property
             {
@@ -89,8 +83,8 @@ namespace RealEstateApp.Application.Services
                 SizeInSquareMeters = (double)dto.Size,
                 Bedrooms = dto.Bedrooms,
                 Bathrooms = dto.Bathrooms,
-                AgentId = dto.AgentId,
-                IsSold = false,
+                AgentId = agentId,
+                Status = PropertyStatus.Disponible,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true,
                 Improvements = improvements.ToHashSet()
@@ -99,12 +93,11 @@ namespace RealEstateApp.Application.Services
             return await _propertyRepository.AddAsync(property);
         }
 
-        public async Task<Property> UpdatePropertyAsync(UpdatePropertyDto dto)
+        public async Task<Property> UpdatePropertyAsync(int propertyId, UpdatePropertyDto dto, string agentId)
         {
-            if (!int.TryParse(dto.Id, out int propertyId))
-            {
-                throw new KeyNotFoundException("ID de propiedad inválido");
-            }
+            // Validate ownership
+            if (!await IsPropertyOwnedByAgentAsync(propertyId, agentId))
+                throw new UnauthorizedAccessException("You don't own this property");
 
             var property = await _propertyRepository.GetByIdAsync(propertyId);
             if (property == null)
@@ -112,7 +105,7 @@ namespace RealEstateApp.Application.Services
                 throw new KeyNotFoundException("Propiedad no encontrada");
             }
 
-            // Valida que existan los tipos
+            // Convertir IDs a números
             if (!int.TryParse(dto.PropertyTypeId, out int propertyTypeId))
             {
                 throw new InvalidOperationException("ID de tipo de propiedad inválido");
@@ -122,20 +115,8 @@ namespace RealEstateApp.Application.Services
                 throw new InvalidOperationException("ID de tipo de venta inválido");
             }
 
-            var propertyType = await _propertyTypeRepository.GetByIdAsync(propertyTypeId);
-            var saleType = await _saleTypeRepository.GetByIdAsync(saleTypeId);
-
-            if (propertyType == null || saleType == null)
-            {
-                throw new InvalidOperationException("No hay tipo de propiedades o tipo de ventas creadas");
-            }
-
-            // Valida que existan las mejoras
+            // Obtener mejoras
             var improvements = await _improvementRepository.GetByIdsAsync(dto.ImprovementIds);
-            if (!improvements.Any())
-            {
-                throw new InvalidOperationException("No hay mejoras creadas");
-            }
 
             property.PropertyTypeId = propertyTypeId;
             property.SaleTypeId = saleTypeId;
@@ -150,6 +131,39 @@ namespace RealEstateApp.Application.Services
             property.Improvements = improvements.ToHashSet();
 
             return await _propertyRepository.UpdateAsync(property);
+        }
+
+        public async Task<bool> DeletePropertyAsync(int propertyId, string agentId)
+        {
+            // Validate ownership
+            if (!await IsPropertyOwnedByAgentAsync(propertyId, agentId))
+                throw new UnauthorizedAccessException("You don't own this property");
+
+            var property = await _propertyRepository.GetByIdAsync(propertyId);
+            if (property == null)
+                return false;
+
+            // Delete related offers
+            var offers = await _offerRepository.GetByPropertyAsync(propertyId);
+            foreach (var offer in offers)
+            {
+                await _offerRepository.DeleteAsync(offer);
+            }
+
+            // Delete property (cascade will handle images and improvements)
+            return await _propertyRepository.DeleteAsync(propertyId);
+        }
+
+        public async Task<Property> GetPropertyDetailAsync(int propertyId)
+        {
+            return await _propertyRepository.GetByIdAsync(propertyId)
+                ?? throw new KeyNotFoundException("Property not found");
+        }
+
+        public async Task<bool> IsPropertyOwnedByAgentAsync(int propertyId, string agentId)
+        {
+            var property = await _propertyRepository.GetByIdAsync(propertyId);
+            return property?.AgentId == agentId;
         }
 
         public async Task<string> GenerateUniquePropertyCodeAsync()

@@ -18,6 +18,12 @@ namespace RealEstateApp.Infrastructure.Persistence
             services.AddScoped<IPropertyTypeRepository, PropertyTypeRepository>();
             services.AddScoped<IPropertyRepository, PropertyRepository>();
             services.AddScoped<IImprovementRepository, ImprovementRepository>();
+            services.AddScoped<IPropertyTypeRepository, PropertyTypeRepository>();
+            services.AddScoped<ISaleTypeRepository, SaleTypeRepository>();
+            services.AddScoped<IImprovementRepository, ImprovementRepository>();
+            services.AddScoped<IPropertyRepository, PropertyRepository>();
+            services.AddScoped<IFavoritePropertyRepository, FavoritePropertyRepository>();
+            services.AddScoped<IOfferRepository, OfferRepository>();
 
         }
     }

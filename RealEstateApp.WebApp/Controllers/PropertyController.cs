@@ -38,12 +38,6 @@ namespace RealEstateApp.WebApp.Controllers
             var saleTypes = await _saleTypeService.GetAllAsync();
             var improvements = await _improvementService.GetAllAsync();
 
-            if (!propertyTypes.Any() || !saleTypes.Any() || !improvements.Any())
-            {
-                TempData["Error"] = "No hay tipo de propiedades, tipo de ventas o mejoras creadas";
-                return RedirectToAction("Properties", "Agent");
-            }
-
             var viewModel = new CreatePropertyViewModel
             {
                 PropertyTypes = propertyTypes.Select(pt => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
@@ -73,12 +67,6 @@ namespace RealEstateApp.WebApp.Controllers
             var propertyTypes = await _propertyTypeService.GetAllAsync();
             var saleTypes = await _saleTypeService.GetAllAsync();
             var improvements = await _improvementService.GetAllAsync();
-
-            if (!propertyTypes.Any() || !saleTypes.Any() || !improvements.Any())
-            {
-                TempData["Error"] = "No hay tipo de propiedades, tipo de ventas o mejoras creadas";
-                return RedirectToAction("Properties", "Agent");
-            }
 
             if (!ModelState.IsValid)
             {
@@ -151,7 +139,7 @@ namespace RealEstateApp.WebApp.Controllers
             var dto = _mapper.Map<CreatePropertyDto>(model);
             dto.AgentId = userId;
 
-            await _propertyService.CreatePropertyAsync(dto);
+            await _propertyService.CreatePropertyAsync(dto, userId);
 
             TempData["Success"] = "Propiedad creada exitosamente";
             return RedirectToAction("Properties", "Agent");
@@ -174,12 +162,6 @@ namespace RealEstateApp.WebApp.Controllers
             var propertyTypes = await _propertyTypeService.GetAllAsync();
             var saleTypes = await _saleTypeService.GetAllAsync();
             var improvements = await _improvementService.GetAllAsync();
-
-            if (!propertyTypes.Any() || !saleTypes.Any() || !improvements.Any())
-            {
-                TempData["Error"] = "No hay tipo de propiedades, tipo de ventas o mejoras creadas";
-                return RedirectToAction("Properties", "Agent");
-            }
 
             var viewModel = _mapper.Map<EditPropertyViewModel>(property);
             
@@ -246,7 +228,7 @@ namespace RealEstateApp.WebApp.Controllers
 
             var dto = _mapper.Map<UpdatePropertyDto>(model);
             
-            await _propertyService.UpdatePropertyAsync(dto);
+            await _propertyService.UpdatePropertyAsync(property.Id, dto, userId);
 
             TempData["Success"] = "Propiedad actualizada exitosamente";
             return RedirectToAction("Properties", "Agent");
@@ -268,7 +250,7 @@ namespace RealEstateApp.WebApp.Controllers
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            await _propertyService.DeletePropertyAsync(id);
+            await _propertyService.DeletePropertyAsync(property.Id, userId);
 
             TempData["Success"] = "Propiedad eliminada exitosamente";
             return RedirectToAction("Properties", "Agent");

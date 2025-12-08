@@ -3,129 +3,180 @@
     ViewData["Title"] = "Crear Nueva Propiedad";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Menú del Agente</h5>
-                </div>
-                <div class="list-group list-group-flush">
-                    <a href="@Url.Action("Dashboard", "Agent")" class="list-group-item list-group-item-action">
-                        <i class="fas fa-home"></i> Home del agente
-                    </a>
-                    <a href="@Url.Action("Profile", "Agent")" class="list-group-item list-group-item-action">
-                        <i class="fas fa-user"></i> Mi perfil
-                    </a>
-                    <a href="@Url.Action("Properties", "Agent")" class="list-group-item list-group-item-action active">
-                        <i class="fas fa-building"></i> Mantenimiento de propiedades
-                    </a>
-                    <a href="@Url.Action("Logout", "Account")" class="list-group-item list-group-item-action text-danger">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                    </a>
-                </div>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg min-h-screen">
+            <div class="p-6 bg-gradient-to-r from-blue-600 to-indigo-600">
+                <h3 class="text-white font-bold text-lg">Panel del Agente</h3>
             </div>
+            <nav class="mt-6">
+                <a href="@Url.Action("Dashboard", "Agent")" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-home w-5 mr-3"></i> Home del agente
+                </a>
+                <a href="@Url.Action("Profile", "Agent")" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-user w-5 mr-3"></i> Mi perfil
+                </a>
+                <a href="@Url.Action("Properties", "Agent")" class="flex items-center px-6 py-3 bg-blue-50 text-blue-600 border-r-4 border-blue-600">
+                    <i class="fas fa-building w-5 mr-3"></i> Mantenimiento de propiedades
+                </a>
+                <form asp-action="Logout" asp-controller="Account" method="post" class="inline">
+                    <button type="submit" class="flex items-center w-full px-6 py-3 text-red-600 hover:bg-red-50 transition-colors">
+                        <i class="fas fa-sign-out-alt w-5 mr-3"></i> Cerrar sesión
+                    </button>
+                </form>
+            </nav>
         </div>
 
-        <div class="col-md-9">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Crear Nueva Propiedad</h4>
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Crear Nueva Propiedad</h1>
+                <p class="text-gray-600">Complete el formulario para agregar una nueva propiedad al sistema</p>
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                        <p class="text-red-700">@TempData["Error"]</p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    @if (TempData["Error"] != null)
-                    {
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
-                        </div>
-                    }
+            }
 
-                    <form asp-action="Create" method="post" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="PropertyTypeId" class="form-label">Tipo de Propiedad</label>
-                                    <select asp-for="PropertyTypeId" asp-items="Model.PropertyTypes" class="form-select">
-                                        <option value="">Seleccione...</option>
-                                    </select>
-                                    <span asp-validation-for="PropertyTypeId" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="SaleTypeId" class="form-label">Tipo de Venta</label>
-                                    <select asp-for="SaleTypeId" asp-items="Model.SaleTypes" class="form-select">
-                                        <option value="">Seleccione...</option>
-                                    </select>
-                                    <span asp-validation-for="SaleTypeId" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Price" class="form-label">Precio (DOP)</label>
-                                    <input asp-for="Price" class="form-control" type="number" step="0.01" />
-                                    <span asp-validation-for="Price" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Size" class="form-label">Tamaño (m²)</label>
-                                    <input asp-for="Size" class="form-control" type="number" step="0.01" />
-                                    <span asp-validation-for="Size" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Bedrooms" class="form-label">Habitaciones</label>
-                                    <input asp-for="Bedrooms" class="form-control" type="number" />
-                                    <span asp-validation-for="Bedrooms" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Bathrooms" class="form-label">Baños</label>
-                                    <input asp-for="Bathrooms" class="form-control" type="number" />
-                                    <span asp-validation-for="Bathrooms" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Description" class="form-label">Descripción</label>
-                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="SelectedImprovementIds" class="form-label">Mejoras</label>
-                            <select asp-for="SelectedImprovementIds" asp-items="Model.Improvements" class="form-select" multiple>
-                            </select>
-                            <small class="text-muted">Mantenga presionado Ctrl para seleccionar múltiples opciones</small>
-                            <span asp-validation-for="SelectedImprovementIds" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Images" class="form-label">Imágenes (1-4 imágenes)</label>
-                            <input asp-for="Images" class="form-control" type="file" multiple accept="image/*" />
-                            <span asp-validation-for="Images" class="text-danger"></span>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <a href="@Url.Action("Properties", "Agent")" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Volver
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Crear Propiedad
-                            </button>
-                        </div>
-                    </form>
+            <!-- Form Card -->
+            <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+                    <h2 class="text-2xl font-bold text-white">Información de la Propiedad</h2>
                 </div>
+                
+                <form asp-action="Create" method="post" enctype="multipart/form-data" class="p-8">
+                    <!-- Basic Information Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                            Información Básica
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label asp-for="PropertyTypeId" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Propiedad</label>
+                                <select asp-for="PropertyTypeId" asp-items="Model.PropertyTypes" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                    <option value="">Seleccione...</option>
+                                </select>
+                                <span asp-validation-for="PropertyTypeId" class="text-red-500 text-sm mt-1"></span>
+                            </div>
+                            <div>
+                                <label asp-for="SaleTypeId" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Venta</label>
+                                <select asp-for="SaleTypeId" asp-items="Model.SaleTypes" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                    <option value="">Seleccione...</option>
+                                </select>
+                                <span asp-validation-for="SaleTypeId" class="text-red-500 text-sm mt-1"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Property Details Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-home text-blue-600 mr-2"></i>
+                            Detalles de la Propiedad
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label asp-for="Price" class="block text-sm font-medium text-gray-700 mb-2">Precio (DOP)</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                                    <input asp-for="Price" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" type="number" step="0.01" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="Price" class="text-red-500 text-sm mt-1"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Size" class="block text-sm font-medium text-gray-700 mb-2">Tamaño (m²)</label>
+                                <div class="relative">
+                                    <input asp-for="Size" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" type="number" step="0.01" placeholder="0.00" />
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">m²</span>
+                                </div>
+                                <span asp-validation-for="Size" class="text-red-500 text-sm mt-1"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Bedrooms" class="block text-sm font-medium text-gray-700 mb-2">Habitaciones</label>
+                                <div class="relative">
+                                    <input asp-for="Bedrooms" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" type="number" placeholder="0" />
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                        <i class="fas fa-bed"></i>
+                                    </span>
+                                </div>
+                                <span asp-validation-for="Bedrooms" class="text-red-500 text-sm mt-1"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Bathrooms" class="block text-sm font-medium text-gray-700 mb-2">Baños</label>
+                                <div class="relative">
+                                    <input asp-for="Bathrooms" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" type="number" placeholder="0" />
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                        <i class="fas fa-bath"></i>
+                                    </span>
+                                </div>
+                                <span asp-validation-for="Bathrooms" class="text-red-500 text-sm mt-1"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-align-left text-blue-600 mr-2"></i>
+                            Descripción
+                        </h3>
+                        <div>
+                            <label asp-for="Description" class="block text-sm font-medium text-gray-700 mb-2">Descripción de la Propiedad</label>
+                            <textarea asp-for="Description" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none" rows="4" placeholder="Describe las características principales de la propiedad..."></textarea>
+                            <span asp-validation-for="Description" class="text-red-500 text-sm mt-1"></span>
+                        </div>
+                    </div>
+
+                    <!-- Additional Features Section -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-star text-blue-600 mr-2"></i>
+                            Características Adicionales
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label asp-for="SelectedImprovementIds" class="block text-sm font-medium text-gray-700 mb-2">Mejoras</label>
+                                <select asp-for="SelectedImprovementIds" asp-items="Model.Improvements" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" multiple size="4">
+                                </select>
+                                <p class="text-sm text-gray-500 mt-1">Mantenga presionado Ctrl para seleccionar múltiples opciones</p>
+                                <span asp-validation-for="SelectedImprovementIds" class="text-red-500 text-sm mt-1"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Images" class="block text-sm font-medium text-gray-700 mb-2">Imágenes de la Propiedad</label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                    <p class="text-sm text-gray-600 mb-2">Arrastra imágenes aquí o haz clic para seleccionar</p>
+                                    <input asp-for="Images" class="hidden" type="file" multiple accept="image/*" onchange="this.previousElementSibling.previousElementSibling.textContent = this.files.length + ' archivo(s) seleccionado(s)'" />
+                                    <button type="button" onclick="this.nextElementSibling.click()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                        Seleccionar Imágenes
+                                    </button>
+                                    <input type="file" multiple accept="image/*" class="hidden" />
+                                    <p class="text-xs text-gray-500 mt-2">Máximo 4 imágenes. Formatos: JPG, PNG, GIF</p>
+                                </div>
+                                <span asp-validation-for="Images" class="text-red-500 text-sm mt-1"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                        <a href="@Url.Action("Properties", "Agent")" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i> Volver
+                        </a>
+                        <button type="submit" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 flex items-center shadow-lg">
+                            <i class="fas fa-save mr-2"></i> Crear Propiedad
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -133,4 +184,17 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // File upload enhancement
+        document.querySelector('input[type="file"][multiple]').addEventListener('change', function(e) {
+            const fileCount = e.target.files.length;
+            const uploadText = document.querySelector('.fa-cloud-upload-alt').parentElement;
+            if (fileCount > 0) {
+                uploadText.innerHTML = `
+                    <i class="fas fa-check-circle text-4xl text-green-500 mb-3"></i>
+                    <p class="text-sm text-green-600 mb-2">${fileCount} archivo(s) seleccionado(s)</p>
+                `;
+            }
+        });
+    </script>
 }

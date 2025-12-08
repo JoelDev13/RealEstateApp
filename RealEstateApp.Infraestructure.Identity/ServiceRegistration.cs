@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using RealEstateApp.Domain.Settings;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Application.Interfaces.Services;
-using RealEstateApp.Domain.Settings;
 using RealEstateApp.Infraestructure.Identity.Context;
 using RealEstateApp.Infraestructure.Identity.Mappings;
 using RealEstateApp.Infraestructure.Identity.Repositories;
@@ -140,6 +139,9 @@ namespace RealEstateApp.Infrastructure.Identity
             #region Services
             services.AddScoped<Application.Interfaces.Services.IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
             services.AddScoped<Application.Interfaces.IAccountServiceForWebApi, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApi>();
+            services.AddScoped<IAdminUserService, AdminUserService>();
+            services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+            services.AddScoped<IDeveloperUserRepository, DeveloperUserRepository>();
             #endregion
 
             #region Exception Handler

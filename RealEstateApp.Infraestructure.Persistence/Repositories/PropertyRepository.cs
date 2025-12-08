@@ -14,6 +14,16 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
+        public async Task<List<Property>> GetAllAsync()
+        {
+            return await _context.Properties
+                .Include(p => p.PropertyType)
+                .Include(p => p.SaleType)
+                .Include(p => p.Images)
+                .Include(p => p.Improvements)
+                .ToListAsync();
+        }
+
         public async Task<List<Property>> GetByAgentAsync(string agentId)
         {
             return await _context.Properties
@@ -32,7 +42,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
                 .Include(p => p.SaleType)
                 .Include(p => p.Images)
                 .Include(p => p.Improvements)
-                .Where(p => p.AgentId == agentId && !p.IsSold)
+                .Where(p => p.AgentId == agentId && p.Status == Domain.Enums.PropertyStatus.Disponible)
                 .ToListAsync();
         }
 
@@ -50,6 +60,16 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
                 .Include(p => p.Images)
                 .Include(p => p.Improvements)
                 .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<Property?> GetByCodeAsync(string code)
+        {
+            return await _context.Properties
+                .Include(p => p.PropertyType)
+                .Include(p => p.SaleType)
+                .Include(p => p.Images)
+                .Include(p => p.Improvements)
+                .FirstOrDefaultAsync(p => p.Code == code);
         }
 
         public async Task<Property> AddAsync(Property property)

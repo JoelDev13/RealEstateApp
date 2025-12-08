@@ -36,6 +36,7 @@ namespace RealEstateApp.Infraestructure.Identity.Seeds
 
             // Usuario Agente
             var agenteUser = new AppUser
+
             {
                 UserName = "agente",
                 Email = "agente@realestateapp.com",

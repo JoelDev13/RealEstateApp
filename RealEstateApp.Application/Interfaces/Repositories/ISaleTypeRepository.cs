@@ -1,4 +1,4 @@
-﻿using RealEstateApp.Domain.Entities;
+using RealEstateApp.Domain.Entities;
 
 namespace RealEstateApp.Application.Interfaces.Repositories
 {

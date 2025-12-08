@@ -1,5 +1,8 @@
 using AutoMapper;
+using RealEstateApp.Application.Dtos.Improvements;
 using RealEstateApp.Application.Dtos.Property;
+using RealEstateApp.Application.Dtos.PropertyTypes;
+using RealEstateApp.Application.Dtos.SaleTypes;
 using RealEstateApp.Domain.Entities;
 
 namespace RealEstateApp.Application.Mappings.EntityToDto
@@ -27,6 +30,27 @@ namespace RealEstateApp.Application.Mappings.EntityToDto
                 .ForMember(dest => dest.Improvements, opt => opt.Ignore())
                 .ForMember(dest => dest.PropertyType, opt => opt.Ignore())
                 .ForMember(dest => dest.SaleType, opt => opt.Ignore());
+
+            // PropertyType mappings
+            CreateMap<PropertyTypeDto, PropertyType>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+
+            CreateMap<SaleTypeDto, SaleType>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+
+            CreateMap<ImprovementDto, Improvement>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true));
+
+            CreateMap<PropertyType, PropertyTypeDto>();
+            CreateMap<SaleType, SaleTypeDto>();
+            CreateMap<Improvement, ImprovementDto>();
         }
     }
 }

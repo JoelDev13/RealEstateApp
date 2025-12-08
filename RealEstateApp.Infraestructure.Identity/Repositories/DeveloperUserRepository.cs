@@ -2,7 +2,7 @@
 using RealEstateApp.Application.Dtos.DeveloperUsers;
 using RealEstateApp.Domain.Enums;
 using RealEstateApp.Infrastructure.Identity.Entities;
-
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Infrastructure.Identity.Repositories
 {

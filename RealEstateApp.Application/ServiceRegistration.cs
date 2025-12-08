@@ -6,7 +6,6 @@ using RealEstateApp.Application.Behaviors;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Services;
 using RealEstateApp.Application.Interfaces.Repositories;
-using RealEstateApp.Application.Mappings;
 using System.Reflection;
 using RealEstateApp.Domain.Entities;
 
@@ -29,16 +28,20 @@ namespace RealEstateApp.Application
 
             services.AddValidatorsFromAssembly(assembly);
 
-            //Services - Solo mapeos Entity <-> DTO (los mapeos DTO <-> ViewModel están en WebApp)
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             
             // Services (Los repositorios se registran en Infrastructure.Persistence)
             services.AddScoped<ISaleTypeService, SaleTypeService>();
             services.AddScoped<IPropertyTypeService, PropertyTypeService>();
             services.AddScoped<IImprovementService, ImprovementService>();
-            services.AddScoped<IAdminUserService, AdminUserService>();
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             services.AddScoped<IPropertyService, PropertyService>();
+            services.AddScoped<IDeveloperUserService, DeveloperUserService>();
+            
+            // New services for client and agent functionality
+            services.AddScoped<IFavoriteService, FavoriteService>();
+            services.AddScoped<IOfferService, OfferService>();
+            services.AddScoped<IAgentProfileService, AgentProfileService>();
 
             return services;
         }

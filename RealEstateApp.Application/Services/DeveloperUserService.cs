@@ -1,6 +1,7 @@
-﻿using RealEstateApp.Application.Dtos.DeveloperUsers;
+using RealEstateApp.Application.Dtos.DeveloperUsers;
 using RealEstateApp.Application.Exceptions;
 using RealEstateApp.Application.Interfaces.Services;
+using RealEstateApp.Application.Interfaces.Repositories;
 
 namespace RealEstateApp.Application.Services
 {

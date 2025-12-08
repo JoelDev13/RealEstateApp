@@ -1,0 +1,38 @@
+using FluentValidation;
+using RealEstateApp.Application.Features.Agents.Queries;
+
+namespace RealEstateApp.Application.Features.Agents.Validators
+{
+    public class GetAgentByIdQueryValidator : AbstractValidator<GetAgentByIdQuery>
+    {
+        public GetAgentByIdQueryValidator()
+        {
+            RuleFor(x => x.Id)
+                .NotEmpty().WithMessage("El ID del agente es requerido")
+                .NotNull().WithMessage("El ID del agente no puede ser nulo");
+        }
+    }
+
+    public class GetAgentPropertiesQueryValidator : AbstractValidator<GetAgentPropertiesQuery>
+    {
+        public GetAgentPropertiesQueryValidator()
+        {
+            RuleFor(x => x.AgentId)
+                .NotEmpty().WithMessage("El ID del agente es requerido")
+                .NotNull().WithMessage("El ID del agente no puede ser nulo");
+        }
+    }
+
+    public class ChangeAgentStatusCommandValidator : AbstractValidator<ChangeAgentStatusCommand>
+    {
+        public ChangeAgentStatusCommandValidator()
+        {
+            RuleFor(x => x.Id)
+                .NotEmpty().WithMessage("El ID del agente es requerido")
+                .NotNull().WithMessage("El ID del agente no puede ser nulo");
+
+            RuleFor(x => x.IsActive)
+                .NotNull().WithMessage("El estado es requerido");
+        }
+    }
+}

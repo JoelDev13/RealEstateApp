@@ -1,4 +1,4 @@
-﻿namespace RealEstateApp.Application.Interfaces.Repositories
+namespace RealEstateApp.Application.Interfaces.Repositories
 {
     public interface IRepository<T> where T : class
     {

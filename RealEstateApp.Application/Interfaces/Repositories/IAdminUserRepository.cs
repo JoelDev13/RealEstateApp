@@ -1,4 +1,4 @@
-﻿using RealEstateApp.Application.Dtos.AdminUsers;
+using RealEstateApp.Application.Dtos.AdminUsers;
 
 namespace RealEstateApp.Application.Interfaces.Repositories
 {
@@ -6,10 +6,8 @@ namespace RealEstateApp.Application.Interfaces.Repositories
     {
         Task<List<AdminUserDto>> GetAllAdminsAsync();
         Task<AdminUserDto?> GetByIdAsync(string id);
-
         Task<string> CreateAdminAsync(AdminUserCreateDto dto);
         Task UpdateAdminAsync(AdminUserUpdateDto dto);
-
         Task SetActiveStatusAsync(string id, bool isActive);
     }
 }
