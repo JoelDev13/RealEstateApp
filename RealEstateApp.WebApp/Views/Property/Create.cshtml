@@ -153,17 +153,27 @@
                             <div>
                                 <label asp-for="Images" class="block text-sm font-medium text-gray-700 mb-2">Imágenes de la Propiedad</label>
                                 <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
-                                    <p class="text-sm text-gray-600 mb-2">Arrastra imágenes aquí o haz clic para seleccionar</p>
-                                    <input asp-for="Images" class="hidden" type="file" multiple accept="image/*" onchange="this.previousElementSibling.previousElementSibling.textContent = this.files.length + ' archivo(s) seleccionado(s)'" />
-                                    <button type="button" onclick="this.nextElementSibling.click()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3 upload-icon"></i>
+                                    <p class="text-sm text-gray-600 mb-2 upload-text">
+                                        Arrastra imágenes aquí o haz clic para seleccionar
+                                    </p>
+                                    <input asp-for="Images"
+                                           id="ImagesInput"
+                                           class="hidden"
+                                           type="file"
+                                           multiple
+                                           accept="image/*" />
+                                    <button type="button"
+                                            onclick="document.getElementById('ImagesInput').click()"
+                                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                                         Seleccionar Imágenes
                                     </button>
-                                    <input type="file" multiple accept="image/*" class="hidden" />
+
                                     <p class="text-xs text-gray-500 mt-2">Máximo 4 imágenes. Formatos: JPG, PNG, GIF</p>
                                 </div>
                                 <span asp-validation-for="Images" class="text-red-500 text-sm mt-1"></span>
                             </div>
+
                         </div>
                     </div>
 
@@ -185,16 +195,27 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // File upload enhancement
-        document.querySelector('input[type="file"][multiple]').addEventListener('change', function(e) {
+        const imagesInput = document.getElementById('ImagesInput');
+        const uploadContainer = imagesInput.closest('.border-dashed');
+        const uploadIcon = uploadContainer.querySelector('.upload-icon');
+        const uploadText = uploadContainer.querySelector('.upload-text');
+
+        imagesInput.addEventListener('change', function (e) {
             const fileCount = e.target.files.length;
-            const uploadText = document.querySelector('.fa-cloud-upload-alt').parentElement;
             if (fileCount > 0) {
-                uploadText.innerHTML = `
-                    <i class="fas fa-check-circle text-4xl text-green-500 mb-3"></i>
-                    <p class="text-sm text-green-600 mb-2">${fileCount} archivo(s) seleccionado(s)</p>
-                `;
+                uploadIcon.classList.remove('fa-cloud-upload-alt', 'text-gray-400');
+                uploadIcon.classList.add('fa-check-circle', 'text-green-500');
+                uploadText.textContent = `${fileCount} archivo(s) seleccionado(s)`;
+                uploadText.classList.remove('text-gray-600');
+                uploadText.classList.add('text-green-600');
+            } else {
+                uploadIcon.classList.remove('fa-check-circle', 'text-green-500');
+                uploadIcon.classList.add('fa-cloud-upload-alt', 'text-gray-400');
+                uploadText.textContent = 'Arrastra imágenes aquí o haz clic para seleccionar';
+                uploadText.classList.remove('text-green-600');
+                uploadText.classList.add('text-gray-600');
             }
         });
     </script>
 }
+

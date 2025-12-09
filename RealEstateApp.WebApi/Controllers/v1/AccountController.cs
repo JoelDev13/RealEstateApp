@@ -1,15 +1,11 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateApp.WebApi.Controllers;
-using RealEstateApp.WebApi.Handlers;
-using RealEstateApp.WebApp.Handlers;
-using RealEstateApp.Application;
 using RealEstateApp.Application.Dtos.Auth;
 using RealEstateApp.Application.Interfaces;
 using RealEstateApp.Domain.Enums;
+using RealEstateApp.WebApp.Helpers;
 using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel.DataAnnotations;
 
 namespace RealEstateApp.WebApi.Controllers.v1
 {

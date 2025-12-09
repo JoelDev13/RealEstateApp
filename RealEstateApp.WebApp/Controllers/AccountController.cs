@@ -6,7 +6,7 @@ using RealEstateApp.Application.Dtos.Auth;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Enums;
 using RealEstateApp.Infrastructure.Identity.Entities;
-using RealEstateApp.WebApp.Handlers;
+using RealEstateApp.WebApp.Helpers;
 
 namespace RealEstateApp.WebApp.Controllers
 {
@@ -78,17 +78,16 @@ namespace RealEstateApp.WebApp.Controllers
 
                     if (result.Succeeded)
                     {
-                        // Si se registro correctamente y hay una imagen, subirla
-                        if (profilePicture != null && result.Data != null)
+                        // Si se registró correctamente y hay una imagen, subirla
+                        if (profilePicture != null && profilePicture.Length > 0 && result.Data != null)
                         {
-                            string? imagePath = await FileHandler.UploadAsync(profilePicture, result.Data.Id, "avatars");
+                            string? imagePath = FileHandler.Upload(profilePicture, result.Data.Id, "avatars");
 
                             if (!string.IsNullOrEmpty(imagePath))
                             {
-                                // Actualiza el usuario con la ruta de la imagen
                                 model.Id = result.Data.Id;
                                 model.ProfilePicture = imagePath;
-                                model.Password = null; // No envia contraseña de nuevo
+                                model.Password = null;
                                 model.ConfirmPassword = null;
 
                                 await _accountService.EditUser(model, origin);

@@ -1,6 +1,7 @@
-using RealEstateApp.Application.Interfaces.Services;
-using RealEstateApp.Application.Dtos.Agent;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using RealEstateApp.Application.Dtos.Agent;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Infrastructure.Identity.Entities;
 
 namespace RealEstateApp.Infraestructure.Identity.Services
@@ -8,12 +9,10 @@ namespace RealEstateApp.Infraestructure.Identity.Services
     public class AgentService : IAgentService
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly IFileHandler _fileHandler;
 
-        public AgentService(UserManager<AppUser> userManager, IFileHandler fileHandler)
+        public AgentService(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
-            _fileHandler = fileHandler;
         }
 
         public async Task<bool> UpdateProfileAsync(string agentId, AgentProfileDto model)
@@ -34,13 +33,12 @@ namespace RealEstateApp.Infraestructure.Identity.Services
                 {
                     try
                     {
-                        var imagePath = await _fileHandler.UploadAsync(
-                            model.ProfileImage, 
-                            user.Id, 
-                            "users", 
-                            isEditMode: !string.IsNullOrEmpty(user.ProfilePicture), 
-                            imagePath: user.ProfilePicture ?? string.Empty);
-                        
+                        var imagePath = await UploadProfileImageAsync(
+                            model.ProfileImage,
+                            user.Id,
+                            user.ProfilePicture
+                        );
+
                         if (!string.IsNullOrEmpty(imagePath))
                         {
                             user.ProfilePicture = imagePath;
@@ -48,9 +46,7 @@ namespace RealEstateApp.Infraestructure.Identity.Services
                     }
                     catch (Exception ex)
                     {
-                        // Log error but continue with other updates
                         System.Diagnostics.Debug.WriteLine($"Error uploading profile image: {ex.Message}");
-                        // Don't throw, just skip image update
                     }
                 }
 
@@ -79,6 +75,62 @@ namespace RealEstateApp.Infraestructure.Identity.Services
                 PhoneNumber = user.PhoneNumber
             };
         }
+
+        private async Task<string?> UploadProfileImageAsync(
+            IFormFile file,
+            string userId,
+            string? currentImagePath)
+        {
+            const long maxFileSize = 5 * 1024 * 1024;
+            if (file.Length <= 0 || file.Length > maxFileSize)
+            {
+                return null;
+            }
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+            var ext = Path.GetExtension(file.FileName)?.ToLowerInvariant();
+
+            if (string.IsNullOrEmpty(ext) || !allowedExtensions.Contains(ext))
+            {
+                return null;
+            }
+
+            var basePath = Path.Combine("Images", "users", userId);
+            var physicalPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                basePath
+            );
+
+            if (!Directory.Exists(physicalPath))
+            {
+                Directory.CreateDirectory(physicalPath);
+            }
+
+            var fileName = $"{Guid.NewGuid()}{ext}";
+            var fullPath = Path.Combine(physicalPath, fileName);
+
+            using (var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            if (!string.IsNullOrWhiteSpace(currentImagePath))
+            {
+                var relativeOldPath = currentImagePath.TrimStart('/').Replace("\\", "/");
+                var oldFullPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    relativeOldPath
+                );
+
+                if (File.Exists(oldFullPath))
+                {
+                    File.Delete(oldFullPath);
+                }
+            }
+            var relativePath = "/" + Path.Combine(basePath, fileName).Replace("\\", "/");
+            return relativePath;
+        }
     }
 }
-

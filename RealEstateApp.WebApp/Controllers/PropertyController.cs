@@ -1,11 +1,12 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Dtos.Property;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Enums;
+using RealEstateApp.WebApp.Helpers;
 using RealEstateApp.WebApp.Models.Property;
 using System.Security.Claims;
-using AutoMapper;
 
 namespace RealEstateApp.WebApp.Controllers
 {
@@ -38,6 +39,12 @@ namespace RealEstateApp.WebApp.Controllers
             var saleTypes = await _saleTypeService.GetAllAsync();
             var improvements = await _improvementService.GetAllAsync();
 
+            if (!propertyTypes.Any() || !saleTypes.Any() || !improvements.Any())
+            {
+                TempData["Error"] = "No se puede crear una propiedad porque faltan tipos de propiedad, tipos de venta o mejoras creadas.";
+                return RedirectToAction("Properties", "Agent");
+            }
+
             var viewModel = new CreatePropertyViewModel
             {
                 PropertyTypes = propertyTypes.Select(pt => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
@@ -68,6 +75,12 @@ namespace RealEstateApp.WebApp.Controllers
             var saleTypes = await _saleTypeService.GetAllAsync();
             var improvements = await _improvementService.GetAllAsync();
 
+            if (!propertyTypes.Any() || !saleTypes.Any() || !improvements.Any())
+            {
+                TempData["Error"] = "No se puede crear una propiedad porque faltan tipos de propiedad, tipos de venta o mejoras creadas.";
+                return RedirectToAction("Properties", "Agent");
+            }
+
             if (!ModelState.IsValid)
             {
                 model.PropertyTypes = propertyTypes.Select(pt => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
@@ -92,7 +105,7 @@ namespace RealEstateApp.WebApp.Controllers
             if (model.Images == null || !model.Images.Any())
             {
                 ModelState.AddModelError("Images", "Debe seleccionar al menos una imagen");
-                
+
                 model.PropertyTypes = propertyTypes.Select(pt => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Value = pt.Id.ToString(),
@@ -115,7 +128,7 @@ namespace RealEstateApp.WebApp.Controllers
             if (model.Images.Count > 4)
             {
                 ModelState.AddModelError("Images", "Puede seleccionar máximo 4 imágenes");
-                
+
                 model.PropertyTypes = propertyTypes.Select(pt => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Value = pt.Id.ToString(),
@@ -135,9 +148,43 @@ namespace RealEstateApp.WebApp.Controllers
                 return View(model);
             }
 
+            var imageFolderId = Guid.NewGuid().ToString();
+            var imagePaths = new List<string>();
+
+            foreach (var file in model.Images.Take(4))
+            {
+                var path = FileHandler.Upload(file, imageFolderId, "Properties");
+
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    ModelState.AddModelError("Images", "Una de las imágenes no es válida o excede el tamaño permitido.");
+
+                    model.PropertyTypes = propertyTypes.Select(pt => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                    {
+                        Value = pt.Id.ToString(),
+                        Text = pt.Name
+                    }).ToList();
+                    model.SaleTypes = saleTypes.Select(st => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                    {
+                        Value = st.Id.ToString(),
+                        Text = st.Name
+                    }).ToList();
+                    model.Improvements = improvements.Select(i => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                    {
+                        Value = i.Id.ToString(),
+                        Text = i.Name
+                    }).ToList();
+
+                    return View(model);
+                }
+
+                imagePaths.Add(path);
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var dto = _mapper.Map<CreatePropertyDto>(model);
             dto.AgentId = userId;
+            dto.ImagePaths = imagePaths;
 
             await _propertyService.CreatePropertyAsync(dto, userId);
 
@@ -164,21 +211,21 @@ namespace RealEstateApp.WebApp.Controllers
             var improvements = await _improvementService.GetAllAsync();
 
             var viewModel = _mapper.Map<EditPropertyViewModel>(property);
-            
+
             viewModel.PropertyTypes = propertyTypes.Select(pt => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
             {
                 Value = pt.Id.ToString(),
                 Text = pt.Name,
                 Selected = pt.Id == property.PropertyTypeId
             }).ToList();
-            
+
             viewModel.SaleTypes = saleTypes.Select(st => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
             {
                 Value = st.Id.ToString(),
                 Text = st.Name,
                 Selected = st.Id == property.SaleTypeId
             }).ToList();
-            
+
             viewModel.Improvements = improvements.Select(i => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
             {
                 Value = i.Id.ToString(),
@@ -220,14 +267,14 @@ namespace RealEstateApp.WebApp.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var property = await _propertyService.GetPropertyByIdAsync(model.Id);
-            
+
             if (property == null || property.AgentId != userId)
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
 
             var dto = _mapper.Map<UpdatePropertyDto>(model);
-            
+
             await _propertyService.UpdatePropertyAsync(property.Id, dto, userId);
 
             TempData["Success"] = "Propiedad actualizada exitosamente";
@@ -248,6 +295,17 @@ namespace RealEstateApp.WebApp.Controllers
             if (property.AgentId != userId)
             {
                 return RedirectToAction("AccessDenied", "Account");
+            }
+
+            if (property.Images != null && property.Images.Any())
+            {
+                foreach (var img in property.Images)
+                {
+                    if (!string.IsNullOrWhiteSpace(img.Url))
+                    {
+                        FileHandler.DeleteFile(img.Url);
+                    }
+                }
             }
 
             await _propertyService.DeletePropertyAsync(property.Id, userId);

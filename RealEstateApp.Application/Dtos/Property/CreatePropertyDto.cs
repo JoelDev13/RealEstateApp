@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace RealEstateApp.Application.Dtos.Property
@@ -33,10 +32,7 @@ namespace RealEstateApp.Application.Dtos.Property
 
         [Required(ErrorMessage = "Debe seleccionar al menos una mejora")]
         public List<string> ImprovementIds { get; set; } = new();
-
-        [Required(ErrorMessage = "Debe subir al menos una imagen")]
-        public List<IFormFile> Images { get; set; } = new();
-
+        public List<string> ImagePaths { get; set; } = new();
         public string AgentId { get; set; } = string.Empty;
     }
 }

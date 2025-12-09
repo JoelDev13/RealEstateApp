@@ -42,7 +42,7 @@
                 </div>
                 <div class="card-body">
                     <!-- Slider de imágenes -->
-                    @if (Model.ImageUrls.Any())
+                    @if (Model.ImageUrls != null && Model.ImageUrls.Any())
                     {
                         <div id="propertyImages" class="carousel slide mb-4" data-bs-ride="carousel">
                             <div class="carousel-indicators">
@@ -148,13 +148,11 @@
                                 <a href="@Url.Action("Edit", "Property", new { id = Model.Id })" class="btn btn-warning">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
-                                <form asp-action="Delete" asp-controller="Property" method="post" style="display: inline;">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@Model.Id" />
-                                    <button type="button" class="btn btn-danger" onclick="confirmDelete('@Model.Id', '@Model.Code')">
-                                        <i class="fas fa-trash"></i> Eliminar
-                                    </button>
-                                </form>
+                                <button type="button"
+                                        class="btn btn-danger"
+                                        onclick="confirmDelete('@Model.Id', '@Model.Code')">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
                             </div>
                         }
                     </div>
@@ -177,7 +175,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="deleteForm" method="post" style="display: inline;">
+                <form id="deleteForm"
+                      asp-action="Delete"
+                      asp-controller="Property"
+                      method="post"
+                      style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deletePropertyId" />
                     <button type="submit" class="btn btn-danger">Aceptar</button>
                 </form>
             </div>
@@ -189,7 +193,8 @@
     <script>
         function confirmDelete(propertyId, propertyCode) {
             document.getElementById('propertyCode').textContent = propertyCode;
-            document.getElementById('deleteForm').action = '/Property/Delete/' + propertyId;
+            document.getElementById('deletePropertyId').value = propertyId;
+
             var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
             modal.show();
         }
