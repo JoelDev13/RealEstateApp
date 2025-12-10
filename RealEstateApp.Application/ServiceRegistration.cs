@@ -41,6 +41,7 @@ namespace RealEstateApp.Application
             // New services for client and agent functionality
             services.AddScoped<IFavoriteService, FavoriteService>();
             services.AddScoped<IOfferService, OfferService>();
+            services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IAgentProfileService, AgentProfileService>();
 
             return services;

@@ -24,6 +24,7 @@ namespace RealEstateApp.Infrastructure.Persistence
             services.AddScoped<IPropertyRepository, PropertyRepository>();
             services.AddScoped<IFavoritePropertyRepository, FavoritePropertyRepository>();
             services.AddScoped<IOfferRepository, OfferRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
 
         }
     }

@@ -13,6 +13,8 @@ namespace RealEstateApp.Application.Interfaces.Repositories
         new Task<Property> UpdateAsync(Property property);
         Task<bool> DeleteAsync(int id);
         Task<bool> CodeExistsAsync(string code);
+        Task<List<Property>> GetAvailablePropertiesAsync();
+        Task<List<Property>> GetByIdsAsync(List<int> propertyIds);
     }
 }
 

@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Domain.Entities;
+using RealEstateApp.Domain.Enums;
 using RealEstateApp.Infrastructure.Persistence;
 
 namespace RealEstateApp.Infrastructure.Persistence.Repositories
 {
     public class PropertyRepository : Repository<Property>, IPropertyRepository
     {
-        private readonly ApplicationDbContext _context;
+        private new readonly ApplicationDbContext _context;
 
         public PropertyRepository(ApplicationDbContext context) : base(context)
         {
@@ -97,6 +98,29 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
             _context.Properties.Remove(property);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<Property>> GetAvailablePropertiesAsync()
+        {
+            return await _context.Properties
+                .Where(p => p.Status == PropertyStatus.Disponible && p.IsActive)
+                .Include(p => p.PropertyType)
+                .Include(p => p.SaleType)
+                .Include(p => p.Images)
+                .Include(p => p.Improvements)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Property>> GetByIdsAsync(List<int> propertyIds)
+        {
+            return await _context.Properties
+                .Where(p => propertyIds.Contains(p.Id) && p.IsActive)
+                .Include(p => p.PropertyType)
+                .Include(p => p.SaleType)
+                .Include(p => p.Images)
+                .Include(p => p.Improvements)
+                .ToListAsync();
         }
     }
 }

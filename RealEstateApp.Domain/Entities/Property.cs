@@ -31,6 +31,9 @@ namespace RealEstateApp.Domain.Entities
         public ICollection<Offer> Offers { get; set; }
             = new HashSet<Offer>();
 
+        public ICollection<Message> Messages { get; set; }
+            = new HashSet<Message>();
+
         public PropertyStatus Status { get; set; } = PropertyStatus.Disponible;
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

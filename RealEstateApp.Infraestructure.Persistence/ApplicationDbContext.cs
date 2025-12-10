@@ -18,6 +18,7 @@ namespace RealEstateApp.Infrastructure.Persistence
         public DbSet<PropertyImage> PropertyImages => Set<PropertyImage>();
         public DbSet<FavoriteProperty> FavoriteProperties => Set<FavoriteProperty>();
         public DbSet<Offer> Offers => Set<Offer>();
+        public DbSet<Message> Messages => Set<Message>();
         public DbSet<PropertyImprovement> PropertyImprovements => Set<PropertyImprovement>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

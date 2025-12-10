@@ -15,5 +15,8 @@ namespace RealEstateApp.Application.Interfaces.Services
         Task<Property> GetPropertyDetailAsync(int propertyId);
         Task<string> GenerateUniquePropertyCodeAsync();
         Task<bool> IsPropertyOwnedByAgentAsync(int propertyId, string agentId);
+        Task<List<Property>> GetAvailablePropertiesAsync();
+        Task<List<Property>> GetPropertiesByIdsAsync(List<int> propertyIds);
+        Task<IEnumerable<Property>> GetAgentPropertiesAsync(string agentId);
     }
 }

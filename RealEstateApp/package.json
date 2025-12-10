@@ -1,0 +1,12 @@
+{
+  "name": "realestateapp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.cjs -i ./RealEstateApp.WebApp/Styles/tailwind.css -o ./RealEstateApp.WebApp/wwwroot/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -c tailwind.config.cjs -i ./RealEstateApp.WebApp/Styles/tailwind.css -o ./RealEstateApp.WebApp/wwwroot/css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.15"
+  }
+}

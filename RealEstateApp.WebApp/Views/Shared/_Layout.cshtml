@@ -14,6 +14,9 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <!-- Styles -->
     <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/luxury-theme.css" asp-append-version="true" />
@@ -65,8 +68,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a asp-controller="Agents" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                <a asp-controller="AgentList" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentList" ? "active" : "")"
                                    data-tooltip="Agentes">
                                     <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
                                     <span class="nav-link-text">Agentes</span>
@@ -111,8 +114,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a asp-controller="Agents" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                <a asp-controller="AgentList" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentList" ? "active" : "")"
                                    data-tooltip="Agentes">
                                     <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
                                     <span class="nav-link-text">Agentes</span>
@@ -125,8 +128,8 @@
                         <div class="nav-section-title">Mis Propiedades</div>
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
-                                <a asp-controller="Favorites" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Favorites" ? "active" : "")"
+                                <a asp-controller="ClientProperty" asp-action="MyProperties"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClientProperty" && ViewContext.RouteData.Values["action"]?.ToString() == "MyProperties" ? "active" : "")"
                                    data-tooltip="Mis Favoritas">
                                     <span class="nav-link-icon"><i class="fas fa-heart"></i></span>
                                     <span class="nav-link-text">Mis Favoritas</span>
@@ -207,8 +210,8 @@
                         <div class="nav-section-title">Usuarios</div>
                         <ul class="nav-list stagger-children">
                             <li class="nav-item">
-                                <a asp-controller="Agents" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Agents" ? "active" : "")"
+                                <a asp-controller="AgentList" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AgentList" ? "active" : "")"
                                    data-tooltip="Agentes">
                                     <span class="nav-link-icon"><i class="fas fa-user-tie"></i></span>
                                     <span class="nav-link-text">Agentes</span>

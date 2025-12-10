@@ -1,0 +1,156 @@
+@model List<RealEstateApp.Application.Dtos.Property.PropertyDto>
+@{
+    ViewData["Title"] = $"Propiedades de {ViewBag.Agent?.FirstName} {ViewBag.Agent?.LastName}";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+    <div class="container mx-auto px-4">
+        <!-- Header del Agente -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <div class="flex items-center space-x-6">
+                <div class="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600 flex-shrink-0">
+                    @if (!string.IsNullOrEmpty(ViewBag.Agent?.ProfilePicture))
+                    {
+                        <img src="@ViewBag.Agent.ProfilePicture" 
+                             alt="@ViewBag.Agent.FirstName @ViewBag.Agent.LastName" 
+                             class="w-full h-full object-cover">
+                    }
+                    else
+                    {
+                        <div class="w-full h-full flex items-center justify-center text-white">
+                            <i class="fas fa-user-tie text-4xl"></i>
+                        </div>
+                    }
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                        @ViewBag.Agent?.FirstName @ViewBag.Agent?.LastName
+                    </h1>
+                    <p class="text-gray-600">
+                        <i class="fas fa-envelope mr-2"></i>@ViewBag.Agent?.Email
+                    </p>
+                    @if (!string.IsNullOrEmpty(ViewBag.Agent?.PhoneNumber))
+                    {
+                        <p class="text-gray-600">
+                            <i class="fas fa-phone mr-2"></i>@ViewBag.Agent.PhoneNumber
+                        </p>
+                    }
+                </div>
+                <a href="@Url.Action("Index")" 
+                   class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all">
+                    <i class="fas fa-arrow-left mr-2"></i> Volver a Agentes
+                </a>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">
+                <i class="fas fa-filter mr-2"></i> Filtrar Propiedades
+            </h3>
+            <form method="get" asp-action="Properties">
+                <input type="hidden" name="agentId" value="@ViewBag.Agent?.Id" />
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Código:</label>
+                        <input type="text" 
+                               name="searchCode" 
+                               value="@ViewBag.SearchCode"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
+                               placeholder="Buscar por código">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio Mínimo:</label>
+                        <input type="number" 
+                               name="minPrice" 
+                               value="@ViewBag.MinPrice"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
+                               placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio Máximo:</label>
+                        <input type="number" 
+                               name="maxPrice" 
+                               value="@ViewBag.MaxPrice"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
+                               placeholder="0">
+                    </div>
+                </div>
+                <div class="flex space-x-4">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-filter mr-2"></i> Aplicar Filtros
+                    </button>
+                    <a href="@Url.Action("Properties", new { agentId = ViewBag.Agent?.Id })" 
+                       class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
+                        <i class="fas fa-times mr-2"></i> Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="bg-white rounded-xl shadow-lg p-12 text-center">
+                <i class="fas fa-home text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-2xl font-bold text-gray-600 mb-2">No hay propiedades disponibles</h3>
+                <p class="text-gray-500">Este agente no tiene propiedades que coincidan con los filtros</p>
+            </div>
+        }
+        else
+        {
+            <!-- Grid de Propiedades -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach (var property in Model.OrderByDescending(p => p.CreatedAt))
+                {
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                        <!-- Property Image -->
+                        <div class="relative h-48 bg-gradient-to-br from-blue-500 to-blue-600">
+                            @if (!string.IsNullOrEmpty(property.MainImageUrl))
+                            {
+                                <img src="~/Images/Properties/@property.MainImageUrl" 
+                                     alt="@property.Code" 
+                                     class="w-full h-48 object-cover"
+                                     onerror="this.outerHTML='<div class=\'w-full h-48 bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center\'><div class=\'text-white text-center\'><i class=\'fas fa-exclamation-triangle text-4xl mb-2 opacity-80\'></i><p class=\'text-sm font-medium\'>Error Imagen</p></div></div>'">
+                            }
+                            else
+                            {
+                                <div class="w-full h-48 flex items-center justify-center">
+                                    <div class="text-white text-center">
+                                        <i class="fas fa-home text-4xl mb-2 opacity-80"></i>
+                                        <p class="text-sm font-medium">Sin Imagen</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                        <!-- Property Info -->
+                        <div class="p-6">
+                            <div class="mb-4">
+                                <h3 class="text-lg font-bold text-gray-800">@property.Code</h3>
+                                <p class="text-sm text-gray-600">@property.PropertyType</p>
+                                <p class="text-sm text-gray-600">@property.SaleType</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <p class="text-2xl font-bold text-blue-600">
+                                    @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO")) DOP
+                                </p>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4 text-sm text-gray-600 mb-4">
+                                <span><i class="fas fa-bed mr-1"></i> @property.Bedrooms</span>
+                                <span><i class="fas fa-bath mr-1"></i> @property.Bathrooms</span>
+                                <span><i class="fas fa-ruler-combined mr-1"></i> @property.Size m²</span>
+                            </div>
+                            
+                            <a href="@Url.Action("Details", "PublicProperty", new { id = property.Id })" 
+                               class="block w-full text-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
+                                Ver Detalles <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

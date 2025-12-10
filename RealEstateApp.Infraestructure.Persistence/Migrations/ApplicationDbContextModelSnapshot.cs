@@ -80,6 +80,44 @@ namespace RealEstateApp.Infraestructure.Persistence.Migrations
                     b.ToTable("Improvements", "RealEstate");
                 });
 
+            modelBuilder.Entity("RealEstateApp.Domain.Entities.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("SentDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId", "SentDate");
+
+                    b.HasIndex("ReceiverId", "PropertyId");
+
+                    b.HasIndex("SenderId", "PropertyId");
+
+                    b.ToTable("Messages", (string)null);
+                });
+
             modelBuilder.Entity("RealEstateApp.Domain.Entities.Offer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -308,6 +346,17 @@ namespace RealEstateApp.Infraestructure.Persistence.Migrations
                     b.Navigation("Property");
                 });
 
+            modelBuilder.Entity("RealEstateApp.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("RealEstateApp.Domain.Entities.Property", "Property")
+                        .WithMany("Messages")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+                });
+
             modelBuilder.Entity("RealEstateApp.Domain.Entities.Offer", b =>
                 {
                     b.HasOne("RealEstateApp.Domain.Entities.Property", "Property")
@@ -373,6 +422,8 @@ namespace RealEstateApp.Infraestructure.Persistence.Migrations
                     b.Navigation("FavoriteProperties");
 
                     b.Navigation("Images");
+
+                    b.Navigation("Messages");
 
                     b.Navigation("Offers");
                 });

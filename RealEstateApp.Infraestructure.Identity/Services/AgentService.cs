@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Dtos.Agent;
+using RealEstateApp.Application.Dtos.Auth;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Infrastructure.Identity.Entities;
 
@@ -73,6 +75,47 @@ namespace RealEstateApp.Infraestructure.Identity.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber
+            };
+        }
+
+        public async Task<List<UserDto>> GetAllActiveAgentsAsync()
+        {
+            var agents = await _userManager.GetUsersInRoleAsync("Agente");
+            
+            return agents
+                .Where(a => a.IsActive)
+                .OrderBy(a => a.FirstName)
+                .ThenBy(a => a.LastName)
+                .Select(a => new UserDto
+                {
+                    Id = a.Id,
+                    FirstName = a.FirstName,
+                    LastName = a.LastName,
+                    Email = a.Email ?? "",
+                    PhoneNumber = a.PhoneNumber,
+                    ProfilePicture = a.ProfilePicture
+                })
+                .ToList();
+        }
+
+        public async Task<UserDto?> GetAgentByIdAsync(string agentId)
+        {
+            var user = await _userManager.FindByIdAsync(agentId);
+            if (user == null || !user.IsActive)
+                return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            if (!roles.Contains("Agente"))
+                return null;
+
+            return new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber,
+                ProfilePicture = user.ProfilePicture
             };
         }
 

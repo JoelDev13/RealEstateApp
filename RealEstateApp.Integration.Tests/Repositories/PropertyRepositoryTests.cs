@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Domain.Entities;
+using RealEstateApp.Domain.Enums;
 using RealEstateApp.Infrastructure.Persistence;
 using RealEstateApp.Infrastructure.Persistence.Repositories;
+using Xunit;
 
 namespace RealEstateApp.Integration.Tests.Repositories
 {
@@ -123,8 +125,8 @@ namespace RealEstateApp.Integration.Tests.Repositories
             // Arrange
             var properties = new[]
             {
-                new Property { Code = "PROP001", Price = 100000, Description = "Disponible", SizeInSquareMeters = 120, IsSold = false, PropertyTypeId = 1, SaleTypeId = 1, AgentId = "agent-123" },
-                new Property { Code = "PROP002", Price = 200000, Description = "Vendida", SizeInSquareMeters = 150, IsSold = true, PropertyTypeId = 1, SaleTypeId = 1, AgentId = "agent-123" }
+                new Property { Code = "PROP001", Price = 100000, Description = "Disponible", SizeInSquareMeters = 120, Status = PropertyStatus.Disponible, PropertyTypeId = 1, SaleTypeId = 1, AgentId = "agent-123" },
+                new Property { Code = "PROP002", Price = 200000, Description = "Vendida", SizeInSquareMeters = 150, Status = PropertyStatus.Vendida, PropertyTypeId = 1, SaleTypeId = 1, AgentId = "agent-123" }
             };
             
             foreach (var prop in properties)
@@ -220,11 +222,11 @@ namespace RealEstateApp.Integration.Tests.Repositories
         public async Task UpdatePropertyStatus_DebeCambiarEstadoAVendida()
         {
             // Arrange
-            var property = new Property { Code = "PROP001", Price = 100000, Description = "Propiedad disponible", SizeInSquareMeters = 120, IsSold = false, PropertyTypeId = 1, SaleTypeId = 1, AgentId = "agent-123" };
+            var property = new Property { Code = "PROP001", Price = 100000, Description = "Propiedad disponible", SizeInSquareMeters = 120, Status = PropertyStatus.Disponible, PropertyTypeId = 1, SaleTypeId = 1, AgentId = "agent-123" };
             await _repository.AddAsync(property);
 
             // Act
-            property.IsSold = true;
+            property.Status = PropertyStatus.Vendida;
             await _repository.UpdateAsync(property);
 
             // Assert

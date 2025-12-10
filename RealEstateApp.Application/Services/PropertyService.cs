@@ -179,6 +179,21 @@ namespace RealEstateApp.Application.Services
             return code;
         }
 
+        public async Task<List<Property>> GetAvailablePropertiesAsync()
+        {
+            return await _propertyRepository.GetAvailablePropertiesAsync();
+        }
+
+        public async Task<List<Property>> GetPropertiesByIdsAsync(List<int> propertyIds)
+        {
+            return await _propertyRepository.GetByIdsAsync(propertyIds);
+        }
+
+        public async Task<IEnumerable<Property>> GetAgentPropertiesAsync(string agentId)
+        {
+            return await _propertyRepository.GetAvailableByAgentAsync(agentId);
+        }
+
         private string GenerateRandomCode(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

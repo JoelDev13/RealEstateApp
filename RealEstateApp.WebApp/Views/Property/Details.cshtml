@@ -142,10 +142,13 @@
                         <a href="@Url.Action("Properties", "Agent")" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Volver
                         </a>
-                        @if (!Model.IsSold)
-                        {
-                            <div>
-                                <a href="@Url.Action("Edit", "Property", new { id = Model.Id })" class="btn btn-warning">
+                        <div>
+                            <a href="@Url.Action("PropertyChats", "Chat", new { propertyId = Model.Id })" class="btn btn-info me-2">
+                                <i class="fas fa-comments"></i> Ver Chats
+                            </a>
+                            @if (!Model.IsSold)
+                            {
+                                <a href="@Url.Action("Edit", "Property", new { id = Model.Id })" class="btn btn-warning me-2">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
                                 <button type="button"
@@ -153,8 +156,8 @@
                                         onclick="confirmDelete('@Model.Id', '@Model.Code')">
                                     <i class="fas fa-trash"></i> Eliminar
                                 </button>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,42 @@
+# Build
+bin/
+obj/
+**/bin/
+**/obj/
+**/out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.userprefs
+
+# Logs
+*.log
+logs/
+**/logs/
+
+# NuGet
+*.nupkg
+packages/
+*.snupkg
+project.assets.json
+project.nuget.cache
+
+
+# ASP.NET
+wwwroot/lib/
+node_modules/
+
+/.git
+*.dll
+*.pdb
+*.cache
+*.json.sourcelink.json
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+**/node_modules/

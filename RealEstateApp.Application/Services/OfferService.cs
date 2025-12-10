@@ -106,7 +106,7 @@ namespace RealEstateApp.Application.Services
             property.Status = PropertyStatus.Vendida;
             await _propertyRepository.UpdateAsync(property);
 
-            // Rechazar automaticamente todas las demas ofertas pendientes
+            // Rechaza automaticamente todas las demas ofertas pendientes
             var pendingOffers = await _offerRepository.GetPendingByPropertyAsync(offer.PropertyId);
             foreach (var pendingOffer in pendingOffers.Where(o => o.Id != offer.Id))
             {
