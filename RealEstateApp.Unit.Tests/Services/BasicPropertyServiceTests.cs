@@ -14,6 +14,7 @@ namespace RealEstateApp.Unit.Tests.Services
         private readonly Mock<ISaleTypeRepository> _mockSaleTypeRepository;
         private readonly Mock<IImprovementRepository> _mockImprovementRepository;
         private readonly Mock<IOfferRepository> _mockOfferRepository;
+        private readonly Mock<IMapper> _mockMapper;
         private readonly PropertyService _propertyService;
 
         public BasicPropertyServiceTests()
@@ -23,13 +24,15 @@ namespace RealEstateApp.Unit.Tests.Services
             _mockSaleTypeRepository = new Mock<ISaleTypeRepository>();
             _mockImprovementRepository = new Mock<IImprovementRepository>();
             _mockOfferRepository = new Mock<IOfferRepository>();
+            _mockMapper = new Mock<IMapper>();
             
             _propertyService = new PropertyService(
                 _mockPropertyRepository.Object,
                 _mockPropertyTypeRepository.Object,
                 _mockSaleTypeRepository.Object,
                 _mockImprovementRepository.Object,
-                _mockOfferRepository.Object
+                _mockOfferRepository.Object,
+                _mockMapper.Object
             );
         }
 
@@ -38,17 +41,23 @@ namespace RealEstateApp.Unit.Tests.Services
         {
             // Arrange
             var propertyId = "1";
-            var expectedProperty = new Property { Code = "PROP001" };
+            var expectedProperty = new Property { Id = 1, Code = "PROP001", Status = Domain.Enums.PropertyStatus.Disponible };
+            var expectedDto = new Application.Dtos.Property.PropertyDto { Id = 1, Code = "PROP001" };
 
             _mockPropertyRepository
                 .Setup(repo => repo.GetByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(expectedProperty);
+
+            _mockMapper
+                .Setup(m => m.Map<Application.Dtos.Property.PropertyDto>(It.IsAny<Property>()))
+                .Returns(expectedDto);
 
             // Act
             var result = await _propertyService.GetPropertyByIdAsync(propertyId);
 
             // Assert
             Assert.NotNull(result);
+            Assert.Equal("PROP001", result.Code);
             _mockPropertyRepository.Verify(repo => repo.GetByIdAsync(1), Times.Once);
         }
 
