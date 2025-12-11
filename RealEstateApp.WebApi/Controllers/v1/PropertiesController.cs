@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Features.Properties.Queries;
 using RealEstateApp.Domain.Enums;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstateApp.WebApi.Controllers.v1
 {
@@ -21,6 +22,12 @@ namespace RealEstateApp.WebApi.Controllers.v1
 
         [HttpGet]
         [Authorize(Roles = nameof(Roles.Administrador) + "," + nameof(Roles.Desarrollador))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [SwaggerOperation(
+            Summary = "Listar propiedades",
+            Description = "Obtiene el listado completo de propiedades registradas."
+        )]
         public async Task<IActionResult> List()
         {
             try
@@ -42,6 +49,12 @@ namespace RealEstateApp.WebApi.Controllers.v1
 
         [HttpGet("{id}")]
         [Authorize(Roles = nameof(Roles.Administrador) + "," + nameof(Roles.Desarrollador))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [SwaggerOperation(
+            Summary = "Obtener propiedad por Id",
+            Description = "Devuelve la información de la propiedad correspondiente al Id especificado."
+        )]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -63,6 +76,12 @@ namespace RealEstateApp.WebApi.Controllers.v1
 
         [HttpGet("code/{code}")]
         [Authorize(Roles = nameof(Roles.Administrador) + "," + nameof(Roles.Desarrollador))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [SwaggerOperation(
+            Summary = "Obtener propiedad por código",
+            Description = "Devuelve la información de la propiedad correspondiente al código especificado."
+        )]
         public async Task<IActionResult> GetByCode(string code)
         {
             try
@@ -83,4 +102,3 @@ namespace RealEstateApp.WebApi.Controllers.v1
         }
     }
 }
-

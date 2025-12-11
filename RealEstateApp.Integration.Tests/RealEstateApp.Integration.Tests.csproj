@@ -29,10 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\RealEstateApp.Application\RealEstateApp.Application.csproj" />
     <ProjectReference Include="..\RealEstateApp.Domain\RealEstateApp.Domain.csproj" />
     <ProjectReference Include="..\RealEstateApp.Infraestructure.Identity\RealEstateApp.Infraestructure.Identity.csproj" />
