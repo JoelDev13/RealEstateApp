@@ -24,9 +24,9 @@ namespace RealEstateApp.Infraestructure.Identity.Services
 
         public async Task<Result<List<AgentAdminDto>>> GetAgentsAsync()
         {
-            var agents = await _userManager.Users
+            var agents = _userManager.Users
                 .Where(u => u.UserType == nameof(Roles.Agente))
-                .ToListAsync();
+                .ToList();
 
             var agentIds = agents.Select(a => a.Id).ToList();
 

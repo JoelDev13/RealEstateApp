@@ -1,9 +1,9 @@
 using AutoMapper;
 using Moq;
+using RealEstateApp.Application.Dtos.Property;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Application.Services;
 using RealEstateApp.Domain.Entities;
-using Xunit;
 
 namespace RealEstateApp.Unit.Tests.Services
 {
@@ -25,7 +25,7 @@ namespace RealEstateApp.Unit.Tests.Services
             _mockImprovementRepository = new Mock<IImprovementRepository>();
             _mockOfferRepository = new Mock<IOfferRepository>();
             _mockMapper = new Mock<IMapper>();
-            
+
             _propertyService = new PropertyService(
                 _mockPropertyRepository.Object,
                 _mockPropertyTypeRepository.Object,
@@ -41,15 +41,25 @@ namespace RealEstateApp.Unit.Tests.Services
         {
             // Arrange
             var propertyId = "1";
-            var expectedProperty = new Property { Id = 1, Code = "PROP001", Status = Domain.Enums.PropertyStatus.Disponible };
-            var expectedDto = new Application.Dtos.Property.PropertyDto { Id = 1, Code = "PROP001" };
+            var expectedProperty = new Property
+            {
+                Id = 1,
+                Code = "PROP001",
+                Status = Domain.Enums.PropertyStatus.Disponible
+            };
+
+            var expectedDto = new PropertyDto
+            {
+                Id = 1,
+                Code = "PROP001"
+            };
 
             _mockPropertyRepository
                 .Setup(repo => repo.GetByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(expectedProperty);
 
             _mockMapper
-                .Setup(m => m.Map<Application.Dtos.Property.PropertyDto>(It.IsAny<Property>()))
+                .Setup(m => m.Map<PropertyDto>(It.IsAny<Property>()))
                 .Returns(expectedDto);
 
             // Act
