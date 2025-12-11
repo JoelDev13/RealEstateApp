@@ -81,7 +81,7 @@ namespace RealEstateApp.Infraestructure.Identity.Services
         public async Task<List<UserDto>> GetAllActiveAgentsAsync()
         {
             var agents = await _userManager.GetUsersInRoleAsync("Agente");
-            
+
             return agents
                 .Where(a => a.IsActive)
                 .OrderBy(a => a.FirstName)
@@ -174,6 +174,27 @@ namespace RealEstateApp.Infraestructure.Identity.Services
             }
             var relativePath = "/" + Path.Combine(basePath, fileName).Replace("\\", "/");
             return relativePath;
+        }
+        public async Task<UserDto?> GetClientByIdAsync(string clientId)
+        {
+            var user = await _userManager.FindByIdAsync(clientId);
+
+            if (user == null)
+                return null;
+
+            return new UserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Cedula = user.Cedula,
+                PhoneNumber = user.PhoneNumber,
+                ProfilePicture = user.ProfilePicture,
+                IsActive = user.IsActive,
+                EmailConfirmed = user.EmailConfirmed
+            };
         }
     }
 }

@@ -1,5 +1,4 @@
 using RealEstateApp.Domain.Entities;
-using RealEstateApp.Domain.Enums;
 
 namespace RealEstateApp.Application.Interfaces.Services
 {
@@ -14,10 +13,11 @@ namespace RealEstateApp.Application.Interfaces.Services
         // Agent operations
         Task<List<Offer>> GetOffersByPropertyAsync(int propertyId);
         Task<List<Offer>> GetOffersByClientForPropertyAsync(string clientId, int propertyId);
-        Task AcceptOfferAsync(int offerId, string agentId);
-        Task RejectOfferAsync(int offerId, string agentId);
+        Task AcceptOfferAsync(Guid offerId, string agentId);
+        Task RejectOfferAsync(Guid offerId, string agentId);
         Task<List<Offer>> GetPendingOffersByPropertyAsync(int propertyId);
         Task<List<string>> GetClientsWithOffersAsync(int propertyId);
+        Task<Offer?> GetOfferByIdAsync(Guid offerId);
         Task<bool> ValidateAgentOwnsPropertyAsync(int propertyId, string agentId);
     }
 }

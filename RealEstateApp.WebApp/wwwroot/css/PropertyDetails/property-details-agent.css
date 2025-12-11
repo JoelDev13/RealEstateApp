@@ -1,0 +1,445 @@
+/* ========================================
+   Property Details - Agent Specific Styles
+   ======================================== */
+
+/* Agent Actions Card */
+.agent-actions-card {
+    margin-bottom: 1.5rem;
+}
+
+/* Buttons Luxury (Match Public Style) */
+.btn-luxury-primary {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--luxury-gold-dark) 0%, var(--luxury-gold) 100%);
+    color: var(--luxury-black);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+    .btn-luxury-primary:hover {
+        box-shadow: var(--shadow-gold);
+        transform: translateY(-2px);
+        color: var(--luxury-black);
+    }
+
+.btn-luxury-danger {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: var(--surface-elevated);
+    color: #dc2626;
+    border: 2px solid #dc2626;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+    .btn-luxury-danger:hover {
+        background: #dc2626;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+/* Chats Card Agent */
+.chats-card-agent {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+}
+
+/* Offers Card Agent */
+.offers-card-agent {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+}
+
+/* Agent Card Header (Gold Header) */
+.agent-card-header {
+    background: linear-gradient(135deg, var(--luxury-gold-dark) 0%, var(--luxury-gold) 100%);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+    .agent-card-header i {
+        font-size: 1.25rem;
+        color: var(--luxury-black);
+    }
+
+    .agent-card-header h3 {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--luxury-black);
+    }
+
+/* Agent Card Body */
+.agent-card-body {
+    padding: 1.5rem;
+}
+
+/* Clients List Agent */
+.clients-list-agent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.client-item-agent {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+    .client-item-agent:hover {
+        background: var(--surface-elevated);
+        border-color: var(--luxury-gold);
+        transform: translateX(4px);
+    }
+
+.client-avatar-agent {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--luxury-gold-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .client-avatar-agent i {
+        color: var(--luxury-gold-dark);
+        font-size: 1rem;
+    }
+
+.client-info-agent {
+    flex: 1;
+    min-width: 0;
+}
+
+.client-name-agent {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.last-message-agent {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.client-item-agent > i {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* Offers List Agent */
+.offers-list-agent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.offer-item-agent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+    .offer-item-agent:hover {
+        background: var(--surface-elevated);
+        border-color: var(--luxury-gold);
+        transform: translateX(4px);
+    }
+
+.offer-left-agent {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.offer-info-agent {
+    flex: 1;
+    min-width: 0;
+}
+
+.offer-amount-agent {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--luxury-gold-dark);
+    margin-top: 0.25rem;
+}
+
+.offer-right-agent {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.offer-status-agent {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+    .offer-status-agent.pendiente {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .offer-status-agent.aceptada {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .offer-status-agent.rechazada {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+.offer-right-agent > i {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* View All Button Agent */
+.btn-view-all-agent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem;
+    background: var(--surface-sunken);
+    color: var(--luxury-gold-dark);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    transition: all var(--transition-fast);
+}
+
+    .btn-view-all-agent:hover {
+        background: var(--luxury-gold-muted);
+        border-color: var(--luxury-gold);
+    }
+
+/* Empty State Agent */
+.empty-state-agent {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+    .empty-state-agent i {
+        font-size: 2.5rem;
+        color: var(--text-muted);
+        opacity: 0.4;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-agent p {
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .agent-card-body {
+        padding: 1.25rem;
+    }
+
+    .clients-list-agent,
+    .offers-list-agent {
+        gap: 0.5rem;
+    }
+
+    .client-item-agent,
+    .offer-item-agent {
+        padding: 0.875rem;
+    }
+}
+/* ========================================
+   Agent View - Layout Adjustments
+   ======================================== */
+
+/* Adjust spacing between cards */
+.actions-card-luxury {
+    margin-bottom: 1.5rem;
+}
+
+.chats-card-agent,
+.offers-card-agent {
+    margin-bottom: 1.5rem;
+}
+
+/* Adjust button spacing in actions card */
+.actions-card-luxury .btn-luxury-primary {
+    margin-bottom: 1rem;
+}
+
+.actions-card-luxury .btn-luxury-danger {
+    margin-bottom: 0;
+}
+
+/* Ensure consistent card widths */
+.sidebar-column > * {
+    width: 100%;
+}
+
+/* Add some breathing room to card content */
+.agent-card-body {
+    padding: 1.5rem;
+}
+
+/* Adjust empty state padding */
+.empty-state-agent {
+    padding: 3rem 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .actions-card-luxury,
+    .chats-card-agent,
+    .offers-card-agent {
+        margin-bottom: 1.25rem;
+    }
+
+    .agent-card-body {
+        padding: 1.25rem;
+    }
+
+    .empty-state-agent {
+        padding: 2.5rem 1.25rem;
+    }
+}
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    transition: transform var(--transition-fast);
+}
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .stat-card.accepted {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    . stat-card.pending {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+
+    . stat-card.rejected {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+
+    .stat-card.range {
+        background: linear-gradient(135deg, var(--luxury-gold-dark) 0%, var(--luxury-gold) 100%);
+        color: var(--luxury-black);
+    }
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.stat-value-small {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 2rem 0 1rem 0;
+}
+
+    .section-title i {
+        margin-right: 0.5rem;
+        color: var(--luxury-gold);
+    }
+
+.offer-percentage {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}

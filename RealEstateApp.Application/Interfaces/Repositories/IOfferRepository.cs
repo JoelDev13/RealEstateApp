@@ -1,5 +1,4 @@
 using RealEstateApp.Domain.Entities;
-using RealEstateApp.Domain.Enums;
 
 namespace RealEstateApp.Application.Interfaces.Repositories
 {
@@ -15,5 +14,6 @@ namespace RealEstateApp.Application.Interfaces.Repositories
         Task<Offer?> GetPendingOfferByClientAndPropertyAsync(string clientId, int propertyId);
         new Task<Offer> AddAsync(Offer offer);
         new Task<Offer> UpdateAsync(Offer offer);
+        new Task<Offer?> GetByIdAsync(Guid id);
     }
 }

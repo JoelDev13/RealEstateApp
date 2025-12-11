@@ -1,11 +1,12 @@
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Dtos.Agent;
+using RealEstateApp.Application.Dtos.Property;
+using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Enums;
 using RealEstateApp.WebApp.Models.Agents;
 using System.Security.Claims;
-using AutoMapper;
 
 namespace RealEstateApp.WebApp.Controllers
 {
@@ -15,71 +16,105 @@ namespace RealEstateApp.WebApp.Controllers
         private readonly IPropertyService _propertyService;
         private readonly IAgentService _agentService;
         private readonly IMapper _mapper;
+        private readonly IPropertyTypeService _propertyTypeService;
 
-        public AgentController(IPropertyService propertyService, IAgentService agentService, IMapper mapper)
+
+        public AgentController(IPropertyService propertyService, IAgentService agentService, IMapper mapper, IPropertyTypeService propertyTypeService)
         {
             _propertyService = propertyService;
             _agentService = agentService;
             _mapper = mapper;
+            _propertyTypeService = propertyTypeService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
             var properties = await _propertyService.GetPropertiesByAgentAsync(userId);
-            
+
+            var mappedProperties = properties.Select(p => new AgentPropertyViewModel
+            {
+                Id = p.Id.ToString(),
+                Code = p.Code ?? string.Empty,
+                PropertyType = p.PropertyType?.Name ?? "Sin tipo",
+                SaleType = p.SaleType?.Name ?? "Sin tipo de venta",
+                Price = p.Price,
+                Bedrooms = p.Bedrooms,
+                Bathrooms = p.Bathrooms,
+                Size = (decimal)p.SizeInSquareMeters,
+                MainImageUrl = p.Images?.FirstOrDefault(img => img.IsPrimary)?.Url ??
+                              p.Images?.FirstOrDefault()?.Url ??
+                              string.Empty,
+                IsSold = p.IsSold,
+                Description = p.Description ?? string.Empty,
+                CreatedAt = p.CreatedAt
+            }).ToList();
+
             var viewModel = new AgentDashboardViewModel
             {
-                Properties = properties.Select(p => new AgentPropertyViewModel
-                {
-                    Id = p.Id.ToString(),
-                    Code = p.Code,
-                    PropertyType = p.PropertyType?.Name ?? "",
-                    SaleType = p.SaleType?.Name ?? "",
-                    Price = p.Price,
-                    Bedrooms = p.Bedrooms,
-                    Bathrooms = p.Bathrooms,
-                    Size = (decimal)p.SizeInSquareMeters,
-                    MainImageUrl = p.Images.FirstOrDefault()?.Url ?? "/images/default-property.jpg",
-                    IsSold = p.IsSold,
-                    Description = p.Description
-                }).ToList()
+                Properties = mappedProperties
             };
 
             return View(viewModel);
         }
 
-        public async Task<IActionResult> Properties()
+        [HttpGet]
+        public async Task<IActionResult> Properties([FromQuery] PropertyFiltersDto filters)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToAction("Login", "Account");
-            }
 
-            var properties = await _propertyService.GetAvailablePropertiesByAgentAsync(userId);
-            
+            var properties = await _propertyService.GetPropertiesByAgentAsync(userId);
+
+            // ✅ FILTRAR SOLO DISPONIBLES (NO VENDIDAS)
+            var query = properties.Where(p => !p.IsSold).AsEnumerable();
+
+            // Aplicar filtros
+            if (!string.IsNullOrWhiteSpace(filters.Code))
+                query = query.Where(p => p.Code.Contains(filters.Code, StringComparison.OrdinalIgnoreCase));
+
+            if (filters.PropertyTypeId.HasValue && filters.PropertyTypeId.Value > 0)
+                query = query.Where(p => p.PropertyTypeId == filters.PropertyTypeId.Value);
+
+            if (filters.MinPrice.HasValue && filters.MinPrice.Value > 0)
+                query = query.Where(p => p.Price >= filters.MinPrice.Value);
+
+            if (filters.MaxPrice.HasValue && filters.MaxPrice.Value > 0)
+                query = query.Where(p => p.Price <= filters.MaxPrice.Value);
+
+            if (filters.Bedrooms.HasValue && filters.Bedrooms.Value > 0)
+                query = query.Where(p => p.Bedrooms >= filters.Bedrooms.Value);
+
+            if (filters.Bathrooms.HasValue && filters.Bathrooms.Value > 0)
+                query = query.Where(p => p.Bathrooms >= filters.Bathrooms.Value);
+
+            query = query.OrderByDescending(p => p.CreatedAt);
+
+            ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
+            ViewBag.Filters = filters;
+
+            // Mapear PropertyDto a AgentPropertyViewModel
+            var mappedProperties = query.Select(p => new AgentPropertyViewModel
+            {
+                Id = p.Id.ToString(),
+                Code = p.Code ?? string.Empty,
+                PropertyType = p.PropertyType?.Name ?? "Sin tipo",
+                SaleType = p.SaleType?.Name ?? "Sin tipo de venta",
+                Price = p.Price,
+                Bedrooms = p.Bedrooms,
+                Bathrooms = p.Bathrooms,
+                Size = (decimal)p.SizeInSquareMeters,
+                MainImageUrl = p.Images?.FirstOrDefault(img => img.IsPrimary)?.Url ??
+                              p.Images?.FirstOrDefault()?.Url ??
+                              string.Empty,
+                IsSold = p.IsSold,
+                Description = p.Description ?? string.Empty,
+                CreatedAt = p.CreatedAt
+            }).ToList();
+
             var viewModel = new AgentPropertiesViewModel
             {
-                Properties = properties.Select(p => new AgentPropertyViewModel
-                {
-                    Id = p.Id.ToString(),
-                    Code = p.Code,
-                    PropertyType = p.PropertyType?.Name ?? "",
-                    SaleType = p.SaleType?.Name ?? "",
-                    Price = p.Price,
-                    Bedrooms = p.Bedrooms,
-                    Bathrooms = p.Bathrooms,
-                    Size = (decimal)p.SizeInSquareMeters,
-                    MainImageUrl = p.Images.FirstOrDefault()?.Url ?? "/images/default-property.jpg",
-                    IsSold = false,
-                    Description = p.Description
-                }).ToList()
+                Properties = mappedProperties
             };
 
             return View(viewModel);
@@ -117,7 +152,7 @@ namespace RealEstateApp.WebApp.Controllers
 
                 var dto = _mapper.Map<AgentProfileDto>(model);
                 var result = await _agentService.UpdateProfileAsync(userId, dto);
-                
+
                 if (result)
                 {
                     TempData["SuccessMessage"] = "Perfil actualizado exitosamente";

@@ -8,12 +8,12 @@ using RealEstateApp.WebApp.Models.Agents;
 namespace RealEstateApp.WebApp.Controllers
 {
     [Authorize(Roles = nameof(Roles.Administrador))]
-    public class AgentsController : Controller
+    public class AdminAgentsController : Controller
     {
         private readonly IAgentAdminService _agentAdminService;
         private readonly IMapper _mapper;
 
-        public AgentsController(
+        public AdminAgentsController(
             IAgentAdminService agentAdminService,
             IMapper mapper)
         {

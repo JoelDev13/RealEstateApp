@@ -25,7 +25,7 @@ namespace RealEstateApp.WebApp.Controllers
             _agentService = agentService;
         }
 
-        // GET: /PublicProperty/Details/5
+        // GET:  /PublicProperty/Details/5
         [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
@@ -33,7 +33,6 @@ namespace RealEstateApp.WebApp.Controllers
             if (property == null)
                 return NotFound();
 
-            // Verificar si el usuario está autenticado
             var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
             ViewBag.IsAuthenticated = isAuthenticated;
             ViewBag.IsClient = User.IsInRole("Cliente");
@@ -48,22 +47,33 @@ namespace RealEstateApp.WebApp.Controllers
                 ViewBag.IsFavorite = false;
             }
 
-            // Obtener información del agente
             var agent = await _agentService.GetAgentByIdAsync(property.AgentId);
-            ViewBag.AgentName = agent?.FirstName + " " + agent?.LastName ?? "Agente";
+            if (agent != null)
+            {
+                ViewBag.AgentName = $"{agent.FirstName} {agent.LastName}";
+                ViewBag.AgentPhone = agent.PhoneNumber;
+                ViewBag.AgentEmail = agent.Email;
+                ViewBag.AgentProfilePicture = agent.ProfilePicture;
+            }
+            else
+            {
+                ViewBag.AgentName = "Agente Inmobiliario";
+                ViewBag.AgentPhone = null;
+                ViewBag.AgentEmail = null;
+                ViewBag.AgentProfilePicture = null;
+            }
 
             return View(property);
         }
 
-        // POST: /PublicProperty/ToggleFavorite
         [HttpPost]
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> ToggleFavorite(int propertyId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+
             var isFavorite = await _favoriteService.IsPropertyFavoriteAsync(userId!, propertyId);
-            
+
             if (isFavorite)
             {
                 await _favoriteService.RemoveFromFavoritesAsync(userId!, propertyId);

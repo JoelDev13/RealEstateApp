@@ -5,9 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RealEstateApp.Application.Behaviors;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Services;
-using RealEstateApp.Application.Interfaces.Repositories;
 using System.Reflection;
-using RealEstateApp.Domain.Entities;
 
 namespace RealEstateApp.Application
 {
@@ -29,7 +27,7 @@ namespace RealEstateApp.Application
             services.AddValidatorsFromAssembly(assembly);
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            
+
             // Services (Los repositorios se registran en Infrastructure.Persistence)
             services.AddScoped<ISaleTypeService, SaleTypeService>();
             services.AddScoped<IPropertyTypeService, PropertyTypeService>();
@@ -37,7 +35,8 @@ namespace RealEstateApp.Application
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             services.AddScoped<IPropertyService, PropertyService>();
             services.AddScoped<IDeveloperUserService, DeveloperUserService>();
-            
+            services.AddScoped<IAdminUserService, AdminUserService>();
+
             // New services for client and agent functionality
             services.AddScoped<IFavoriteService, FavoriteService>();
             services.AddScoped<IOfferService, OfferService>();
@@ -51,7 +50,7 @@ namespace RealEstateApp.Application
         {
             // Registra el AutoMapper
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            
+
             return services;
         }
     }

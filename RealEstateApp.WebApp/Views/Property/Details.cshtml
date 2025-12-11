@@ -1,192 +1,260 @@
 @model RealEstateApp.WebApp.Models.Property.PropertyDetailViewModel
 @{
-    ViewData["Title"] = $"Detalles de Propiedad - {Model.Code}";
+    ViewData["Title"] = $"Detalles - {Model.Code}";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Menú del Agente</h5>
-                </div>
-                <div class="list-group list-group-flush">
-                    <a href="@Url.Action("Dashboard", "Agent")" class="list-group-item list-group-item-action">
-                        <i class="fas fa-home"></i> Home del agente
-                    </a>
-                    <a href="@Url.Action("Profile", "Agent")" class="list-group-item list-group-item-action">
-                        <i class="fas fa-user"></i> Mi perfil
-                    </a>
-                    <a href="@Url.Action("Properties", "Agent")" class="list-group-item list-group-item-action active">
-                        <i class="fas fa-building"></i> Mantenimiento de propiedades
-                    </a>
-                    <a href="@Url.Action("Logout", "Account")" class="list-group-item list-group-item-action text-danger">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                    </a>
-                </div>
-            </div>
-        </div>
+<link rel="stylesheet" href="~/css/PropertyDetails/property-details-base.css" />
+<link rel="stylesheet" href="~/css/PropertyDetails/property-details-agent.css" />
 
-        <div class="col-md-9">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>Detalles de Propiedad - @Model.Code</h4>
-                    @if (Model.IsSold)
+<div class="details-page">
+    <div class="details-container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="@Url.Action("Dashboard", "Agent")">Mi Dashboard</a>
+            <span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+            <span class="breadcrumb-current">@Model.Code</span>
+        </nav>
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+
+            <!-- Main Column (Left) -->
+            <div class="main-column">
+
+                <!-- Image Gallery -->
+                <div class="gallery-section">
+                    @if (Model.ImageUrls != null && Model.ImageUrls.Any())
                     {
-                        <span class="badge bg-danger fs-6">VENDIDA</span>
+                        <div class="carousel-container">
+                            @foreach (var imageUrl in Model.ImageUrls)
+                            {
+                                <div class="carousel-item">
+                                    <img src="@imageUrl" alt="@Model.Code" loading="lazy" />
+                                </div>
+                            }
+
+                            @if (Model.ImageUrls.Count > 1)
+                            {
+                                <button class="carousel-btn carousel-btn-prev" onclick="prevSlide()" aria-label="Anterior">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="carousel-btn carousel-btn-next" onclick="nextSlide()" aria-label="Siguiente">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+
+                                <div class="carousel-dots">
+                                    @for (int i = 0; i < Model.ImageUrls.Count; i++)
+                                    {
+                                        <button class="carousel-dot" onclick="goToSlide(@i)" aria-label="Ir a imagen @(i + 1)"></button>
+                                    }
+                                </div>
+                            }
+                        </div>
                     }
                     else
                     {
-                        <span class="badge bg-success fs-6">DISPONIBLE</span>
+                        <div class="carousel-placeholder">
+                            <i class="fas fa-home"></i>
+                            <p>Sin Imágenes Disponibles</p>
+                        </div>
                     }
                 </div>
-                <div class="card-body">
-                    <!-- Slider de imágenes -->
-                    @if (Model.ImageUrls != null && Model.ImageUrls.Any())
+
+                <!-- Property Info Card -->
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-title-section">
+                            <h1>@Model.Code</h1>
+                            <div class="info-tags">
+                                <span class="info-tag">
+                                    <i class="fas fa-tag"></i>
+                                    @Model.PropertyType
+                                </span>
+                                <span class="info-tag">
+                                    <i class="fas fa-handshake"></i>
+                                    @Model.SaleType
+                                </span>
+                            </div>
+                        </div>
+                        <div class="info-price-section">
+                            <div class="price-amount">RD$@Model.Price.ToString("N0")</div>
+                            <div class="price-currency">DOP</div>
+                        </div>
+                    </div>
+
+                    <!-- Features Grid -->
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <i class="fas fa-bed"></i>
+                            <div>
+                                <div class="feature-value">@Model.Bedrooms</div>
+                                <div class="feature-label">Habitaciones</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-bath"></i>
+                            <div>
+                                <div class="feature-value">@Model.Bathrooms</div>
+                                <div class="feature-label">Baños</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-ruler-combined"></i>
+                            <div>
+                                <div class="feature-value">@Model.Size</div>
+                                <div class="feature-label">m²</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-info-circle"></i>
+                            <div>
+                                <div class="feature-value" style="font-size: 0.875rem;">
+                                    @(Model.IsSold ? "Vendida" : "Disponible")
+                                </div>
+                                <div class="feature-label">Estado</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="description-section">
+                        <h3 class="section-title">Descripción</h3>
+                        <p class="description-text">@Model.Description</p>
+                    </div>
+
+                    <!-- Improvements -->
+                    @if (Model.Improvements != null && Model.Improvements.Any())
                     {
-                        <div id="propertyImages" class="carousel slide mb-4" data-bs-ride="carousel">
-                            <div class="carousel-indicators">
-                                @for (int i = 0; i < Model.ImageUrls.Count; i++)
+                        <div class="improvements-section">
+                            <h3 class="section-title">Mejoras y Características</h3>
+                            <div class="improvements-grid">
+                                @foreach (var improvement in Model.Improvements)
                                 {
-                                    <button type="button" data-bs-target="#propertyImages" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
-                                }
-                            </div>
-                            <div class="carousel-inner">
-                                @for (int i = 0; i < Model.ImageUrls.Count; i++)
-                                {
-                                    <div class="carousel-item @(i == 0 ? "active" : "")">
-                                        <img src="@(Model.ImageUrls[i])" class="d-block w-100" alt="Imagen @(i + 1)" style="height: 400px; object-fit: cover;">
+                                    <div class="improvement-item">
+                                        <div class="improvement-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span>@improvement</span>
                                     </div>
                                 }
                             </div>
-                            @if (Model.ImageUrls.Count > 1)
-                            {
-                                <button class="carousel-control-prev" type="button" data-bs-target="#propertyImages" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon"></span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#propertyImages" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon"></span>
-                                </button>
-                            }
                         </div>
                     }
+                </div>
 
-                    <!-- Información de la propiedad -->
-                    <div class="row mb-4">
-                        <div class="col-md-8">
-                            <h5>@Model.PropertyType - @Model.SaleType</h5>
-                            <h3 class="text-primary">@Model.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</h3>
-                            
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <i class="fas fa-bed"></i> @Model.Bedrooms hab
-                                </div>
-                                <div class="col-4">
-                                    <i class="fas fa-bath"></i> @Model.Bathrooms baños
-                                </div>
-                                <div class="col-4">
-                                    <i class="fas fa-ruler-combined"></i> @Model.Size m²
-                                </div>
-                            </div>
+            </div>
 
-                            <div class="mb-3">
-                                <h6>Descripción</h6>
-                                <p>@Model.Description</p>
-                            </div>
+            <!-- Sidebar Column (Right) -->
+            <div class="sidebar-column">
 
-                            @if (Model.Improvements.Any())
-                            {
-                                <div class="mb-3">
-                                    <h6>Mejoras</h6>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        @foreach (var improvement in Model.Improvements)
-                                        {
-                                            <span class="badge bg-secondary">@improvement</span>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6>Información del Agente</h6>
-                                </div>
-                                <div class="card-body text-center">
-                                    @if (!string.IsNullOrEmpty(Model.AgentProfilePicture))
-                                    {
-                                        <img src="@Model.AgentProfilePicture" class="rounded-circle mb-3" alt="Agente" style="width: 100px; height: 100px; object-fit: cover;">
-                                    }
-                                    else
-                                    {
-                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
-                                            <i class="fas fa-user fa-2x text-white"></i>
-                                        </div>
-                                    }
-                                    
-                                    <h6>@Model.AgentName</h6>
-                                    <p class="mb-1">
-                                        <i class="fas fa-phone"></i> @Model.AgentPhone
-                                    </p>
-                                    <p class="mb-0">
-                                        <i class="fas fa-envelope"></i> @Model.AgentEmail
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botones de acción -->
-                    <div class="d-flex justify-content-between">
-                        <a href="@Url.Action("Properties", "Agent")" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Volver
+                <!-- Agent Actions Card (Edit/Delete) -->
+                @if (!Model.IsSold)
+                {
+                    <div class="actions-card-luxury agent-actions-card">
+                        <a href="@Url.Action("Edit", "Property", new { id = Model.Id })" class="btn-luxury-primary">
+                            <i class="fas fa-edit"></i>
+                            <span>Editar Propiedad</span>
                         </a>
-                        <div>
-                            <a href="@Url.Action("PropertyChats", "Chat", new { propertyId = Model.Id })" class="btn btn-info me-2">
-                                <i class="fas fa-comments"></i> Ver Chats
+                        <button type="button" class="btn-luxury-danger" onclick="confirmDelete('@Model.Id', '@Model.Code')">
+                            <i class="fas fa-trash"></i>
+                            <span>Eliminar Propiedad</span>
+                        </button>
+                    </div>
+                }
+
+                <!-- Chats Card -->
+                <div class="agent-card-luxury chats-card-agent">
+                    <div class="agent-card-header">
+                        <i class="fas fa-comments"></i>
+                        <h3>Conversaciones</h3>
+                    </div>
+                    <div class="agent-card-body">
+                        @if (Model.ClientChats != null && Model.ClientChats.Any())
+                        {
+                            <div class="clients-list-agent">
+                                @foreach (var chat in Model.ClientChats.Take(3))
+                                {
+                                    <a href="@Url.Action("AgentChat", "Chat", new { propertyId = int.Parse(Model.Id), clientId = chat.ClientId })" class="client-item-agent">
+                                        <div class="client-avatar-agent">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="client-info-agent">
+                                            <span class="client-name-agent">@chat.ClientName</span>
+                                            <span class="last-message-agent">@chat.LastMessage</span>
+                                        </div>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                }
+                            </div>
+                            <a href="@Url.Action("PropertyChats", "Chat", new { propertyId = int.Parse(Model.Id) })" class="btn-view-all-agent">
+                                Ver Todas
+                                <i class="fas fa-arrow-right"></i>
                             </a>
-                            @if (!Model.IsSold)
-                            {
-                                <a href="@Url.Action("Edit", "Property", new { id = Model.Id })" class="btn btn-warning me-2">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                                <button type="button"
-                                        class="btn btn-danger"
-                                        onclick="confirmDelete('@Model.Id', '@Model.Code')">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-                            }
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="empty-state-agent">
+                                <i class="fas fa-comments"></i>
+                                <p>No hay conversaciones aún</p>
+                            </div>
+                        }
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Modal de confirmación de eliminación -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirmar Eliminación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>¿Está seguro que desea eliminar la propiedad <strong id="propertyCode"></strong>?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="deleteForm"
-                      asp-action="Delete"
-                      asp-controller="Property"
-                      method="post"
-                      style="display: inline;">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" id="deletePropertyId" />
-                    <button type="submit" class="btn btn-danger">Aceptar</button>
-                </form>
+                <!-- Offers Card -->
+                <div class="agent-card-luxury offers-card-agent">
+                    <div class="agent-card-header">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <h3>Ofertas Recibidas</h3>
+                    </div>
+                    <div class="agent-card-body">
+                        @if (Model.ClientOffers != null && Model.ClientOffers.Any())
+                        {
+                            <div class="offers-list-agent">
+                                @foreach (var offer in Model.ClientOffers.Take(3))
+                                {
+                                    <a href="@Url.Action("ClientOffers", "Offer", new { propertyId = int.Parse(Model.Id), clientId = offer.ClientId })" class="offer-item-agent">
+                                        <div class="offer-left-agent">
+                                            <div class="client-avatar-agent">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div class="offer-info-agent">
+                                                <span class="client-name-agent">@offer.ClientName</span>
+                                                <span class="offer-amount-agent">RD$@offer.LastOfferAmount.ToString("N0")</span>
+                                            </div>
+                                        </div>
+                                        <div class="offer-right-agent">
+                                            <span class="offer-status-agent @offer.Status.ToLower()">
+                                                @offer.StatusText
+                                            </span>
+                                            <i class="fas fa-chevron-right"></i>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                            <a href="@Url.Action("AgentPropertyOffers", "Offer", new { propertyId = int.Parse(Model.Id) })" class="btn-view-all-agent">
+                                Ver Todas
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="empty-state-agent">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <p>No hay ofertas recibidas</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Back Button -->
+                <div class="actions-card-luxury">
+                    <a href="@Url.Action("Dashboard", "Agent")" class="btn-luxury-back">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Volver al Dashboard</span>
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
@@ -194,12 +262,82 @@
 
 @section Scripts {
     <script>
-        function confirmDelete(propertyId, propertyCode) {
-            document.getElementById('propertyCode').textContent = propertyCode;
-            document.getElementById('deletePropertyId').value = propertyId;
+        document.addEventListener('DOMContentLoaded', function () {
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.carousel-item');
+            const dots = document.querySelectorAll('.carousel-dot');
+            let autoplayInterval;
 
-            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-            modal.show();
+            if (slides.length === 0) {
+                return;
+            }
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    if (i === index) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+
+                if (dots.length > 0) {
+                    dots.forEach((dot, i) => {
+                        if (i === index) {
+                            dot.classList.add('active');
+                        } else {
+                            dot.classList.remove('active');
+                        }
+                    });
+                }
+
+                currentSlide = index;
+            }
+
+            window.nextSlide = function () {
+                const next = (currentSlide + 1) % slides.length;
+                showSlide(next);
+            }
+
+            window.prevSlide = function () {
+                const prev = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(prev);
+            }
+
+            window.goToSlide = function (index) {
+                showSlide(index);
+                resetAutoplay();
+            }
+
+            function resetAutoplay() {
+                clearInterval(autoplayInterval);
+                startAutoplay();
+            }
+
+            function startAutoplay() {
+                if (slides.length > 1) {
+                    autoplayInterval = setInterval(window.nextSlide, 5000);
+                }
+            }
+
+            showSlide(0);
+            startAutoplay();
+
+            const carouselContainer = document.querySelector('.carousel-container');
+            if (carouselContainer) {
+                carouselContainer.addEventListener('mouseenter', () => {
+                    clearInterval(autoplayInterval);
+                });
+                carouselContainer.addEventListener('mouseleave', () => {
+                    startAutoplay();
+                });
+            }
+        });
+
+        function confirmDelete(propertyId, propertyCode) {
+            if (confirm(`¿Está seguro que desea eliminar la propiedad ${propertyCode}?`)) {
+                window.location.href = '@Url.Action("Delete", "Property")' + '?id=' + propertyId;
+            }
         }
     </script>
 }

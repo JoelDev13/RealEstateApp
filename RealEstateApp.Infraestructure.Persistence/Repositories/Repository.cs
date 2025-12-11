@@ -18,6 +18,11 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         {
             return await _dbSet.FindAsync(id);
         }
+        public async Task<T?> GetByIdAsync(Guid id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
 
         public async Task AddAsync(T entity)
         {

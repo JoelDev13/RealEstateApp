@@ -1,0 +1,183 @@
+/* ========================================
+   Agent Properties Page (Luxury Theme)
+   ======================================== */
+
+.agent-properties-page {
+    background: var(--surface-primary);
+    min-height: calc(100vh - 64px);
+    padding: 2rem 0;
+}
+
+.agent-properties-container {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+}
+
+/* Agent Profile Header */
+.agent-profile-header {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.agent-profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--luxury-gold);
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--luxury-charcoal) 0%, var(--luxury-black) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .agent-profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.agent-profile-avatar-placeholder {
+    color: var(--luxury-pearl);
+    font-size: 3rem;
+}
+
+.agent-profile-info {
+    flex: 1;
+}
+
+.agent-profile-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem 0;
+}
+
+.agent-profile-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.agent-profile-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+}
+
+    .agent-profile-contact-item i {
+        color: var(--luxury-gold);
+        width: 18px;
+        text-align: center;
+    }
+
+.agent-profile-actions {
+    display: flex;
+    align-items: center;
+}
+
+.btn-back-agents {
+    padding: 0.875rem 1.75rem;
+    background: var(--luxury-black);
+    color: var(--luxury-pearl);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+    .btn-back-agents:hover {
+        background: var(--luxury-charcoal);
+        transform: translateX(-2px);
+    }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .agent-profile-header {
+        gap: 1.5rem;
+    }
+
+    .agent-profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .agent-profile-name {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .agent-properties-container {
+        padding: 0 1rem;
+    }
+
+    .agent-profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .agent-profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .agent-profile-name {
+        font-size: 1.5rem;
+    }
+
+    .agent-profile-contact {
+        align-items: center;
+    }
+
+    .agent-profile-actions {
+        width: 100%;
+    }
+
+    .btn-back-agents {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .agent-profile-header {
+        padding: 1.25rem;
+    }
+
+    .agent-profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-width: 3px;
+    }
+
+    .agent-profile-avatar-placeholder {
+        font-size: 2rem;
+    }
+
+    .agent-profile-name {
+        font-size: 1.25rem;
+    }
+
+    .agent-profile-contact-item {
+        font-size: 0.875rem;
+    }
+}

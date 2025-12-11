@@ -3,191 +3,285 @@
     ViewData["Title"] = "Crear Nueva Propiedad";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div class="flex">
-        <!-- Sidebar -->
-        <div class="w-64 bg-white shadow-lg min-h-screen">
-            <div class="p-6 bg-gradient-to-r from-blue-600 to-indigo-600">
-                <h3 class="text-white font-bold text-lg">Panel del Agente</h3>
-            </div>
-            <nav class="mt-6">
-                <a href="@Url.Action("Dashboard", "Agent")" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    <i class="fas fa-home w-5 mr-3"></i> Home del agente
-                </a>
-                <a href="@Url.Action("Profile", "Agent")" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    <i class="fas fa-user w-5 mr-3"></i> Mi perfil
-                </a>
-                <a href="@Url.Action("Properties", "Agent")" class="flex items-center px-6 py-3 bg-blue-50 text-blue-600 border-r-4 border-blue-600">
-                    <i class="fas fa-building w-5 mr-3"></i> Mantenimiento de propiedades
-                </a>
-                <form asp-action="Logout" asp-controller="Account" method="post" class="inline">
-                    <button type="submit" class="flex items-center w-full px-6 py-3 text-red-600 hover:bg-red-50 transition-colors">
-                        <i class="fas fa-sign-out-alt w-5 mr-3"></i> Cerrar sesión
-                    </button>
-                </form>
-            </nav>
+<link rel="stylesheet" href="~/css/luxury-components.css" />
+
+<div style="background: var(--surface-primary); min-height: calc(100vh - 64px); padding: 3rem 0;">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 0 3rem;">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-nav">
+            <a href="@Url.Action("Properties", "Agent")" class="breadcrumb-link">
+                <i class="fas fa-arrow-left"></i> Volver a Mis Propiedades
+            </a>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 p-8">
-            <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">Crear Nueva Propiedad</h1>
-                <p class="text-gray-600">Complete el formulario para agregar una nueva propiedad al sistema</p>
-            </div>
+        <!-- Page Header -->
+        <div style="margin-bottom: 3rem;">
+            <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem; letter-spacing: -0.02em;">
+                Crear Nueva Propiedad
+            </h1>
+            <p style="font-size: 1.125rem; color: var(--text-secondary);">
+                Complete el formulario para agregar una nueva propiedad a su portafolio
+            </p>
+        </div>
 
-            @if (TempData["Error"] != null)
-            {
-                <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
-                        <p class="text-red-700">@TempData["Error"]</p>
+        @* Validación:  Verificar que existan los catálogos necesarios *@
+        @if (Model?.PropertyTypes == null || !Model.PropertyTypes.Any() ||
+                Model?.SaleTypes == null || !Model.SaleTypes.Any() ||
+                Model?.Improvements == null || !Model.Improvements.Any())
+        {
+            <div class="card">
+                <div class="card-body" style="text-align: center; padding: 4rem;">
+                    <div style="width: 100px; height: 100px; margin: 0 auto 2rem; background: var(--status-error-light); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--status-error);"></i>
                     </div>
+                    <h3 style="font-size: 1.75rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.25rem;">
+                        No se puede crear una propiedad
+                    </h3>
+                    <p style="font-size: 1.0625rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                        Para crear una propiedad, primero debe existir:
+                    </p>
+                    <ul style="text-align: left; max-width: 450px; margin: 0 auto 2.5rem; font-size: 1rem; color: var(--text-secondary);">
+                        @if (Model?.PropertyTypes == null || !Model.PropertyTypes.Any())
+                        {
+                            <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;">
+                                <i class="fas fa-times-circle" style="color: var(--status-error); font-size: 1.125rem;"></i>
+                                <span>Al menos un <strong>Tipo de Propiedad</strong></span>
+                            </li>
+                        }
+                        @if (Model?.SaleTypes == null || !Model.SaleTypes.Any())
+                        {
+                            <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;">
+                                <i class="fas fa-times-circle" style="color: var(--status-error); font-size: 1.125rem;"></i>
+                                <span>Al menos un <strong>Tipo de Venta</strong></span>
+                            </li>
+                        }
+                        @if (Model?.Improvements == null || !Model.Improvements.Any())
+                        {
+                            <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;">
+                                <i class="fas fa-times-circle" style="color: var(--status-error); font-size: 1.125rem;"></i>
+                                <span>Al menos una <strong>Mejora</strong></span>
+                            </li>
+                        }
+                    </ul>
+                    <a href="@Url.Action("Properties", "Agent")" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-left"></i> Volver a Mis Propiedades
+                    </a>
                 </div>
-            }
+            </div>
+            return;
+        }
 
-            <!-- Form Card -->
-            <div class="bg-white rounded-xl shadow-xl overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-                    <h2 class="text-2xl font-bold text-white">Información de la Propiedad</h2>
-                </div>
-                
-                <form asp-action="Create" method="post" enctype="multipart/form-data" class="p-8">
-                    <!-- Basic Information Section -->
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-toast alert-toast-error" style="margin-bottom: 2rem;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>@TempData["Error"]</span>
+            </div>
+        }
+
+        <!-- Form Card -->
+        <div class="card">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+                <!-- Información Básica -->
+                <div style="padding: 2.5rem 3rem; border-bottom: 1px solid var(--border-light);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                        <div style="width: 48px; height: 48px; background: var(--luxury-gold-muted); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-info-circle" style="color: var(--luxury-gold-dark); font-size: 1.25rem;"></i>
+                        </div>
+                        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin: 0;">
                             Información Básica
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label asp-for="PropertyTypeId" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Propiedad</label>
-                                <select asp-for="PropertyTypeId" asp-items="Model.PropertyTypes" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                                    <option value="">Seleccione...</option>
-                                </select>
-                                <span asp-validation-for="PropertyTypeId" class="text-red-500 text-sm mt-1"></span>
-                            </div>
-                            <div>
-                                <label asp-for="SaleTypeId" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Venta</label>
-                                <select asp-for="SaleTypeId" asp-items="Model.SaleTypes" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                                    <option value="">Seleccione...</option>
-                                </select>
-                                <span asp-validation-for="SaleTypeId" class="text-red-500 text-sm mt-1"></span>
-                            </div>
-                        </div>
+                        </h2>
                     </div>
 
-                    <!-- Property Details Section -->
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-home text-blue-600 mr-2"></i>
-                            Detalles de la Propiedad
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label asp-for="Price" class="block text-sm font-medium text-gray-700 mb-2">Precio (DOP)</label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                                    <input asp-for="Price" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" type="number" step="0.01" placeholder="0.00" />
-                                </div>
-                                <span asp-validation-for="Price" class="text-red-500 text-sm mt-1"></span>
-                            </div>
-                            <div>
-                                <label asp-for="Size" class="block text-sm font-medium text-gray-700 mb-2">Tamaño (m²)</label>
-                                <div class="relative">
-                                    <input asp-for="Size" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" type="number" step="0.01" placeholder="0.00" />
-                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">m²</span>
-                                </div>
-                                <span asp-validation-for="Size" class="text-red-500 text-sm mt-1"></span>
-                            </div>
-                            <div>
-                                <label asp-for="Bedrooms" class="block text-sm font-medium text-gray-700 mb-2">Habitaciones</label>
-                                <div class="relative">
-                                    <input asp-for="Bedrooms" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" type="number" placeholder="0" />
-                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                        <i class="fas fa-bed"></i>
-                                    </span>
-                                </div>
-                                <span asp-validation-for="Bedrooms" class="text-red-500 text-sm mt-1"></span>
-                            </div>
-                            <div>
-                                <label asp-for="Bathrooms" class="block text-sm font-medium text-gray-700 mb-2">Baños</label>
-                                <div class="relative">
-                                    <input asp-for="Bathrooms" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" type="number" placeholder="0" />
-                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                        <i class="fas fa-bath"></i>
-                                    </span>
-                                </div>
-                                <span asp-validation-for="Bathrooms" class="text-red-500 text-sm mt-1"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Description Section -->
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-align-left text-blue-600 mr-2"></i>
-                            Descripción
-                        </h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
                         <div>
-                            <label asp-for="Description" class="block text-sm font-medium text-gray-700 mb-2">Descripción de la Propiedad</label>
-                            <textarea asp-for="Description" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none" rows="4" placeholder="Describe las características principales de la propiedad..."></textarea>
-                            <span asp-validation-for="Description" class="text-red-500 text-sm mt-1"></span>
+                            <label asp-for="PropertyTypeId" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                                Tipo de Propiedad <span style="color: var(--status-error);">*</span>
+                            </label>
+                            <select asp-for="PropertyTypeId" asp-items="Model.PropertyTypes"
+                                    style="width: 100%; padding: 1rem 1.25rem; border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 1rem; color: var(--text-primary); background: var(--surface-primary); transition: all var(--transition-fast);">
+                                <option value="">Seleccione un tipo...</option>
+                            </select>
+                            <span asp-validation-for="PropertyTypeId" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="SaleTypeId" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                                Tipo de Venta <span style="color: var(--status-error);">*</span>
+                            </label>
+                            <select asp-for="SaleTypeId" asp-items="Model.SaleTypes"
+                                    style="width: 100%; padding: 1rem 1.25rem; border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 1rem; color: var(--text-primary); background: var(--surface-primary); transition: all var(--transition-fast);">
+                                <option value="">Seleccione un tipo...</option>
+                            </select>
+                            <span asp-validation-for="SaleTypeId" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Additional Features Section -->
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-star text-blue-600 mr-2"></i>
+                <!-- Detalles de la Propiedad -->
+                <div style="padding: 2.5rem 3rem; border-bottom: 1px solid var(--border-light);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                        <div style="width: 48px; height: 48px; background: var(--luxury-gold-muted); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-home" style="color: var(--luxury-gold-dark); font-size: 1.25rem;"></i>
+                        </div>
+                        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin: 0;">
+                            Detalles de la Propiedad
+                        </h2>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                        <div>
+                            <label asp-for="Price" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                                Precio (RD$) <span style="color: var(--status-error);">*</span>
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-dollar-sign" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem;"></i>
+                                <input asp-for="Price" type="number" step="0.01" placeholder="15000000.00"
+                                       style="width: 100%; padding: 1rem 1.25rem 1rem 3rem; border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 1rem; color: var(--text-primary); background: var(--surface-primary); transition: all var(--transition-fast);" />
+                            </div>
+                            <span asp-validation-for="Price" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
+                            <p style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                <i class="fas fa-info-circle"></i> Ingrese el precio en pesos dominicanos
+                            </p>
+                        </div>
+
+                        <div>
+                            <label asp-for="Size" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                                Tamaño (m²) <span style="color: var(--status-error);">*</span>
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-ruler-combined" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem;"></i>
+                                <input asp-for="Size" type="number" step="0.01" placeholder="250.50"
+                                       style="width: 100%; padding: 1rem 1.25rem 1rem 3rem; border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 1rem; color: var(--text-primary); background: var(--surface-primary); transition: all var(--transition-fast);" />
+                            </div>
+                            <span asp-validation-for="Size" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
+                            <p style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                <i class="fas fa-info-circle"></i> Tamaño en metros cuadrados
+                            </p>
+                        </div>
+
+                        <div>
+                            <label asp-for="Bedrooms" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                                Habitaciones <span style="color: var(--status-error);">*</span>
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-bed" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem;"></i>
+                                <input asp-for="Bedrooms" type="number" min="0" placeholder="3"
+                                       style="width: 100%; padding: 1rem 1.25rem 1rem 3rem; border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 1rem; color: var(--text-primary); background: var(--surface-primary); transition: all var(--transition-fast);" />
+                            </div>
+                            <span asp-validation-for="Bedrooms" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Bathrooms" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                                Baños <span style="color: var(--status-error);">*</span>
+                            </label>
+                            <div style="position: relative;">
+                                <i class="fas fa-bath" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem;"></i>
+                                <input asp-for="Bathrooms" type="number" min="0" placeholder="2"
+                                       style="width: 100%; padding: 1rem 1.25rem 1rem 3rem; border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 1rem; color: var(--text-primary); background: var(--surface-primary); transition: all var(--transition-fast);" />
+                            </div>
+                            <span asp-validation-for="Bathrooms" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div style="padding: 2.5rem 3rem; border-bottom: 1px solid var(--border-light);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                        <div style="width: 48px; height: 48px; background: var(--luxury-gold-muted); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-align-left" style="color: var(--luxury-gold-dark); font-size: 1.25rem;"></i>
+                        </div>
+                        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin: 0;">
+                            Descripción
+                        </h2>
+                    </div>
+
+                    <div>
+                        <label asp-for="Description" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                            Descripción de la Propiedad <span style="color: var(--status-error);">*</span>
+                        </label>
+                        <textarea asp-for="Description" rows="6" placeholder="Describe las características principales de la propiedad, ubicación, amenidades cercanas, etc."
+                                  style="width: 100%; padding: 1.25rem; border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 1rem; color: var(--text-primary); background: var(--surface-primary); resize: vertical; font-family: inherit; line-height: 1.6;"></textarea>
+                        <span asp-validation-for="Description" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
+                        <p style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.5rem;">
+                            <i class="fas fa-info-circle"></i> Proporcione una descripción detallada de la propiedad
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Características Adicionales -->
+                <div style="padding: 2.5rem 3rem; border-bottom: 1px solid var(--border-light);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                        <div style="width: 48px; height: 48px; background: var(--luxury-gold-muted); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-star" style="color: var(--luxury-gold-dark); font-size: 1.25rem;"></i>
+                        </div>
+                        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin: 0;">
                             Características Adicionales
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label asp-for="SelectedImprovementIds" class="block text-sm font-medium text-gray-700 mb-2">Mejoras</label>
-                                <select asp-for="SelectedImprovementIds" asp-items="Model.Improvements" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" multiple size="4">
-                                </select>
-                                <p class="text-sm text-gray-500 mt-1">Mantenga presionado Ctrl para seleccionar múltiples opciones</p>
-                                <span asp-validation-for="SelectedImprovementIds" class="text-red-500 text-sm mt-1"></span>
-                            </div>
-                            <div>
-                                <label asp-for="Images" class="block text-sm font-medium text-gray-700 mb-2">Imágenes de la Propiedad</label>
-                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3 upload-icon"></i>
-                                    <p class="text-sm text-gray-600 mb-2 upload-text">
-                                        Arrastra imágenes aquí o haz clic para seleccionar
-                                    </p>
-                                    <input asp-for="Images"
-                                           id="ImagesInput"
-                                           class="hidden"
-                                           type="file"
-                                           multiple
-                                           accept="image/*" />
-                                    <button type="button"
-                                            onclick="document.getElementById('ImagesInput').click()"
-                                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                        Seleccionar Imágenes
-                                    </button>
+                        </h2>
+                    </div>
 
-                                    <p class="text-xs text-gray-500 mt-2">Máximo 4 imágenes. Formatos: JPG, PNG, GIF</p>
-                                </div>
-                                <span asp-validation-for="Images" class="text-red-500 text-sm mt-1"></span>
-                            </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                        <div>
+                            <label asp-for="SelectedImprovementIds" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                                Mejoras <span style="color: var(--status-error);">*</span>
+                            </label>
+                            <select asp-for="SelectedImprovementIds" asp-items="Model.Improvements" multiple size="8"
+                                    style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 1rem; color: var(--text-primary); background: var(--surface-primary);">
+                            </select>
+                            <span asp-validation-for="SelectedImprovementIds" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
+                            <p style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.75rem;">
+                                <i class="fas fa-info-circle"></i>
+                                Mantenga presionado
+                                <kbd style="background: var(--surface-sunken); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8125rem; font-weight: 600;">Ctrl</kbd>
+                                (Windows) o
+                                <kbd style="background: var(--surface-sunken); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8125rem; font-weight: 600;">Cmd</kbd>
+                                (Mac) para seleccionar múltiples opciones
+                            </p>
+                        </div>
 
+                        <div>
+                            <label asp-for="Images" style="display: block; font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+                                Imágenes de la Propiedad <span style="color: var(--status-error);">*</span>
+                            </label>
+                            <div style="border: 2px dashed var(--border-medium); border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; transition: all var(--transition-fast); cursor: pointer; background: var(--surface-sunken);"
+                                 id="uploadArea"
+                                 onclick="document.getElementById('ImagesInput').click()">
+                                <i class="fas fa-cloud-upload-alt" id="uploadIcon" style="font-size: 3.5rem; color: var(--text-muted); margin-bottom: 1.25rem; display: block;"></i>
+                                <p id="uploadText" style="color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 1rem; font-weight: 500;">
+                                    Arrastra imágenes aquí o haz clic para seleccionar
+                                </p>
+                                <input asp-for="Images" id="ImagesInput" type="file" multiple accept="image/*" style="display: none;" />
+                                <button type="button" class="btn btn-secondary"
+                                        onclick="event.stopPropagation(); document.getElementById('ImagesInput').click();">
+                                    <i class="fas fa-folder-open"></i>
+                                    Seleccionar Imágenes
+                                </button>
+                                <p style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 1.25rem;">
+                                    <i class="fas fa-info-circle"></i>
+                                    Mínimo 1 imagen, máximo 4. Formatos: JPG, PNG, GIF
+                                </p>
+                            </div>
+                            <span asp-validation-for="Images" style="display: block; color: var(--status-error); font-size: 0.875rem; margin-top: 0.5rem;"></span>
+                            <div id="imagePreview" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1.25rem;"></div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Action Buttons -->
-                    <div class="flex justify-between items-center pt-6 border-t border-gray-200">
-                        <a href="@Url.Action("Properties", "Agent")" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center">
-                            <i class="fas fa-arrow-left mr-2"></i> Volver
-                        </a>
-                        <button type="submit" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 flex items-center shadow-lg">
-                            <i class="fas fa-save mr-2"></i> Crear Propiedad
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <!-- Action Buttons -->
+                <div style="padding: 2.5rem 3rem; display: flex; align-items: center; justify-content: space-between;">
+                    <a href="@Url.Action("Properties", "Agent")" class="btn btn-outline btn-lg">
+                        <i class="fas fa-arrow-left"></i>
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg" style="padding: 1rem 3rem;">
+                        <i class="fas fa-save"></i>
+                        Crear Propiedad
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -196,26 +290,110 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
         const imagesInput = document.getElementById('ImagesInput');
-        const uploadContainer = imagesInput.closest('.border-dashed');
-        const uploadIcon = uploadContainer.querySelector('.upload-icon');
-        const uploadText = uploadContainer.querySelector('.upload-text');
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadIcon = document.getElementById('uploadIcon');
+        const uploadText = document.getElementById('uploadText');
+        const imagePreview = document.getElementById('imagePreview');
 
-        imagesInput.addEventListener('change', function (e) {
-            const fileCount = e.target.files.length;
-            if (fileCount > 0) {
-                uploadIcon.classList.remove('fa-cloud-upload-alt', 'text-gray-400');
-                uploadIcon.classList.add('fa-check-circle', 'text-green-500');
-                uploadText.textContent = `${fileCount} archivo(s) seleccionado(s)`;
-                uploadText.classList.remove('text-gray-600');
-                uploadText.classList.add('text-green-600');
-            } else {
-                uploadIcon.classList.remove('fa-check-circle', 'text-green-500');
-                uploadIcon.classList.add('fa-cloud-upload-alt', 'text-gray-400');
-                uploadText.textContent = 'Arrastra imágenes aquí o haz clic para seleccionar';
-                uploadText.classList.remove('text-green-600');
-                uploadText.classList.add('text-gray-600');
+        // Focus styles for inputs
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('focus', function () {
+                this.style.borderColor = 'var(--luxury-gold)';
+                this.style.boxShadow = '0 0 0 3px var(--luxury-gold-muted)';
+            });
+            el.addEventListener('blur', function () {
+                this.style.borderColor = 'var(--border-medium)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--luxury-gold)';
+            uploadArea.style.background = 'var(--luxury-gold-muted)';
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-medium)';
+            uploadArea.style.background = 'var(--surface-sunken)';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-medium)';
+            uploadArea.style.background = 'var(--surface-sunken)';
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imagesInput.files = files;
+                updateImagePreview(files);
             }
         });
+
+        imagesInput.addEventListener('change', function (e) {
+            const files = e.target.files;
+            updateImagePreview(files);
+        });
+
+        function updateImagePreview(files) {
+            const fileCount = files.length;
+
+            if (fileCount > 4) {
+                alert('Solo puedes seleccionar un máximo de 4 imágenes');
+                imagesInput.value = '';
+                resetUploadUI();
+                return;
+            }
+
+            if (fileCount > 0) {
+                uploadIcon.className = 'fas fa-check-circle';
+                uploadIcon.style.color = 'var(--status-success)';
+                uploadIcon.style.fontSize = '3.5rem';
+                uploadText.textContent = `${fileCount} imagen(es) seleccionada(s)`;
+                uploadText.style.color = 'var(--status-success)';
+                uploadText.style.fontWeight = '600';
+
+                imagePreview.innerHTML = '';
+                for (let i = 0; i < fileCount; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const img = document.createElement('div');
+                        img.style.cssText = 'position: relative; border-radius: var(--radius-md); overflow: hidden; aspect-ratio: 1; border: 3px solid var(--border-light);';
+                        img.innerHTML = `
+                            <img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <div style="position: absolute; top: 8px; right: 8px; background: var(--luxury-gold); color: var(--luxury-black); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 700; box-shadow: var(--shadow-md);">${i + 1}</div>
+                        `;
+                        imagePreview.appendChild(img);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                resetUploadUI();
+            }
+        }
+
+        function resetUploadUI() {
+            uploadIcon.className = 'fas fa-cloud-upload-alt';
+            uploadIcon.style.color = 'var(--text-muted)';
+            uploadIcon.style.fontSize = '3.5rem';
+            uploadText.textContent = 'Arrastra imágenes aquí o haz clic para seleccionar';
+            uploadText.style.color = 'var(--text-secondary)';
+            uploadText.style.fontWeight = '500';
+            imagePreview.innerHTML = '';
+        }
+
+        // Auto-hide alerts
+        setTimeout(() => {
+            document.querySelectorAll('.alert-toast').forEach(alert => {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
     </script>
 }
-

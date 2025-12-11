@@ -1,0 +1,135 @@
+﻿@model List<RealEstateApp.Application.Dtos.Offers.OfferDto>
+@using RealEstateApp.Domain.Enums
+
+@{
+    ViewData["Title"] = "Ofertas del Cliente";
+    var property = ViewBag.Property as RealEstateApp.Application.Dtos.Property.PropertyDto;
+    var clientId = ViewBag.ClientId as string;
+    var clientName = ViewBag.ClientName as string;
+
+    if (property == null)
+    {
+        <div class="alert alert-danger m-5">
+            <h4><i class="fas fa-exclamation-triangle"></i> Error</h4>
+            <p>No se pudo cargar la información de la propiedad. </p>
+            <a href="@Url.Action("Dashboard", "Agent")" class="btn btn-primary">Volver al Dashboard</a>
+        </div>
+        return;
+    }
+}
+
+<link rel="stylesheet" href="~/css/PropertyDetails/property-details-base.css" />
+<link rel="stylesheet" href="~/css/PropertyDetails/property-details-agent.css" />
+
+<div class="property-details-page">
+    <div class="details-container">
+
+        <!-- Back Button -->
+        <div class="back-section">
+            <a href="@Url.Action("AgentPropertyOffers", "Offer", new { propertyId = property.Id })" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver a Todas las Ofertas</span>
+            </a>
+        </div>
+
+        <!-- Page Header -->
+        <div class="property-header">
+            <div class="header-left">
+                <h1 class="property-title">Ofertas de @clientName</h1>
+                <p class="property-meta">
+                    Propiedad: @property.Code - @property.PropertyType | Precio: RD$@property.Price.ToString("N0")
+                </p>
+            </div>
+            <div class="header-right">
+                @if (property.IsSold)
+                {
+                    <span class="status-badge sold">
+                        <i class="fas fa-check-circle"></i>
+                        VENDIDA
+                    </span>
+                }
+                else
+                {
+                    <span class="status-badge available">
+                        <i class="fas fa-home"></i>
+                        DISPONIBLE
+                    </span>
+                }
+            </div>
+        </div>
+
+        <!-- Offers List -->
+        @if (Model.Any())
+        {
+            <div class="offers-card-agent">
+                <div class="agent-card-header">
+                    <i class="fas fa-history"></i>
+                    <h3>Historial de Ofertas</h3>
+                </div>
+                <div class="agent-card-body">
+                    <div class="offers-list-agent">
+                        @foreach (var offer in Model.OrderByDescending(o => o.OfferDate))
+                        {
+                            <div class="offer-item-agent" style="cursor: default; display: flex; align-items: center; justify-content: space-between;">
+                                <div class="offer-left-agent">
+                                    <div class="client-avatar-agent">
+                                        <i class="fas @(offer.Status == OfferStatus.Aceptada ? "fa-check-circle" : offer.Status == OfferStatus.Rechazada ? "fa-times-circle" : "fa-clock")"></i>
+                                    </div>
+                                    <div class="offer-info-agent">
+                                        <span class="client-name-agent">
+                                            Fecha: @offer.OfferDate.ToString("dd/MM/yyyy HH:mm")
+                                        </span>
+                                        <span class="offer-amount-agent">RD$@offer.Amount.ToString("N0")</span>
+                                    </div>
+                                </div>
+                                <div class="offer-right-agent">
+                                    <span class="offer-status-agent @offer.Status.ToString().ToLower()">
+                                        @offer.StatusText
+                                    </span>
+
+                                    @if (offer.Status == OfferStatus.Pendiente && !property.IsSold)
+                                    {
+                                        <div style="display: flex; gap: 0.5rem; margin-left: 1rem;">
+                                            <form asp-action="Accept" asp-controller="Offer" method="post" class="inline-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="offerId" value="@offer.Id" />
+                                                <input type="hidden" name="propertyId" value="@property.Id" />
+                                                <input type="hidden" name="clientId" value="@clientId" />
+                                                <button type="submit"
+                                                        class="action-btn action-btn-success"
+                                                        title="Aceptar Oferta"
+                                                        onclick="return confirm('¿Está seguro que desea ACEPTAR esta oferta?\n\n⚠️ IMPORTANTE:\n• La propiedad se marcará como VENDIDA\n• Todas las demás ofertas pendientes serán RECHAZADAS automáticamente\n• No se podrán recibir más ofertas\n\n¿Desea continuar?');">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <form asp-action="Reject" asp-controller="Offer" method="post" class="inline-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="offerId" value="@offer.Id" />
+                                                <input type="hidden" name="propertyId" value="@property.Id" />
+                                                <input type="hidden" name="clientId" value="@clientId" />
+                                                <button type="submit"
+                                                        class="action-btn action-btn-danger"
+                                                        title="Rechazar Oferta"
+                                                        onclick="return confirm('¿Está seguro que desea RECHAZAR esta oferta? ');">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state-agent">
+                <i class="fas fa-hand-holding-usd"></i>
+                <p>Este cliente no ha realizado ofertas para esta propiedad</p>
+            </div>
+        }
+
+    </div>
+</div>

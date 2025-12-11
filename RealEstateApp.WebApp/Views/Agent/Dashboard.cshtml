@@ -1,130 +1,147 @@
 @model RealEstateApp.WebApp.Models.Agents.AgentDashboardViewModel
 @{
-    ViewData["Title"] = "Dashboard del Agente";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Dashboard del Agente</h1>
-                    <p class="mt-2 text-sm text-gray-600">Gestiona tus propiedades inmobiliarias</p>
+<link rel="stylesheet" href="~/css/home-properties.css" />
+<link rel="stylesheet" href="~/css/agent-dashboard.css" />
+
+<div class="agent-dashboard">
+    <div class="dashboard-wrapper">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Mis Propiedades</h1>
+                <p class="page-description">Gestiona y monitorea tu portafolio inmobiliario</p>
+            </div>
+        </div>
+
+        <!-- Stats Cards Row -->
+        <div class="stats-row">
+            <div class="stat-card gold">
+                <div class="stat-icon-bg">
+                    <i class="fas fa-building"></i>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                        <i class="fas fa-building mr-2"></i>
-                        @Model.Properties.Count propiedades
-                    </span>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.Properties.Count</h3>
+                    <p class="stat-label">Total Propiedades</p>
+                </div>
+            </div>
+
+            <div class="stat-card green">
+                <div class="stat-icon-bg">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.Properties.Count(p => !p.IsSold)</h3>
+                    <p class="stat-label">Disponibles</p>
+                </div>
+            </div>
+
+            <div class="stat-card blue">
+                <div class="stat-icon-bg">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.Properties.Count(p => p.IsSold)</h3>
+                    <p class="stat-label">Vendidas</p>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation Menu -->
-        <div class="mb-8">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                <nav class="flex flex-wrap gap-2">
-                    <a href="@Url.Action("Dashboard", "Agent")" 
-                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors">
-                        <i class="fas fa-home mr-2"></i>
-                        Home del agente
-                    </a>
-                    <a href="@Url.Action("Profile", "Agent")" 
-                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-user mr-2"></i>
-                        Mi perfil
-                    </a>
-                    <a href="@Url.Action("Properties", "Agent")" 
-                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-building mr-2"></i>
-                        Mantenimiento de propiedades
-                    </a>
-                    <a href="@Url.Action("Logout", "Account")" 
-                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-red-700 bg-white border border-red-300 hover:bg-red-50 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>
-                        Cerrar sesión
-                    </a>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Properties Section -->
-        <div>
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-semibold text-gray-900">Mis Propiedades</h2>
-            </div>
-
-            @if (!Model.Properties.Any())
-            {
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-                    <div class="max-w-md mx-auto">
-                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
-                            <i class="fas fa-info-circle text-2xl text-blue-600"></i>
-                        </div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes propiedades registradas</h3>
-                        <p class="text-sm text-gray-500 mb-6">Comienza gestionando tus propiedades</p>
-                        <a href="@Url.Action("Properties", "Agent")" 
-                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            <i class="fas fa-plus mr-2"></i>
-                            Gestionar Propiedades
-                        </a>
-                    </div>
+        @if (!Model.Properties.Any())
+        {
+            <!-- Empty State -->
+            <div class="empty-state-dashboard">
+                <div class="empty-illustration">
+                    <i class="fas fa-building"></i>
                 </div>
-            }
-            else
-            {
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach (var property in Model.Properties)
+                <h3 class="empty-title">No tienes propiedades registradas</h3>
+                <p class="empty-description">Comienza a construir tu portafolio inmobiliario agregando tu primera propiedad</p>
+                <a href="@Url.Action("Create", "Property")" class="btn-get-started">
+                    <i class="fas fa-plus-circle"></i>
+                    Crear Mi Primera Propiedad
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Properties Section -->
+            <div class="properties-section">
+                <div class="section-header">
+                    <h2 class="section-title">Todas las Propiedades</h2>
+                    <span class="properties-count">@Model.Properties.Count propiedades</span>
+                </div>
+
+                <!-- Properties Grid -->
+                <div class="properties-grid">
+                    @foreach (var property in Model.Properties.OrderByDescending(p => p.CreatedAt))
                     {
-                        <div class="bg-white rounded-lg shadow-sm border @(property.IsSold ? "border-red-300" : "border-gray-200") overflow-hidden hover:shadow-md transition-shadow">
-                            @if (property.IsSold)
-                            {
-                                <div class="bg-red-600 text-white text-center py-2">
-                                    <span class="font-semibold text-sm">VENDIDA</span>
-                                </div>
-                            }
-                            
-                            <div class="relative">
-                                <img src="@(property.MainImageUrl)" 
-                                     alt="@property.Code" 
-                                     class="w-full h-48 object-cover">
+                        <article class="property-card @(property.IsSold ? "is-sold" : "")">
+                            <div class="card-image">
                                 @if (property.IsSold)
                                 {
-                                    <div class="absolute top-2 right-2">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-600 text-white">
-                                            Vendida
-                                        </span>
+                                    <div class="sold-badge">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>VENDIDA</span>
+                                    </div>
+                                }
+
+                                <span class="badge-type">@(!string.IsNullOrWhiteSpace(property.PropertyType) ? property.PropertyType : "Propiedad")</span>
+                                <span class="badge-sale">@(!string.IsNullOrWhiteSpace(property.SaleType) ? property.SaleType : "Venta")</span>
+
+                                @if (!string.IsNullOrEmpty(property.MainImageUrl))
+                                {
+                                    <img src="@property.MainImageUrl" alt="@property.Code" class="card-img" loading="lazy">
+                                }
+                                else
+                                {
+                                    <div class="card-img-placeholder">
+                                        <i class="fas fa-home"></i>
                                     </div>
                                 }
                             </div>
-                            
-                            <div class="p-5">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">@property.Code</h3>
-                                <div class="space-y-2 mb-4">
-                                    <p class="text-sm text-gray-600">
-                                        <span class="font-medium">@property.PropertyType</span> - 
-                                        <span class="font-medium">@property.SaleType</span>
-                                    </p>
-                                    <p class="text-xl font-bold text-blue-600">
-                                        @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))
-                                    </p>
-                                    <p class="text-sm text-gray-500">
-                                        <i class="fas fa-bed mr-1"></i>@property.Bedrooms hab • 
-                                        <i class="fas fa-bath mr-1"></i>@property.Bathrooms baños • 
-                                        <i class="fas fa-ruler-combined mr-1"></i>@property.Size m²
-                                    </p>
+
+                            <div class="card-content">
+                                <p class="card-code">Código: @property.Code</p>
+
+                                <div class="card-price">
+                                    RD$@property.Price.ToString("N0") <span class="currency">DOP</span>
                                 </div>
-                                <a href="@Url.Action("Details", "Property", new { id = property.Id })" 
-                                   class="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                                    <i class="fas fa-eye mr-2"></i>
-                                    Ver detalles
-                                </a>
+
+                                <div class="card-features">
+                                    <div class="feature">
+                                        <i class="fas fa-bed"></i>
+                                        <span>@property.Bedrooms Hab. </span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-bath"></i>
+                                        <span>@property.Bathrooms Baños</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-ruler-combined"></i>
+                                        <span>@property.Size m²</span>
+                                    </div>
+                                </div>
+
+                                <div class="card-actions">
+                                    <a href="@Url.Action("Details", "Property", new { id = property.Id })" class="btn-view">
+                                        <i class="fas fa-eye"></i> Ver detalles
+                                    </a>
+
+                                    @if (!property.IsSold)
+                                    {
+                                        <a href="@Url.Action("Edit", "Property", new { id = property.Id })" class="btn-edit" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        </article>
                     }
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>

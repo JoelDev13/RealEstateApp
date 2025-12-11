@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace RealEstateApp.WebApp.Models.Agents
@@ -21,6 +20,7 @@ namespace RealEstateApp.WebApp.Models.Agents
         public string MainImageUrl { get; set; } = string.Empty;
         public bool IsSold { get; set; }
         public string Description { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
     }
 
     public class AgentPropertiesViewModel

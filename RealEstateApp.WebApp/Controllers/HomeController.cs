@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Dtos.Property;
 using RealEstateApp.Application.Interfaces.Services;
+using RealEstateApp.Domain.Enums;
 using RealEstateApp.WebApp.Models;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -30,57 +31,48 @@ namespace RealEstateApp.WebApp.Controllers
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> Index(string searchCode, string propertyType, decimal? minPrice, decimal? maxPrice, int? bedrooms, int? bathrooms)
+        public async Task<IActionResult> Index([FromQuery] PropertyFiltersDto filters)
         {
-            var allProperties = await _propertyService.GetAvailablePropertiesAsync();
-            
-            var properties = allProperties.AsEnumerable();
-            
-            if (!string.IsNullOrEmpty(searchCode))
+            if (User.Identity?.IsAuthenticated == true)
             {
-                properties = properties.Where(p => p.Code.Contains(searchCode, StringComparison.OrdinalIgnoreCase));
+                if (User.IsInRole(nameof(Roles.Administrador)))
+                    return RedirectToAction("Index", "AdminHome");
+
+                if (User.IsInRole(nameof(Roles.Agente)))
+                    return RedirectToAction("Dashboard", "Agent");
             }
-            
-            if (!string.IsNullOrEmpty(propertyType))
-            {
-                properties = properties.Where(p => p.PropertyType != null && p.PropertyType.Name.Contains(propertyType, StringComparison.OrdinalIgnoreCase));
-            }
-            
-            if (minPrice.HasValue)
-            {
-                properties = properties.Where(p => p.Price >= minPrice.Value);
-            }
-            
-            if (maxPrice.HasValue)
-            {
-                properties = properties.Where(p => p.Price <= maxPrice.Value);
-            }
-            
-            if (bedrooms.HasValue)
-            {
-                properties = properties.Where(p => p.Bedrooms >= bedrooms.Value);
-            }
-            
-            if (bathrooms.HasValue)
-            {
-                properties = properties.Where(p => p.Bathrooms >= bathrooms.Value);
-            }
-            
-            // Verifica si el usuario esta autenticado
+
+            // Propiedades disponibles
+            var properties = await _propertyService.GetAvailablePropertiesAsync();
+            var query = properties.AsEnumerable();
+
+            // Filtros
+            if (!string.IsNullOrWhiteSpace(filters.Code))
+                query = query.Where(p => p.Code.Contains(filters.Code, StringComparison.OrdinalIgnoreCase));
+
+            if (filters.PropertyTypeId.HasValue)
+                query = query.Where(p => p.PropertyTypeId == filters.PropertyTypeId.Value);
+
+            if (filters.MinPrice.HasValue)
+                query = query.Where(p => p.Price >= filters.MinPrice.Value);
+
+            if (filters.MaxPrice.HasValue)
+                query = query.Where(p => p.Price <= filters.MaxPrice.Value);
+
+            if (filters.Bedrooms.HasValue)
+                query = query.Where(p => p.Bedrooms >= filters.Bedrooms.Value);
+
+            if (filters.Bathrooms.HasValue)
+                query = query.Where(p => p.Bathrooms >= filters.Bathrooms.Value);
+
+            query = query.OrderByDescending(p => p.CreatedAt);
+
+            ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
+            ViewBag.Filters = filters;
+
             var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
             ViewBag.IsAuthenticated = isAuthenticated;
-            
-            // Guarda los valores del filtro para mantenerlos en el formulario
-            ViewBag.SearchCode = searchCode;
-            ViewBag.PropertyType = propertyType;
-            ViewBag.MinPrice = minPrice;
-            ViewBag.MaxPrice = maxPrice;
-            ViewBag.Bedrooms = bedrooms;
-            ViewBag.Bathrooms = bathrooms;
-            
-            // Obtiene los  tipos de propiedad para el dropdown
-            ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
-            
+
             if (isAuthenticated)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -94,15 +86,11 @@ namespace RealEstateApp.WebApp.Controllers
                 ViewBag.UserName = null;
             }
 
-            var propertyDtos = _mapper.Map<List<PropertyDto>>(properties.ToList());
-            
+            var propertyDtos = _mapper.Map<List<PropertyDto>>(query.ToList());
             return View(propertyDtos);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -1,0 +1,95 @@
+﻿@using RealEstateApp.WebApp.Models.Offer
+@{
+    ViewData["Title"] = "Ofertas Recibidas";
+    var property = ViewBag.Property as RealEstateApp.Application.Dtos.Property.PropertyDto;
+    var clientOffers = ViewBag.ClientOffers as List<ClientOfferSummaryViewModel>;
+}
+
+<link rel="stylesheet" href="~/css/PropertyDetails/property-details-base.css" />
+<link rel="stylesheet" href="~/css/PropertyDetails/property-details-agent.css" />
+
+<div class="property-details-page">
+    <div class="details-container">
+
+        <!-- Back Button -->
+        <div class="back-section">
+            <a href="@Url.Action("Details", "Property", new { id = property.Id })" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver a Detalles</span>
+            </a>
+        </div>
+
+        <!-- Page Header -->
+        <div class="property-header">
+            <div class="header-left">
+                <h1 class="property-title">Ofertas Recibidas</h1>
+                <p class="property-meta">
+                    Propiedad: @property.Code - @property.PropertyType | Precio: RD$@property.Price.ToString("N0")
+                </p>
+            </div>
+            <div class="header-right">
+                @if (property.IsSold)
+                {
+                    <span class="status-badge sold">
+                        <i class="fas fa-check-circle"></i>
+                        VENDIDA
+                    </span>
+                }
+                else
+                {
+                    <span class="status-badge available">
+                        <i class="fas fa-home"></i>
+                        DISPONIBLE
+                    </span>
+                }
+            </div>
+        </div>
+
+        <!-- Offers List -->
+        @if (clientOffers != null && clientOffers.Any())
+        {
+            <div class="offers-card-agent">
+                <div class="agent-card-header">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <h3>Clientes con Ofertas</h3>
+                </div>
+                <div class="agent-card-body">
+                    <div class="offers-list-agent">
+                        @foreach (var client in clientOffers)
+                        {
+                            <a href="@Url.Action("ClientOffers", "Offer", new { propertyId = property.Id, clientId = client.ClientId })"
+                               class="offer-item-agent">
+                                <div class="offer-left-agent">
+                                    <div class="client-avatar-agent">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="offer-info-agent">
+                                        <span class="client-name-agent">@client.ClientName</span>
+                                        <span class="last-message-agent">
+                                            Última oferta: @client.LastOfferDate.ToString("dd/MM/yyyy HH:mm")
+                                        </span>
+                                        <span class="offer-amount-agent">RD$@client.LastOfferAmount.ToString("N0")</span>
+                                    </div>
+                                </div>
+                                <div class="offer-right-agent">
+                                    <span class="offer-status-agent @client.Status.ToLower()">
+                                        @client.Status
+                                    </span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state-agent">
+                <i class="fas fa-hand-holding-usd"></i>
+                <p>No hay ofertas recibidas para esta propiedad</p>
+            </div>
+        }
+
+    </div>
+</div>

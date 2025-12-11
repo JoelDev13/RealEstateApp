@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Domain.Entities;
 using RealEstateApp.Domain.Enums;
-using RealEstateApp.Infrastructure.Persistence;
 
 namespace RealEstateApp.Infrastructure.Persistence.Repositories
 {
@@ -77,6 +76,11 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         {
             await _context.Properties.AddAsync(property);
             await _context.SaveChangesAsync();
+            await _context.Entry(property).Collection(p => p.Images).LoadAsync();
+            await _context.Entry(property).Collection(p => p.Improvements).LoadAsync();
+            await _context.Entry(property).Reference(p => p.PropertyType).LoadAsync();
+            await _context.Entry(property).Reference(p => p.SaleType).LoadAsync();
+
             return property;
         }
 

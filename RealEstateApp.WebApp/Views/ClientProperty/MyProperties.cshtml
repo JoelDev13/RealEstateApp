@@ -1,136 +1,127 @@
 @model IEnumerable<RealEstateApp.Application.Dtos.Property.PropertyDto>
+@using RealEstateApp.Application.Dtos.Property
 @{
-    ViewData["Title"] = "Mis Propiedades";
+    ViewData["Title"] = "Mis Propiedades Favoritas";
+    var filters = ViewBag.Filters as PropertyFiltersDto ?? new PropertyFiltersDto();
+    var totalProperties = Model.Count();
 }
 
 @Html.AntiForgeryToken()
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div class="flex">
-        <!-- Sidebar -->
-        <div class="w-64 bg-white shadow-lg min-h-screen">
-            <div class="p-6 bg-gradient-to-r from-blue-600 to-indigo-600">
-                <h3 class="text-white font-bold text-lg">Panel del Cliente</h3>
+<link rel="stylesheet" href="~/css/home-properties.css" />
+
+<div class="home-page">
+    <div class="home-container">
+        <!-- Header -->
+        <div class="home-header">
+            <div class="header-info">
+                <h1 class="header-title">Mis Propiedades Favoritas</h1>
+                <p class="header-subtitle">
+                    <span class="property-count">@totalProperties</span> propiedades favoritas
+                </p>
             </div>
-            <nav class="mt-6">
-                <a href="@Url.Action("Index", "Home")" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    <i class="fas fa-home w-5 mr-3"></i> Home
-                </a>
-                <a href="@Url.Action("MyProperties", "ClientProperty")" class="flex items-center px-6 py-3 bg-blue-50 text-blue-600 border-r-4 border-blue-600">
-                    <i class="fas fa-heart w-5 mr-3"></i> Mis Propiedades
-                </a>
-                <a href="@Url.Action("Profile", "Account")" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                    <i class="fas fa-user w-5 mr-3"></i> Mi perfil
-                </a>
-                <a href="@Url.Action("Logout", "Account")" class="flex items-center px-6 py-3 text-red-600 hover:bg-red-50 transition-colors">
-                    <i class="fas fa-sign-out-alt w-5 mr-3"></i> Cerrar sesión
-                </a>
-            </nav>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 p-8">
-            <!-- Header -->
-            <div class="mb-8">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800 mb-2">Mis Propiedades Favoritas</h1>
-                        <p class="text-gray-600">Bienvenido, @ViewBag.UserName</p>
-                    </div>
-                    <a href="@Url.Action("Index", "Home")" 
-                       class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
-                        <i class="fas fa-search mr-2"></i> Buscar más propiedades
-                    </a>
-                </div>
-            </div>
+        <!-- Filtros Globales -->
+        <div class="filters-section">
+            <form asp-action="MyProperties" asp-controller="ClientProperty" method="get" class="filters-form">
+                @await Html.PartialAsync("_PropertyFilters", filters)
+            </form>
+        </div>
 
+        @if (Model.Any())
+        {
             <!-- Properties Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="properties-grid">
                 @foreach (var property in Model.OrderByDescending(p => p.CreatedAt))
                 {
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                        <!-- Favorite Button (always active in favorites view) -->
-                        <div class="absolute top-4 right-4 z-10">
-                            <form asp-action="ToggleFavorite" asp-controller="ClientProperty" method="post" class="inline">
+                    <article class="property-card">
+                        <div class="card-image">
+                            <form asp-action="ToggleFavorite" asp-controller="ClientProperty" method="post" class="fav-form">
                                 <input type="hidden" name="propertyId" value="@property.Id" />
-                                <button type="submit" 
-                                        class="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all"
+                                <button type="submit"
+                                        class="btn-favorite is-favorite"
+                                        title="Remover de favoritos"
                                         onclick="return confirm('¿Estás seguro de que quieres eliminar esta propiedad de tus favoritos?')">
-                                    <i class="fas fa-heart text-xl text-red-500"></i>
+                                    <i class="fas fa-heart"></i>
                                 </button>
                             </form>
-                        </div>
-                        
-                        <!-- Property Image -->
-                        <div class="relative h-48 bg-gradient-to-br from-blue-500 to-blue-600">
+
+                            <span class="badge-type">@(!string.IsNullOrWhiteSpace(property.PropertyType) ? property.PropertyType : "Propiedad")</span>
+                            <span class="badge-sale">@(!string.IsNullOrWhiteSpace(property.SaleType) ? property.SaleType : "Venta")</span>
+
                             @if (!string.IsNullOrEmpty(property.MainImageUrl))
                             {
-                                <img src="~/Images/Properties/@property.MainImageUrl" 
-                                     alt="@property.Code" 
-                                     class="w-full h-48 object-cover"
-                                     onerror="this.outerHTML='<div class=\'w-full h-48 bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center\'><div class=\'text-white text-center\'><i class=\'fas fa-exclamation-triangle text-4xl mb-2 opacity-80\'></i><p class=\'text-sm font-medium\'>Error Imagen</p></div></div>'">
+                                <img src="@property.MainImageUrl" alt="@property.Code" class="card-img" loading="lazy">
                             }
                             else
                             {
-                                <div class="w-full h-48 flex items-center justify-center">
-                                    <div class="text-white text-center">
-                                        <i class="fas fa-home text-4xl mb-2 opacity-80"></i>
-                                        <p class="text-sm font-medium">Sin Imagen</p>
-                                    </div>
+                                <div class="card-img-placeholder">
+                                    <i class="fas fa-home"></i>
                                 </div>
                             }
                         </div>
-                        
-                        <!-- Property Info -->
-                        <div class="p-6">
-                            <div class="mb-4">
-                                <h3 class="text-lg font-bold text-gray-800">@property.Code</h3>
-                                <p class="text-sm text-gray-600">@property.PropertyType</p>
-                                <p class="text-sm text-gray-600">@property.SaleType</p>
+
+                        <div class="card-content">
+                            <p class="card-code">Código: @property.Code</p>
+
+                            <div class="card-price">
+                                RD$@property.Price.ToString("N0") <span class="currency">DOP</span>
                             </div>
-                            
-                            <div class="mb-4">
-                                <p class="text-2xl font-bold text-blue-600">
-                                    @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO")) DOP
-                                </p>
-                            </div>
-                            
-                            <div class="mb-4 text-sm text-gray-600">
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-bed mr-2"></i> @property.Bedrooms Habitaciones
+
+                            <div class="card-features">
+                                <div class="feature">
+                                    <i class="fas fa-bed"></i>
+                                    <span>@property.Bedrooms Hab.</span>
                                 </div>
-                                <div class="flex items-center mb-1">
-                                    <i class="fas fa-bath mr-2"></i> @property.Bathrooms Baños
+                                <div class="feature">
+                                    <i class="fas fa-bath"></i>
+                                    <span>@property.Bathrooms Baños</span>
                                 </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-ruler-combined mr-2"></i> @property.Size m²
+                                <div class="feature">
+                                    <i class="fas fa-ruler-combined"></i>
+                                    <span>@property.Size m²</span>
                                 </div>
                             </div>
-                            
-                            <div class="flex space-x-2">
-                                <a href="@Url.Action("Details", "Property", new { id = property.Id })" 
-                                   class="flex-1 bg-blue-600 text-white text-center py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                                    Ver Detalles
-                                </a>
-                            </div>
+
+                            <a href="@Url.Action("Details", "PublicProperty", new { id = property.Id })" class="btn-view-details">
+                                Ver detalles <i class="fas fa-arrow-right"></i>
+                            </a>
                         </div>
-                    </div>
+                    </article>
                 }
             </div>
-
-            @if (!Model.Any())
-            {
-                <div class="text-center py-12">
-                    <i class="fas fa-heart text-6xl text-gray-300 mb-4"></i>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No tienes propiedades favoritas</h3>
-                    <p class="text-gray-500 mb-6">Explora nuestras propiedades y marca tus favoritas</p>
-                    <a href="@Url.Action("Index", "Home")" 
-                       class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        <i class="fas fa-search mr-2"></i> Buscar Propiedades
-                    </a>
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-heart"></i>
                 </div>
-            }
-        </div>
+                <h3 class="empty-title">No tienes propiedades favoritas</h3>
+                <p class="empty-text">
+                    @if (filters.Code != null || filters.PropertyTypeId != null || filters.MinPrice != null || filters.MaxPrice != null || filters.Bedrooms != null || filters.Bathrooms != null)
+                    {
+                        <text>No hay propiedades favoritas que coincidan con los filtros. Intenta ajustarlos.</text>
+                    }
+                    else
+                    {
+                        <text>Explora nuestras propiedades y marca tus favoritas haciendo clic en el corazón.</text>
+                    }
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                    <a href="@Url.Action("Index", "Home")" class="btn-empty-action">
+                        <i class="fas fa-search"></i> Buscar Propiedades
+                    </a>
+                    @if (filters.Code != null || filters.PropertyTypeId != null || filters.MinPrice != null || filters.MaxPrice != null || filters.Bedrooms != null || filters.Bathrooms != null)
+                    {
+                        <a href="@Url.Action("MyProperties", "ClientProperty")" class="btn-empty-action" style="background: var(--surface-sunken); color: var(--text-secondary);">
+                            <i class="fas fa-redo"></i> Limpiar Filtros
+                        </a>
+                    }
+                </div>
+            </div>
+        }
     </div>
 </div>
-

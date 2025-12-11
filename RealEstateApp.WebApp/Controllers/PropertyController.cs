@@ -18,19 +18,25 @@ namespace RealEstateApp.WebApp.Controllers
         private readonly ISaleTypeService _saleTypeService;
         private readonly IImprovementService _improvementService;
         private readonly IMapper _mapper;
+        private readonly IMessageService _messageService;
+        private readonly IOfferService _offerService;
 
         public PropertyController(
             IPropertyService propertyService,
             IPropertyTypeService propertyTypeService,
             ISaleTypeService saleTypeService,
             IImprovementService improvementService,
-            IMapper mapper)
+            IMapper mapper,
+            IMessageService messageService,
+            IOfferService offerService)
         {
             _propertyService = propertyService;
             _propertyTypeService = propertyTypeService;
             _saleTypeService = saleTypeService;
             _improvementService = improvementService;
             _mapper = mapper;
+            _messageService = messageService;
+            _offerService = offerService;
         }
 
         public async Task<IActionResult> Create()
@@ -77,7 +83,7 @@ namespace RealEstateApp.WebApp.Controllers
 
             if (!propertyTypes.Any() || !saleTypes.Any() || !improvements.Any())
             {
-                TempData["Error"] = "No se puede crear una propiedad porque faltan tipos de propiedad, tipos de venta o mejoras creadas.";
+                TempData["Error"] = "No se puede crear una propiedad porque faltan tipos de propiedad, tipos de venta o mejoras creadas. ";
                 return RedirectToAction("Properties", "Agent");
             }
 
@@ -192,9 +198,9 @@ namespace RealEstateApp.WebApp.Controllers
             return RedirectToAction("Properties", "Agent");
         }
 
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var property = await _propertyService.GetPropertyByIdAsync(id);
+            var property = await _propertyService.GetPropertyDetailAsync(id);
             if (property == null)
             {
                 return NotFound();
@@ -209,6 +215,12 @@ namespace RealEstateApp.WebApp.Controllers
             var propertyTypes = await _propertyTypeService.GetAllAsync();
             var saleTypes = await _saleTypeService.GetAllAsync();
             var improvements = await _improvementService.GetAllAsync();
+
+            if (!propertyTypes.Any() || !saleTypes.Any() || !improvements.Any())
+            {
+                TempData["Error"] = "No se puede editar la propiedad. Faltan configuraciones del sistema (tipos de propiedad, tipos de venta o mejoras).";
+                return RedirectToAction("Properties", "Agent");
+            }
 
             var viewModel = _mapper.Map<EditPropertyViewModel>(property);
 
@@ -233,9 +245,10 @@ namespace RealEstateApp.WebApp.Controllers
                 Selected = property.Improvements.Any(imp => imp.Id == i.Id)
             }).ToList();
 
+            viewModel.ExistingImages = property.Images?.Select(img => img.Url).ToList() ?? new List<string>();
+
             return View(viewModel);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditPropertyViewModel model)
@@ -266,7 +279,14 @@ namespace RealEstateApp.WebApp.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var property = await _propertyService.GetPropertyByIdAsync(model.Id);
+
+            // ✅ Parse el ID correctamente
+            if (!int.TryParse(model.Id, out int propertyId))
+            {
+                return BadRequest();
+            }
+
+            var property = await _propertyService.GetPropertyDetailAsync(propertyId); // ✅ Usa Detail
 
             if (property == null || property.AgentId != userId)
             {
@@ -275,7 +295,7 @@ namespace RealEstateApp.WebApp.Controllers
 
             var dto = _mapper.Map<UpdatePropertyDto>(model);
 
-            await _propertyService.UpdatePropertyAsync(property.Id, dto, userId);
+            await _propertyService.UpdatePropertyAsync(propertyId, dto, userId);
 
             TempData["Success"] = "Propiedad actualizada exitosamente";
             return RedirectToAction("Properties", "Agent");
@@ -283,9 +303,9 @@ namespace RealEstateApp.WebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var property = await _propertyService.GetPropertyByIdAsync(id);
+            var property = await _propertyService.GetPropertyDetailAsync(id);
             if (property == null)
             {
                 return NotFound();
@@ -308,15 +328,15 @@ namespace RealEstateApp.WebApp.Controllers
                 }
             }
 
-            await _propertyService.DeletePropertyAsync(property.Id, userId);
+            await _propertyService.DeletePropertyAsync(id, userId);
 
             TempData["Success"] = "Propiedad eliminada exitosamente";
             return RedirectToAction("Properties", "Agent");
         }
 
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int id)
         {
-            var property = await _propertyService.GetPropertyByIdAsync(id);
+            var property = await _propertyService.GetPropertyDetailAsync(id);
             if (property == null)
             {
                 return NotFound();
@@ -329,7 +349,59 @@ namespace RealEstateApp.WebApp.Controllers
             }
 
             var viewModel = _mapper.Map<PropertyDetailViewModel>(property);
+
+            try
+            {
+                var chatPartners = await _messageService.GetAgentChatPartnersAsync(id, userId);
+                viewModel.ClientChats = chatPartners.Select(m => new ClientChatSummary
+                {
+                    ClientId = m.SenderId,
+                    ClientName = $"Cliente {m.SenderId.Substring(0, 8)}",
+                    LastMessage = m.Content,
+                    LastMessageDate = m.SentDate,
+                    UnreadCount = 0
+                }).ToList();
+            }
+            catch
+            {
+                viewModel.ClientChats = new List<ClientChatSummary>();
+            }
+
+            try
+            {
+                var offers = await _offerService.GetOffersByPropertyAsync(id);
+                viewModel.ClientOffers = offers
+                    .GroupBy(o => o.ClientId)
+                    .Select(g => new ClientOfferSummary
+                    {
+                        ClientId = g.Key,
+                        ClientName = $"Cliente {g.Key.Substring(0, 8)}",
+                        LastOfferAmount = g.OrderByDescending(o => o.OfferDate).First().Amount,
+                        LastOfferDate = g.OrderByDescending(o => o.OfferDate).First().OfferDate,
+                        Status = g.OrderByDescending(o => o.OfferDate).First().Status.ToString(),
+                        StatusText = GetOfferStatusText(g.OrderByDescending(o => o.OfferDate).First().Status),
+                        TotalOffers = g.Count()
+                    })
+                    .OrderByDescending(o => o.LastOfferDate)
+                    .ToList();
+            }
+            catch
+            {
+                viewModel.ClientOffers = new List<ClientOfferSummary>();
+            }
+
             return View(viewModel);
+        }
+
+        private string GetOfferStatusText(OfferStatus status)
+        {
+            return status switch
+            {
+                OfferStatus.Pendiente => "Pendiente",
+                OfferStatus.Aceptada => "Aceptada",
+                OfferStatus.Rechazada => "Rechazada",
+                _ => "Desconocido"
+            };
         }
     }
 }

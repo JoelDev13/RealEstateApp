@@ -9,5 +9,6 @@ namespace RealEstateApp.Application.Interfaces.Services
         Task<AgentProfileDto> GetProfileAsync(string agentId);
         Task<List<UserDto>> GetAllActiveAgentsAsync();
         Task<UserDto?> GetAgentByIdAsync(string agentId);
+        Task<UserDto?> GetClientByIdAsync(string clientId);
     }
 }

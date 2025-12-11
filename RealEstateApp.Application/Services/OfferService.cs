@@ -83,39 +83,39 @@ namespace RealEstateApp.Application.Services
             return await _offerRepository.GetByClientAndPropertyAsync(clientId, propertyId);
         }
 
-        public async Task AcceptOfferAsync(int offerId, string agentId)
+        public async Task AcceptOfferAsync(Guid offerId, string agentId)
         {
             var offer = await _offerRepository.GetByIdAsync(offerId);
             if (offer == null)
-                throw new KeyNotFoundException("Oferta no encontrada");
+                throw new Exception("Oferta no encontrada");
 
-            // Valida que el agente es dueño de la propiedad
+            // Verifica que el agente sea dueño de la propiedad
             if (!await ValidateAgentOwnsPropertyAsync(offer.PropertyId, agentId))
-                throw new UnauthorizedAccessException("No es el propietario de esta propiedad");
+                throw new Exception("No tienes permiso para aceptar esta oferta");
 
-            // Obtiene la propiedad
+            // Verifica que la oferta esté pendiente
+            if (offer.Status != OfferStatus.Pendiente)
+                throw new Exception("Solo se pueden aceptar ofertas pendientes");
+
+            // Verifica que la propiedad no esté vendida
             var property = await _propertyRepository.GetByIdAsync(offer.PropertyId);
-            if (property == null)
-                throw new KeyNotFoundException("Propiedad no encontrada");
+            if (property.Status == PropertyStatus.Vendida)
+                throw new Exception("La propiedad ya ha sido vendida");
 
-            // Acepta la oferta
             offer.Status = OfferStatus.Aceptada;
             await _offerRepository.UpdateAsync(offer);
 
-            // Marca la propiedad como vendida
+            var allOffers = await _offerRepository.GetByPropertyAsync(offer.PropertyId);
+            foreach (var otherOffer in allOffers.Where(o => o.Id != offerId && o.Status == OfferStatus.Pendiente))
+            {
+                otherOffer.Status = OfferStatus.Rechazada;
+                await _offerRepository.UpdateAsync(otherOffer);
+            }
+
             property.Status = PropertyStatus.Vendida;
             await _propertyRepository.UpdateAsync(property);
-
-            // Rechaza automaticamente todas las demas ofertas pendientes
-            var pendingOffers = await _offerRepository.GetPendingByPropertyAsync(offer.PropertyId);
-            foreach (var pendingOffer in pendingOffers.Where(o => o.Id != offer.Id))
-            {
-                pendingOffer.Status = OfferStatus.Rechazada;
-                await _offerRepository.UpdateAsync(pendingOffer);
-            }
         }
-
-        public async Task RejectOfferAsync(int offerId, string agentId)
+        public async Task RejectOfferAsync(Guid offerId, string agentId)
         {
             var offer = await _offerRepository.GetByIdAsync(offerId);
             if (offer == null)
@@ -143,6 +143,10 @@ namespace RealEstateApp.Application.Services
         {
             var property = await _propertyRepository.GetByIdAsync(propertyId);
             return property?.AgentId == agentId;
+        }
+        public async Task<Offer?> GetOfferByIdAsync(Guid offerId)
+        {
+            return await _offerRepository.GetByIdAsync(offerId);
         }
     }
 }

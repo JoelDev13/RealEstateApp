@@ -70,6 +70,7 @@ namespace RealEstateApp.Infraestructure.Identity.Seeds
                 FirstName = "Cliente",
                 LastName = "Ejemplo",
                 Cedula = "98765432109",
+                UserType = "Cliente",
                 PhoneNumber = "809-987-6543",
                 ProfilePicture = "",
                 IsActive = true,

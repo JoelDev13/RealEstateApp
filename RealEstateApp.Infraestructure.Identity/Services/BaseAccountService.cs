@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Application;
 using RealEstateApp.Application.Dtos.Auth;
-using RealEstateApp.Application.Dtos.Email;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Domain.Enums;
 using RealEstateApp.Infrastructure.Identity.Entities;
@@ -41,7 +40,7 @@ namespace RealEstateApp.Infraestructure.Identity.Services
 
             // Remueve los guiones o espacios si los tiene
             string cedulaClean = saveDto.Cedula.Replace("-", "").Replace(" ", "").Trim();
-            
+
             if (cedulaClean.Length != 11 || !cedulaClean.All(char.IsDigit))
             {
                 return Result<UserDto>.Fail("La cédula debe tener exactamente 11 dígitos numéricos");
@@ -98,17 +97,17 @@ namespace RealEstateApp.Infraestructure.Identity.Services
             if (saveDto.UserType == nameof(Roles.Cliente))
             {
                 string verificationUri = await GetVerificationEmailUri(user, origin ?? "");
-                string htmlBody = $@"
-                <p>Hola {saveDto.FirstName},</p>
-                <p>¡Bienvenido a RealEstateApp!</p>
-                <p>Por favor confirma tu correo haciendo clic aquí: <a href='{verificationUri}'>Confirmar correo</a></p>
-                ";
-                await _emailService.SendAsync(new EmailRequestDto()
+                var (htmlBody, textBody) = RealEstateApp.Application.Helpers.EmailTemplates
+                    .BuildAccountConfirmationEmail(saveDto.FirstName ?? "usuario", verificationUri, origin ?? "");
+
+                var emailRequest = new RealEstateApp.Application.Dtos.Email.EmailRequestDto
                 {
                     To = saveDto.Email,
+                    Subject = "Confirma tu cuenta en RealEstateApp",
                     HtmlBody = htmlBody,
-                    Subject = "Confirma tu cuenta en RealEstateApp"
-                });
+                };
+
+                await _emailService.SendAsync(emailRequest);
             }
 
             var rolesList = await _userManager.GetRolesAsync(user);
@@ -144,7 +143,7 @@ namespace RealEstateApp.Infraestructure.Identity.Services
             if (!string.IsNullOrWhiteSpace(saveDto.Cedula))
             {
                 string cedulaClean = saveDto.Cedula.Replace("-", "").Replace(" ", "").Trim();
-                
+
                 if (cedulaClean.Length != 11 || !cedulaClean.All(char.IsDigit))
                 {
                     return Result<UserDto>.Fail("La cédula debe tener exactamente 11 dígitos numéricos.");
@@ -270,22 +269,32 @@ namespace RealEstateApp.Infraestructure.Identity.Services
             if (isApi != null && !isApi.Value)
             {
                 var resetUri = await GetResetPasswordUri(user, request.Origin ?? "");
-                await _emailService.SendAsync(new EmailRequestDto()
+                var (htmlBody, textBody) = RealEstateApp.Application.Helpers.EmailTemplates
+                    .BuildResetPasswordEmail(user.FirstName ?? "usuario", resetUri, request.Origin ?? "", isApiMode: false);
+
+                var emailRequest = new RealEstateApp.Application.Dtos.Email.EmailRequestDto
                 {
                     To = user.Email!,
-                    HtmlBody = $"Por favor restablece tu contraseña visitando esta URL: {resetUri}",
-                    Subject = "Restablecer contraseña"
-                });
+                    Subject = "Restablecer contraseña - RealEstateApp",
+                    HtmlBody = htmlBody,
+                };
+
+                await _emailService.SendAsync(emailRequest);
             }
             else
             {
                 string? resetToken = await GetResetPasswordToken(user);
-                await _emailService.SendAsync(new EmailRequestDto()
+                var (htmlBody, textBody) = RealEstateApp.Application.Helpers.EmailTemplates
+                    .BuildResetPasswordEmail(user.FirstName ?? "usuario", resetUri: string.Empty, origin: request.Origin ?? "", isApiMode: true, resetToken: resetToken);
+
+                var emailRequest = new RealEstateApp.Application.Dtos.Email.EmailRequestDto
                 {
                     To = user.Email!,
-                    HtmlBody = $"Por favor restablece tu contraseña usando este token: {resetToken}",
-                    Subject = "Restablecer contraseña"
-                });
+                    Subject = "Restablecer contraseña - RealEstateApp",
+                    HtmlBody = htmlBody,
+                };
+
+                await _emailService.SendAsync(emailRequest);
             }
 
             return Result.Ok();

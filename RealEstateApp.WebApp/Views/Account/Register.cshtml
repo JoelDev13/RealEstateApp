@@ -26,7 +26,7 @@
             <div class="auth-branding-content">
                 <div class="auth-logo">
                     <div class="auth-logo-icon">
-                        <img src="~/images/logo.png" alt="RealEstate Logo" class="auth-logo-img" />
+                        <img src="~/Images/logo.png" alt="RealEstate Logo" class="auth-logo-img" />
                     </div>
                     <div class="auth-logo-text">
                         <span class="auth-logo-name">RealEstate</span>
@@ -72,6 +72,7 @@
                 </div>
 
                 <form class="auth-form" asp-action="Register" asp-controller="Account" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="auth-alert auth-alert-error"></div>
 
                     <!-- Información Personal -->
@@ -80,13 +81,13 @@
                     <div class="auth-form-grid">
                         <div class="auth-form-group">
                             <label asp-for="FirstName" class="auth-form-label">Nombre</label>
-                            <input asp-for="FirstName" class="auth-form-input no-icon" placeholder="Tu nombre">
+                            <input asp-for="FirstName" class="auth-form-input no-icon" placeholder="Tu nombre" />
                             <span asp-validation-for="FirstName" class="auth-form-error"></span>
                         </div>
 
                         <div class="auth-form-group">
                             <label asp-for="LastName" class="auth-form-label">Apellido</label>
-                            <input asp-for="LastName" class="auth-form-input no-icon" placeholder="Tu apellido">
+                            <input asp-for="LastName" class="auth-form-input no-icon" placeholder="Tu apellido" />
                             <span asp-validation-for="LastName" class="auth-form-error"></span>
                         </div>
                     </div>
@@ -95,34 +96,25 @@
                         <label asp-for="PhoneNumber" class="auth-form-label">Teléfono</label>
                         <div class="auth-form-input-wrapper">
                             <i class="fas fa-phone"></i>
-                            <input asp-for="PhoneNumber" class="auth-form-input" placeholder="809-123-4567">
+                            <input asp-for="PhoneNumber" class="auth-form-input" placeholder="809-123-4567" />
                         </div>
                         <span asp-validation-for="PhoneNumber" class="auth-form-error"></span>
                     </div>
 
                     <div class="auth-form-group">
-                        <label class="auth-form-label">Foto de perfil</label>
-                        <input type="file" name="profilePicture" accept="image/*" class="auth-form-input no-icon" style="padding: 0.5rem 1rem;">
-                        <span class="auth-form-hint">Formatos: JPG, PNG, GIF. Máximo 5MB</span>
-                    </div>
-
-                    <div class="auth-form-group">
-                        <label asp-for="Cedula" class="block text-sm font-medium text-gray-700">
-                            Cédula <span class="text-red-500">*</span>
-                        </label>
+                        <label asp-for="Cedula" class="auth-form-label">Cédula <span class="text-red-500">*</span></label>
                         <input asp-for="Cedula" type="text" maxlength="11" pattern="[0-9]{11}"
-                               class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md"
+                               class="auth-form-input no-icon"
                                placeholder="00000000000"
-                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)">
-                        <span asp-validation-for="Cedula" class="text-red-500 text-xs"></span>
-                        <p class="text-xs text-gray-500 mt-1">Debe tener exactamente 11 dígitos numéricos</p>
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" />
+                        <span asp-validation-for="Cedula" class="auth-form-error"></span>
+                        <p class="auth-form-hint">Debe tener exactamente 11 dígitos numéricos</p>
                     </div>
 
                     <div class="auth-form-group">
-                        <label asp-for="ProfilePicture" class="block text-sm font-medium text-gray-700">Foto de perfil</label>
-                        <input type="file" name="profilePicture" accept="image/*"
-                               class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md">
-                        <p class="text-xs text-gray-500 mt-1">Formatos: JPG, PNG, GIF. Máximo 5MB</p>
+                        <label class="auth-form-label">Foto de perfil</label>
+                        <input type="file" name="profilePicture" accept="image/*" class="auth-form-input no-icon" style="padding: 0.5rem 1rem;" />
+                        <span class="auth-form-hint">Formatos: JPG, PNG, GIF. Máximo 5MB</span>
                     </div>
 
                     <!-- Credenciales -->
@@ -132,7 +124,7 @@
                         <label asp-for="UserName" class="auth-form-label">Nombre de usuario</label>
                         <div class="auth-form-input-wrapper">
                             <i class="fas fa-user"></i>
-                            <input asp-for="UserName" class="auth-form-input" placeholder="nombredeusuario">
+                            <input asp-for="UserName" class="auth-form-input" placeholder="nombredeusuario" />
                         </div>
                         <span asp-validation-for="UserName" class="auth-form-error"></span>
                     </div>
@@ -141,7 +133,7 @@
                         <label asp-for="Email" class="auth-form-label">Correo electrónico</label>
                         <div class="auth-form-input-wrapper">
                             <i class="fas fa-envelope"></i>
-                            <input asp-for="Email" type="email" class="auth-form-input" placeholder="correo@ejemplo.com">
+                            <input asp-for="Email" type="email" class="auth-form-input" placeholder="correo@ejemplo.com" />
                         </div>
                         <span asp-validation-for="Email" class="auth-form-error"></span>
                     </div>
@@ -149,13 +141,13 @@
                     <div class="auth-form-grid">
                         <div class="auth-form-group">
                             <label asp-for="Password" class="auth-form-label">Contraseña</label>
-                            <input asp-for="Password" type="password" class="auth-form-input no-icon" placeholder="Mínimo 8 caracteres">
+                            <input asp-for="Password" type="password" class="auth-form-input no-icon" placeholder="Mínimo 8 caracteres" />
                             <span asp-validation-for="Password" class="auth-form-error"></span>
                         </div>
 
                         <div class="auth-form-group">
                             <label asp-for="ConfirmPassword" class="auth-form-label">Confirmar</label>
-                            <input asp-for="ConfirmPassword" type="password" class="auth-form-input no-icon" placeholder="Repite tu contraseña">
+                            <input asp-for="ConfirmPassword" type="password" class="auth-form-input no-icon" placeholder="Repite tu contraseña" />
                             <span asp-validation-for="ConfirmPassword" class="auth-form-error"></span>
                         </div>
                     </div>
@@ -174,7 +166,7 @@
                     </div>
 
                     <div class="auth-info-box">
-                        <strong>Cliente:</strong> Recibirás un email para activar tu cuenta.<br>
+                        <strong>Cliente:</strong> Recibirás un email para activar tu cuenta.<br />
                         <strong>Agente:</strong> Tu cuenta será revisada por un administrador.
                     </div>
 

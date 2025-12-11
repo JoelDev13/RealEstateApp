@@ -1,83 +1,93 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Dtos.Property;
 using RealEstateApp.Application.Interfaces.Services;
 
 namespace RealEstateApp.WebApp.Controllers
 {
+    [AllowAnonymous]
     public class AgentListController : Controller
     {
         private readonly IAgentService _agentService;
         private readonly IPropertyService _propertyService;
+        private readonly IPropertyTypeService _propertyTypeService;
         private readonly IMapper _mapper;
 
         public AgentListController(
             IAgentService agentService,
             IPropertyService propertyService,
+            IPropertyTypeService propertyTypeService,
             IMapper mapper)
         {
             _agentService = agentService;
             _propertyService = propertyService;
+            _propertyTypeService = propertyTypeService;
             _mapper = mapper;
         }
 
-        // GET: /AgentList
         public async Task<IActionResult> Index(string searchName)
         {
-            // Obtiene todos los agentes activos
             var agents = await _agentService.GetAllActiveAgentsAsync();
 
-            // Filtra por nombre si se proporciona
             if (!string.IsNullOrEmpty(searchName))
             {
-                agents = agents.Where(a => 
-                    (a.FirstName + " " + a.LastName).Contains(searchName, StringComparison.OrdinalIgnoreCase))
+                agents = agents.Where(a =>
+                    (a.FirstName + " " + a.LastName)
+                    .Contains(searchName, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
 
-            // Ordena alfabeticamente por nombre
             agents = agents.OrderBy(a => a.FirstName).ThenBy(a => a.LastName).ToList();
 
             ViewBag.SearchName = searchName;
             return View(agents);
         }
 
-        // GET: /AgentList/Properties/agentId
-        public async Task<IActionResult> Properties(string agentId, string searchCode, decimal? minPrice, decimal? maxPrice)
+        public async Task<IActionResult> Properties(string agentId, [FromQuery] PropertyFiltersDto filters)
         {
             if (string.IsNullOrEmpty(agentId))
                 return NotFound();
 
-            // Obtiene la info del agente
             var agent = await _agentService.GetAgentByIdAsync(agentId);
             if (agent == null)
                 return NotFound();
 
-            // Obtiene las propiedades del agente
-            var properties = await _propertyService.GetAgentPropertiesAsync(agentId);
-
-            // Aplica filtros
-            if (!string.IsNullOrEmpty(searchCode))
-            {
-                properties = properties.Where(p => p.Code.Contains(searchCode, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (minPrice.HasValue)
-            {
-                properties = properties.Where(p => p.Price >= minPrice.Value);
-            }
-
-            if (maxPrice.HasValue)
-            {
-                properties = properties.Where(p => p.Price <= maxPrice.Value);
-            }
-
-            var propertyDtos = _mapper.Map<List<PropertyDto>>(properties.ToList());
-
             ViewBag.Agent = agent;
-            ViewBag.SearchCode = searchCode;
-            ViewBag.MinPrice = minPrice;
-            ViewBag.MaxPrice = maxPrice;
+
+            var properties = await _propertyService.GetAvailablePropertiesByAgentAsync(agentId);
+            var query = properties.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(filters.Code))
+                query = query.Where(p => p.Code.Contains(filters.Code, StringComparison.OrdinalIgnoreCase));
+
+            if (filters.PropertyTypeId.HasValue)
+                query = query.Where(p => p.PropertyTypeId == filters.PropertyTypeId.Value);
+
+            if (filters.MinPrice.HasValue)
+                query = query.Where(p => p.Price >= filters.MinPrice.Value);
+
+            if (filters.MaxPrice.HasValue)
+                query = query.Where(p => p.Price <= filters.MaxPrice.Value);
+
+            if (filters.Bedrooms.HasValue)
+                query = query.Where(p => p.Bedrooms >= filters.Bedrooms.Value);
+
+            if (filters.Bathrooms.HasValue)
+                query = query.Where(p => p.Bathrooms >= filters.Bathrooms.Value);
+
+            query = query.OrderByDescending(p => p.CreatedAt);
+
+            ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
+
+            ViewBag.SearchCode = filters.Code;
+            ViewBag.PropertyTypeId = filters.PropertyTypeId;
+            ViewBag.MinPrice = filters.MinPrice;
+            ViewBag.MaxPrice = filters.MaxPrice;
+            ViewBag.Bedrooms = filters.Bedrooms;
+            ViewBag.Bathrooms = filters.Bathrooms;
+
+            var propertyDtos = _mapper.Map<List<PropertyDto>>(query.ToList());
 
             return View(propertyDtos);
         }

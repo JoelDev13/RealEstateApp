@@ -1,38 +1,36 @@
 @model List<RealEstateApp.Application.Dtos.Auth.UserDto>
+
 @{
     ViewData["Title"] = "Listado de Agentes";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-    <div class="container mx-auto px-4">
-        <!-- Header con imagen de fondo -->
-        <div class="relative h-64 rounded-xl overflow-hidden mb-8 shadow-2xl">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <div class="text-center text-white">
-                    <h1 class="text-5xl font-bold mb-4">Listado de Agentes</h1>
-                    <p class="text-xl opacity-90">Encuentra al agente perfecto para ti</p>
-                </div>
+<link rel="stylesheet" href="~/css/agents.css" />
+
+<div class="agents-page">
+    <div class="agents-container">
+        <div class="agents-header">
+            <div class="agents-header-content">
+                <h1 class="agents-title">Nuestros Agentes</h1>
+                <p class="agents-subtitle">Encuentra al agente perfecto para ti</p>
             </div>
         </div>
 
-        <!-- Buscador -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <form method="get" asp-action="Index" class="flex items-center space-x-4">
-                <div class="flex-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Buscar por nombre:</label>
-                    <input type="text" 
-                           name="searchName" 
+        <div class="search-section">
+            <form method="get" asp-action="Index" asp-controller="AgentList" class="search-form">
+                <div class="search-field">
+                    <label class="search-label">Buscar por nombre</label>
+                    <input type="text"
+                           name="searchName"
                            value="@ViewBag.SearchName"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                           placeholder="Ej: Fernando, Olga, Manuel...">
+                           class="search-input"
+                           placeholder="Ej: Fernando, Olga, Manuel..." />
                 </div>
-                <div class="flex items-end space-x-3">
-                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg">
-                        <i class="fas fa-search mr-2"></i> Buscar
+                <div class="search-actions">
+                    <button type="submit" class="btn-search">
+                        <i class="fas fa-search"></i> Buscar
                     </button>
-                    <a href="@Url.Action("Index")" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all">
-                        <i class="fas fa-times mr-2"></i> Limpiar
+                    <a href="@Url.Action("Index", "AgentList")" class="btn-clear">
+                        <i class="fas fa-times"></i> Limpiar
                     </a>
                 </div>
             </form>
@@ -40,55 +38,53 @@
 
         @if (!Model.Any())
         {
-            <div class="bg-white rounded-xl shadow-lg p-12 text-center">
-                <i class="fas fa-user-tie text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-2xl font-bold text-gray-600 mb-2">No se encontraron agentes</h3>
-                <p class="text-gray-500">Intenta con otro término de búsqueda</p>
+            <div class="empty-state-agents">
+                <div class="empty-state-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 class="empty-state-title">No se encontraron agentes</h3>
+                <p class="empty-state-text">Intenta con otro término de búsqueda</p>
             </div>
         }
         else
         {
-            <!-- Grid de Agentes -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                @foreach (var agent in Model)
+            <div class="agents-grid">
+                @foreach (var agent in Model.OrderBy(a => a.FirstName))
                 {
-                    <a href="@Url.Action("Properties", new { agentId = agent.Id })" 
-                       class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:scale-105 cursor-pointer">
-                        <!-- Foto del Agente -->
-                        <div class="relative h-48 bg-gradient-to-br from-blue-500 to-indigo-600">
+                    <a href="@Url.Action("Properties", "AgentList", new { agentId = agent.Id })" class="agent-card">
+                        <div class="agent-card-image">
                             @if (!string.IsNullOrEmpty(agent.ProfilePicture))
                             {
-                                <img src="@agent.ProfilePicture" 
-                                     alt="@agent.FirstName @agent.LastName" 
-                                     class="w-full h-48 object-cover">
+                                <img src="@agent.ProfilePicture" alt="@agent.FirstName @agent.LastName" />
                             }
                             else
                             {
-                                <div class="w-full h-48 flex items-center justify-center">
-                                    <div class="text-white text-center">
-                                        <i class="fas fa-user-tie text-6xl mb-2 opacity-80"></i>
-                                    </div>
+                                <div class="agent-placeholder">
+                                    <i class="fas fa-user-tie"></i>
                                 </div>
                             }
                         </div>
-                        
-                        <!-- Info del Agente -->
-                        <div class="p-6 text-center">
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">
-                                @agent.FirstName @agent.LastName
-                            </h3>
-                            <p class="text-sm text-gray-600 mb-4">
-                                <i class="fas fa-envelope mr-2"></i>@agent.Email
-                            </p>
-                            @if (!string.IsNullOrEmpty(agent.PhoneNumber))
-                            {
-                                <p class="text-sm text-gray-600 mb-4">
-                                    <i class="fas fa-phone mr-2"></i>@agent.PhoneNumber
-                                </p>
-                            }
-                            <div class="mt-4 pt-4 border-t border-gray-200">
-                                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">
-                                    Ver Propiedades <i class="fas fa-arrow-right ml-2"></i>
+
+                        <div class="agent-card-content">
+                            <h3 class="agent-name">@agent.FirstName @agent.LastName</h3>
+
+                            <div class="agent-contact">
+                                <div class="agent-contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>@agent.Email</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(agent.PhoneNumber))
+                                {
+                                    <div class="agent-contact-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>@agent.PhoneNumber</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="agent-card-action">
+                                <span class="agent-view-properties">
+                                    Ver Propiedades <i class="fas fa-arrow-right"></i>
                                 </span>
                             </div>
                         </div>
@@ -96,13 +92,5 @@
                 }
             </div>
         }
-
-        <!-- Botón Volver -->
-        <div class="mt-8 text-center">
-            <a href="@Url.Action("Index", "Home")" 
-               class="inline-block px-6 py-3 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl transition-all">
-                <i class="fas fa-arrow-left mr-2"></i> Volver al Inicio
-            </a>
-        </div>
     </div>
 </div>

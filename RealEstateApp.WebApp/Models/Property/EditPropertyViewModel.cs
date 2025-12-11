@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
@@ -42,7 +41,7 @@ namespace RealEstateApp.WebApp.Models.Property
 
         [DataType(DataType.Upload)]
         public List<IFormFile>? NewImages { get; set; } = new();
-
+        public List<string> ExistingImages { get; set; } = new();
         public List<SelectListItem> PropertyTypes { get; set; } = new();
         public List<SelectListItem> SaleTypes { get; set; } = new();
         public List<SelectListItem> Improvements { get; set; } = new();

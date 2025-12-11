@@ -15,6 +15,7 @@ namespace RealEstateApp.Application.Dtos.Property
         public string AgentName { get; set; } = string.Empty;
         public string AgentId { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
+        public bool IsSold { get; set; }
         public string MainImageUrl { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
     }

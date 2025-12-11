@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Dtos.Messages;
 using RealEstateApp.Application.Interfaces.Services;
-using RealEstateApp.Domain.Enums;
+using RealEstateApp.WebApp.Models.Chat;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 
 namespace RealEstateApp.WebApp.Controllers
 {
@@ -33,36 +32,32 @@ namespace RealEstateApp.WebApp.Controllers
         public async Task<IActionResult> PropertyChat(int propertyId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            // Verifica que la propiedad exista
+
             var property = await _propertyService.GetPropertyByIdAsync(propertyId.ToString());
             if (property == null)
                 return NotFound();
 
-            // Verifica que la propiedad este disponible
-            if (property.Status == PropertyStatus.Vendida)
+            if (property.Status == "Vendida")
             {
                 TempData["Error"] = "No se puede chatear sobre propiedades vendidas";
-                return RedirectToAction("Details", "Property", new { id = propertyId });
+                return RedirectToAction("Details", "PublicProperty", new { id = propertyId });
             }
 
-            // Obtiene el chat del cliente con el agente
             var agentId = property.AgentId;
             var messages = await _messageService.GetChatBetweenUsersAsync(userId!, agentId, propertyId);
             var messageDtos = _mapper.Map<List<MessageDto>>(messages);
 
-            // Marca quién envió cada mensaje (cliente vs agente)
             foreach (var msg in messageDtos)
             {
                 msg.IsFromAgent = msg.SenderId == agentId;
             }
 
-            // Obtiene informacion del agente
             var agent = await _agentService.GetAgentByIdAsync(agentId);
 
             ViewBag.Property = property;
             ViewBag.AgentId = agentId;
-            ViewBag.AgentName = agent?.FirstName + " " + agent?.LastName ?? "Agente";
+            ViewBag.AgentName = agent != null ? $"{agent.FirstName} {agent.LastName}" : "Agente";
+            ViewBag.AgentProfilePicture = agent?.ProfilePicture;
 
             return View(messageDtos);
         }
@@ -82,18 +77,17 @@ namespace RealEstateApp.WebApp.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var property = await _propertyService.GetPropertyByIdAsync(dto.PropertyId.ToString());
-                
+
                 if (property == null)
                     return NotFound();
 
-                // Determina el receptor (agente o cliente)
                 string receiverId;
                 if (User.IsInRole("Cliente"))
                 {
                     receiverId = property.AgentId;
                     dto.SenderId = userId!;
                 }
-                else // Agente
+                else
                 {
                     receiverId = dto.ReceiverId;
                     dto.SenderId = userId!;
@@ -123,28 +117,30 @@ namespace RealEstateApp.WebApp.Controllers
         public async Task<IActionResult> AgentChat(int propertyId, string clientId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            // Verifica que el agente es dueño de la propiedad
+
             if (!await _messageService.ValidateAgentOwnsPropertyAsync(propertyId, userId!))
                 return Unauthorized();
 
-            // Verifica que la propiedad exista
             var property = await _propertyService.GetPropertyByIdAsync(propertyId.ToString());
             if (property == null)
                 return NotFound();
 
-            // Obtiene el chat con el cliente especifico
             var messages = await _messageService.GetChatBetweenUsersAsync(userId!, clientId, propertyId);
             var messageDtos = _mapper.Map<List<MessageDto>>(messages);
 
-            // Marca quién envió cada mensaje (agente vs cliente)
             foreach (var msg in messageDtos)
             {
                 msg.IsFromAgent = msg.SenderId == userId;
             }
 
+            var client = await _agentService.GetClientByIdAsync(clientId);
+            var clientName = client != null
+                ? $"{client.FirstName} {client.LastName}"
+                : $"Cliente {clientId.Substring(0, Math.Min(8, clientId.Length))}";
+
             ViewBag.Property = property;
             ViewBag.ClientId = clientId;
+            ViewBag.ClientName = clientName;
 
             return View(messageDtos);
         }
@@ -154,22 +150,38 @@ namespace RealEstateApp.WebApp.Controllers
         public async Task<IActionResult> PropertyChats(int propertyId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            // Verifica que el agente es dueño de la propiedad
+
             if (!await _messageService.ValidateAgentOwnsPropertyAsync(propertyId, userId!))
                 return Unauthorized();
 
-            // Verifica que la propiedad exista
             var property = await _propertyService.GetPropertyByIdAsync(propertyId.ToString());
             if (property == null)
                 return NotFound();
 
-            //los clientes con los que ha chateado
             var chatPartners = await _messageService.GetAgentChatPartnersAsync(propertyId, userId!);
 
-            ViewBag.Property = property;
+            var chatSummaries = new List<ChatSummaryViewModel>();
+            foreach (var m in chatPartners)
+            {
+                var client = await _agentService.GetClientByIdAsync(m.SenderId);
+                var clientName = client != null
+                    ? $"{client.FirstName} {client.LastName}"
+                    : $"Cliente {m.SenderId.Substring(0, Math.Min(8, m.SenderId.Length))}";
 
-            return View(chatPartners);
+                chatSummaries.Add(new ChatSummaryViewModel
+                {
+                    ClientId = m.SenderId,
+                    ClientName = clientName,
+                    LastMessage = m.Content,
+                    LastMessageDate = m.SentDate,
+                    UnreadCount = 0
+                });
+            }
+
+            ViewBag.Property = property;
+            ViewBag.ChatSummaries = chatSummaries;
+
+            return View();
         }
     }
 }

@@ -1,0 +1,676 @@
+/* ========================================
+   Home - Properties Listing (Luxury Theme)
+   ======================================== */
+
+.home-page {
+    background: var(--surface-primary);
+    min-height: calc(100vh - 64px);
+}
+
+.home-container {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+}
+
+/* Header */
+.home-header {
+    margin-bottom: 1.5rem;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.header-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0.25rem 0 0;
+}
+
+.property-count {
+    font-weight: 700;
+    color: var(--luxury-gold);
+}
+
+/* Filters Section */
+.filters-section {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.filters-form {
+    width: 100%;
+}
+
+.filters-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+    min-width: 120px;
+}
+
+    .filter-group.filter-small {
+        flex: 0 0 90px;
+        min-width: 80px;
+    }
+
+    .filter-group.filter-price-range {
+        flex: 2.5;
+        min-width: 320px;
+    }
+
+.filter-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.15rem;
+}
+
+.filter-input,
+.filter-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    background: var(--surface-primary);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+}
+
+    .filter-input:focus,
+    .filter-select:focus {
+        outline: none;
+        border-color: var(--luxury-gold);
+        box-shadow: 0 0 0 2px var(--luxury-gold-muted);
+    }
+
+    .filter-input::placeholder {
+        color: var(--text-muted);
+    }
+
+/* Price Range Slider */
+.price-range-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.price-range-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1rem;
+    background: var(--surface-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.price-value {
+    font-weight: 600;
+    color: var(--luxury-gold-dark);
+}
+
+.price-separator {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.slider-container {
+    position: relative;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.slider-track {
+    position: absolute;
+    width: calc(100% - 20px);
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 6px;
+    background: var(--border-medium);
+    border-radius: 3px;
+    z-index: 1;
+}
+
+.slider-range {
+    position: absolute;
+    height: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--luxury-gold);
+    border-radius: 3px;
+    z-index: 2;
+}
+
+.price-slider {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 6px;
+    background: transparent;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+    z-index: 3;
+}
+
+    /* Chrome, Safari, Edge, Opera */
+    .price-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: var(--luxury-gold);
+        border: 3px solid var(--surface-elevated);
+        border-radius: 50%;
+        cursor: pointer;
+        pointer-events: auto;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        transition: all var(--transition-fast);
+        margin-top: -7px;
+        position: relative;
+    }
+
+        .price-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+    /* Firefox */
+    .price-slider:-moz-range-thumb {
+        width: 12px;
+        height: 12px;
+        background: var(--luxury-gold);
+        border: 3px solid var(--surface-elevated);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        transition: all var(--transition-fast);
+    }
+
+        .price-slider:-moz-range-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+    .price-slider:-moz-range-track {
+        background: transparent;
+        border: none;
+        height: 5px;
+    }
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-filter-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, var(--luxury-gold-dark) 0%, var(--luxury-gold) 100%);
+    color: var(--luxury-black);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+    .btn-filter-primary:hover {
+        box-shadow: var(--shadow-gold);
+        transform: translateY(-1px);
+    }
+
+.btn-filter-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--surface-sunken);
+    color: var(--text-muted);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+    .btn-filter-clear:hover {
+        background: var(--surface-elevated);
+        color: var(--status-error);
+        border-color: var(--status-error);
+    }
+
+/* ========================================
+   Properties Grid
+   ======================================== */
+.properties-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* ========================================
+   Property Card - Unified for All Views
+   ======================================== */
+.property-card {
+    position: relative;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+}
+
+    .property-card:hover {
+        border-color: var(--luxury-gold);
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+
+/* Card Image - Supports both . card-image and .card-img-wrapper */
+.card-image,
+.card-img-wrapper {
+    position: relative;
+    height: 220px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    overflow: hidden;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+}
+
+.property-card:hover .card-img {
+    transform: scale(1.05);
+}
+
+.card-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #ffffff;
+}
+
+    .card-img-placeholder i {
+        font-size: 3rem;
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-img-placeholder span {
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+/* Card Badges - Supports multiple naming conventions */
+.card-badges {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+.badge,
+.badge-type {
+    padding: 6px 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+}
+
+.badge-primary,
+.badge-type {
+    background: rgba(0, 0, 0, 0.85);
+    color: #ffffff;
+}
+
+.badge-secondary,
+.badge-sale {
+    padding: 6px 12px;
+    background: var(--luxury-gold);
+    color: var(--luxury-black);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+}
+
+/* Badge positioning for standalone badges */
+.badge-type {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 10;
+}
+
+.badge-sale {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+}
+
+/* Sold Badge - Horizontal Across Image */
+.sold-badge {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: white;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 20;
+}
+
+.property-card.is-sold .card-img {
+    filter: grayscale(30%);
+}
+
+.property-card.is-sold {
+    opacity: 0.85;
+}
+
+/* Favorite Button */
+.fav-form {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 10;
+}
+
+.btn-favorite {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: #9ca3af;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+    .btn-favorite:hover,
+    .btn-favorite.is-favorite {
+        color: #ef4444;
+    }
+
+/* Card Content */
+.card-content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-header-info {
+    margin-bottom: 0.75rem;
+}
+
+.property-code,
+.card-code {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+/* Card Price */
+.card-price {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--luxury-gold-dark);
+    margin-bottom: 1rem;
+    line-height: 1;
+}
+
+    .card-price .currency,
+    .card-price .price-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-left: 0.25rem;
+    }
+
+/* Card Features */
+.card-features {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.feature,
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+    .feature i {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .feature-item i {
+        color: var(--luxury-gold-dark);
+        font-size: 0.875rem;
+    }
+
+/* Card Actions */
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+/* View Details Button */
+.btn-view-details {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--luxury-black);
+    color: var(--luxury-pearl);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+    .btn-view-details:hover {
+        background: var(--luxury-charcoal);
+    }
+
+    .btn-view-details i {
+        font-size: 0.75rem;
+    }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    background: var(--surface-sunken);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .empty-icon i {
+        font-size: 1.5rem;
+        color: var(--text-muted);
+    }
+
+.empty-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.empty-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+}
+
+.btn-empty-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    background: var(--luxury-gold);
+    color: var(--luxury-black);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+    .btn-empty-action:hover {
+        box-shadow: var(--shadow-gold);
+    }
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 1400px) {
+    .properties-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .properties-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-group {
+        min-width: 100px;
+    }
+
+        .filter-group.filter-price-range {
+            min-width: 260px;
+        }
+}
+
+@media (max-width: 768px) {
+    .filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group,
+    .filter-group.filter-small,
+    .filter-group.filter-price-range {
+        flex: 1;
+        min-width: 100%;
+    }
+
+    .filter-actions {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .btn-filter-primary {
+        flex: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .home-container {
+        padding: 1rem;
+    }
+
+    .properties-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card-image,
+    .card-img-wrapper {
+        height: 200px;
+    }
+
+    .card-features {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+}

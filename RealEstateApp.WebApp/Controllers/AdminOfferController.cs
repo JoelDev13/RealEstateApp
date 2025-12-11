@@ -28,7 +28,7 @@ namespace RealEstateApp.WebApp.Controllers
         public async Task<IActionResult> PropertyOffers(int propertyId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+
             // Verifica que el agente es dueño de la propiedad
             if (!await _offerService.ValidateAgentOwnsPropertyAsync(propertyId, userId!))
                 return Unauthorized();
@@ -50,7 +50,7 @@ namespace RealEstateApp.WebApp.Controllers
         public async Task<IActionResult> ClientOffers(int propertyId, string clientId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+
             // Verifica que el agente es dueño de la propiedad
             if (!await _offerService.ValidateAgentOwnsPropertyAsync(propertyId, userId!))
                 return Unauthorized();
@@ -73,7 +73,7 @@ namespace RealEstateApp.WebApp.Controllers
         // POST: /AdminOffer/Accept
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Accept(int offerId)
+        public async Task<IActionResult> Accept(Guid offerId)
         {
             try
             {
@@ -81,20 +81,21 @@ namespace RealEstateApp.WebApp.Controllers
                 await _offerService.AcceptOfferAsync(offerId, userId!);
 
                 TempData["Success"] = "Oferta aceptada correctamente. La propiedad ha sido marcada como vendida";
+
+                var offer = await _offerService.GetOfferByIdAsync(offerId);
+                return RedirectToAction("PropertyOffers", new { propertyId = offer?.PropertyId ?? 0 });
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.Message;
+                return RedirectToAction("Index");
             }
-
-            // Redirigir de vuelta a la vista de ofertas de la propiedad
-            return RedirectToAction("PropertyOffers", new { propertyId = GetPropertyIdFromOffer(offerId) });
         }
 
         // POST: /AdminOffer/Reject
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(int offerId)
+        public async Task<IActionResult> Reject(Guid offerId)
         {
             try
             {
@@ -102,23 +103,15 @@ namespace RealEstateApp.WebApp.Controllers
                 await _offerService.RejectOfferAsync(offerId, userId!);
 
                 TempData["Success"] = "Oferta rechazada correctamente";
+
+                var offer = await _offerService.GetOfferByIdAsync(offerId);
+                return RedirectToAction("PropertyOffers", new { propertyId = offer?.PropertyId ?? 0 });
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.Message;
+                return RedirectToAction("Index");
             }
-
-            // Redirigir de vuelta a la vista de ofertas de la propiedad
-            return RedirectToAction("PropertyOffers", new { propertyId = GetPropertyIdFromOffer(offerId) });
-        }
-
-        // un metodo auxiliar para obtener el PropertyId desde una oferta
-        private async Task<int> GetPropertyIdFromOffer(int offerId)
-        {
-            // Necesitariamos un metodo en el servicio para obtener esto
-            // Por ahora,implemento una solucion temporal
-            var offers = await _offerService.GetOffersByPropertyAsync(0); // Esto necesita ajuste
-            return 0;
         }
     }
 }
