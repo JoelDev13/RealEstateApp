@@ -20,7 +20,7 @@ namespace RealEstateApp.WebApp.Controllers
         private readonly IMapper _mapper;
         private readonly IMessageService _messageService;
         private readonly IOfferService _offerService;
-
+        private readonly IUserService _userService;
         public PropertyController(
             IPropertyService propertyService,
             IPropertyTypeService propertyTypeService,
@@ -28,7 +28,8 @@ namespace RealEstateApp.WebApp.Controllers
             IImprovementService improvementService,
             IMapper mapper,
             IMessageService messageService,
-            IOfferService offerService)
+            IOfferService offerService,
+            IUserService userService)
         {
             _propertyService = propertyService;
             _propertyTypeService = propertyTypeService;
@@ -37,6 +38,7 @@ namespace RealEstateApp.WebApp.Controllers
             _mapper = mapper;
             _messageService = messageService;
             _offerService = offerService;
+            _userService = userService;
         }
 
         public async Task<IActionResult> Create()
@@ -353,14 +355,25 @@ namespace RealEstateApp.WebApp.Controllers
             try
             {
                 var chatPartners = await _messageService.GetAgentChatPartnersAsync(id, userId);
-                viewModel.ClientChats = chatPartners.Select(m => new ClientChatSummary
+                var clientChats = new List<ClientChatSummary>();
+
+                foreach (var message in chatPartners)
                 {
-                    ClientId = m.SenderId,
-                    ClientName = $"Cliente {m.SenderId.Substring(0, 8)}",
-                    LastMessage = m.Content,
-                    LastMessageDate = m.SentDate,
-                    UnreadCount = 0
-                }).ToList();
+                    var clientName = await _userService.GetUserFullNameAsync(message.SenderId);
+                    var clientUser = await _userService.GetUserByIdAsync(message.SenderId);
+
+                    clientChats.Add(new ClientChatSummary
+                    {
+                        ClientId = message.SenderId,
+                        ClientName = clientName,
+                        ClientAvatar = clientUser?.ProfilePicture,
+                        LastMessage = message.Content,
+                        LastMessageDate = message.SentDate,
+                        UnreadCount = 0
+                    });
+                }
+
+                viewModel.ClientChats = clientChats;
             }
             catch
             {
@@ -370,18 +383,27 @@ namespace RealEstateApp.WebApp.Controllers
             try
             {
                 var offers = await _offerService.GetOffersByPropertyAsync(id);
-                viewModel.ClientOffers = offers
-                    .GroupBy(o => o.ClientId)
-                    .Select(g => new ClientOfferSummary
+                var clientOffers = new List<ClientOfferSummary>();
+                var groupedOffers = offers.GroupBy(o => o.ClientId);
+
+                foreach (var group in groupedOffers)
+                {
+                    var clientName = await _userService.GetUserFullNameAsync(group.Key);
+                    var lastOffer = group.OrderByDescending(o => o.OfferDate).First();
+
+                    clientOffers.Add(new ClientOfferSummary
                     {
-                        ClientId = g.Key,
-                        ClientName = $"Cliente {g.Key.Substring(0, 8)}",
-                        LastOfferAmount = g.OrderByDescending(o => o.OfferDate).First().Amount,
-                        LastOfferDate = g.OrderByDescending(o => o.OfferDate).First().OfferDate,
-                        Status = g.OrderByDescending(o => o.OfferDate).First().Status.ToString(),
-                        StatusText = GetOfferStatusText(g.OrderByDescending(o => o.OfferDate).First().Status),
-                        TotalOffers = g.Count()
-                    })
+                        ClientId = group.Key,
+                        ClientName = clientName,
+                        LastOfferAmount = lastOffer.Amount,
+                        LastOfferDate = lastOffer.OfferDate,
+                        Status = lastOffer.Status.ToString(),
+                        StatusText = GetOfferStatusText(lastOffer.Status),
+                        TotalOffers = group.Count()
+                    });
+                }
+
+                viewModel.ClientOffers = clientOffers
                     .OrderByDescending(o => o.LastOfferDate)
                     .ToList();
             }

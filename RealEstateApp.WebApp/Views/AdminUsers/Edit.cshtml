@@ -14,8 +14,14 @@
                     Volver a Administradores
                 </a>
             </nav>
-            <h1>Editar Administrador</h1>
-            <p class="page-header-subtitle">Modifica la información del administrador</p>
+            <h1>
+                <i class="fas fa-user-edit" style="color: var(--luxury-gold); margin-right: 0.5rem;"></i>
+                Editar Administrador
+            </h1>
+            <p class="page-header-subtitle">
+                <i class="fas fa-edit"></i>
+                Modifica la información del administrador
+            </p>
         </div>
     </div>
 </div>
@@ -24,7 +30,7 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">
-            <i class="fas fa-user-edit"></i>
+            <i class="fas fa-user-shield"></i>
             Información del Administrador
         </h3>
     </div>
@@ -104,19 +110,17 @@
                 </div>
             </div>
 
-            <!-- Botones -->
+            <!-- Form Actions -->
             <div class="form-actions">
                 <a asp-action="Index" class="btn btn-secondary">
                     <i class="fas fa-times"></i>
                     Cancelar
                 </a>
-
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i>
                     Guardar Cambios
                 </button>
             </div>
-
         </form>
     </div>
 </div>

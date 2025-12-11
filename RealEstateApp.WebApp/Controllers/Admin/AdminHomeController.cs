@@ -20,12 +20,23 @@ namespace RealEstateApp.WebApp.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var dto = await _adminDashboardService.GetDashboardAsync();
-            var vm = _mapper.Map<AdminDashboardViewModel>(dto);
+            try
+            {
+                var dto = await _adminDashboardService.GetDashboardAsync();
+                var viewModel = _mapper.Map<AdminDashboardViewModel>(dto);
 
-            return View(vm);
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al cargar los datos del dashboard. Por favor, intente nuevamente.";
+
+                var viewModel = new AdminDashboardViewModel();
+                return View(viewModel);
+            }
         }
     }
 }

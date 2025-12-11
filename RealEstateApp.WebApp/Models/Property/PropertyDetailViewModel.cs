@@ -32,6 +32,7 @@ namespace RealEstateApp.WebApp.Models.Property
         public string LastMessage { get; set; } = string.Empty;
         public DateTime LastMessageDate { get; set; }
         public int UnreadCount { get; set; }
+        public string? ClientAvatar { get; set; }
     }
 
     // ViewModel para resumen de ofertas de clientes
@@ -44,5 +45,6 @@ namespace RealEstateApp.WebApp.Models.Property
         public string Status { get; set; } = string.Empty;
         public string StatusText { get; set; } = string.Empty;
         public int TotalOffers { get; set; }
+        public string? ClientAvatar { get; set; }
     }
 }

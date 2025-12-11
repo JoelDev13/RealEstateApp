@@ -1,13 +1,13 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using RealEstateApp.Domain.Settings;
 using RealEstateApp.Application.Interfaces.Repositories;
 using RealEstateApp.Application.Interfaces.Services;
+using RealEstateApp.Application.Services;
+using RealEstateApp.Domain.Settings;
 using RealEstateApp.Infraestructure.Identity.Context;
 using RealEstateApp.Infraestructure.Identity.Mappings;
 using RealEstateApp.Infraestructure.Identity.Repositories;
@@ -15,7 +15,7 @@ using RealEstateApp.Infraestructure.Identity.Services;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using RealEstateApp.Infrastructure.Identity.Repositories;
 using RealEstateApp.Infrastructure.Identity.Services;
-using RealEstateApp.Application.Services;
+using System.Text;
 
 namespace RealEstateApp.Infrastructure.Identity
 {
@@ -57,6 +57,7 @@ namespace RealEstateApp.Infrastructure.Identity
             services.AddScoped<IAgentService, AgentService>();
             services.AddScoped<IDeveloperUserService, DeveloperUserService>();
             services.AddScoped<IDeveloperUserRepository, DeveloperUserRepository>();
+            services.AddScoped<IUserService, UserService>();
 
             #endregion
 
@@ -141,6 +142,7 @@ namespace RealEstateApp.Infrastructure.Identity
             services.AddScoped<IDeveloperUserRepository, DeveloperUserRepository>();
             services.AddScoped<IAgentQueryService, AgentQueryService>();
             services.AddScoped<IAgentService, AgentService>();
+            services.AddScoped<IUserService, UserService>();
             #endregion
 
             #region Exception Handler

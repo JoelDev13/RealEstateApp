@@ -23,5 +23,10 @@
         public int TotalImprovements { get; set; }
         public int ActiveImprovements { get; set; }
         public int InactiveImprovements { get; set; }
+
+        // ============ ADMINISTRADORES ============
+        public int TotalAdmins { get; set; }
+        public int ActiveAdmins { get; set; }
+        public int InactiveAdmins { get; set; }
     }
 }

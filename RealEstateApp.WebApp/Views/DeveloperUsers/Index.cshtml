@@ -11,8 +11,14 @@
 <div class="page-header">
     <div class="page-header-content">
         <div class="page-header-title">
-            <h1>Desarrolladores</h1>
-            <p class="page-header-subtitle">Gestiona los usuarios con rol de desarrollador</p>
+            <h1>
+                <i class="fas fa-code" style="color: var(--luxury-gold); margin-right: 0.5rem;"></i>
+                Desarrolladores
+            </h1>
+            <p class="page-header-subtitle">
+                <i class="fas fa-users-cog"></i>
+                Gestiona los usuarios con rol de desarrollador
+            </p>
         </div>
         <div class="page-header-actions">
             <a asp-action="Create" class="btn btn-primary">
@@ -60,8 +66,10 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">
-            <i class="fas fa-code"></i> Lista de Desarrolladores
+            <i class="fas fa-list"></i>
+            Lista de Desarrolladores
         </h3>
+        <span class="card-header-badge">@totalDevs registros</span>
     </div>
 
     <div class="card-body" style="padding: 0;">
@@ -78,7 +86,6 @@
                             <th class="text-right">Acciones</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         @foreach (var dev in Model)
                         {
@@ -90,14 +97,16 @@
                                         <div class="user-cell-avatar">@initials</div>
                                         <div class="user-cell-info">
                                             <span class="user-cell-name">@dev.FirstName @dev.LastName</span>
-                                            <span class="user-cell-username">@("@" + dev.UserName)</span>
+                                            <span class="user-cell-username">@@@dev.UserName</span>
                                         </div>
                                     </div>
                                 </td>
-
-                                <td>@dev.Cedula</td>
-                                <td>@dev.Email</td>
-
+                                <td>
+                                    <span class="table-cell-mono">@dev.Cedula</span>
+                                </td>
+                                <td>
+                                    <span class="table-cell-email">@dev.Email</span>
+                                </td>
                                 <td>
                                     @if (dev.IsActive)
                                     {
@@ -112,7 +121,6 @@
                                         </span>
                                     }
                                 </td>
-
                                 <td>
                                     <div class="table-actions">
                                         <a asp-action="Edit" asp-route-id="@dev.Id"
@@ -122,11 +130,9 @@
 
                                         <form asp-action="ToggleStatus" method="post" class="inline-form"
                                               onsubmit="return confirm('¿Está seguro que desea @(dev.IsActive ? "inactivar" : "activar") este desarrollador?');">
-
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@dev.Id" />
                                             <input type="hidden" name="isActive" value="@(dev.IsActive ? "false" : "true")" />
-
                                             <button type="submit"
                                                     class="action-btn @(dev.IsActive ? "action-btn-danger" : "action-btn-success")"
                                                     title="@(dev.IsActive ? "Inactivar" : "Activar")">
@@ -149,7 +155,6 @@
                 </div>
                 <h4 class="empty-state-title">No hay desarrolladores</h4>
                 <p class="empty-state-description">Comienza creando el primer desarrollador del sistema.</p>
-
                 <a asp-action="Create" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     Crear Desarrollador
