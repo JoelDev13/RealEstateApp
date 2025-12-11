@@ -32,7 +32,7 @@ builder.Services.AddControllers();
 builder.Services.AddPersistenceServicesIoC(builder.Configuration);
 builder.Services.AddApplicationServicesIoC();
 builder.Services.AddSharedInfrastructure(builder.Configuration);
-builder.Services.AddIdentityInfrastructure(builder.Configuration);
+builder.Services.AddIdentityLayerIocForWebApi(builder.Configuration);
 builder.Services.AddAppiVersioningExtension();
 builder.Services.AddSwaggerExtension();
 builder.Services.AddDistributedMemoryCache();

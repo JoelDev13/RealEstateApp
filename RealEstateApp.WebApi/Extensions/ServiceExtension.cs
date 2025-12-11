@@ -30,10 +30,10 @@ namespace RealEstateApp.WebApi.Extensions
                 {
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
+                    Type = SecuritySchemeType.Http,
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
-                    Description = "Ingrese 'Bearer {token}'"
+                    Description = "Ingrese el token JWT sin 'Bearer'"
                 });
 
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
