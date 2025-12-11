@@ -100,12 +100,6 @@ namespace RealEstateApp.Infrastructure.Identity
 
             services.AddHttpContextAccessor();
             services.AddScoped<SignInManager<AppUser>>();
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })
-            .AddIdentityCookies();
             services.AddAutoMapper(typeof(UserMappingProfile));
             #endregion
 
@@ -117,7 +111,9 @@ namespace RealEstateApp.Infrastructure.Identity
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+            .AddCookie(IdentityConstants.ApplicationScheme)
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
@@ -139,9 +135,12 @@ namespace RealEstateApp.Infrastructure.Identity
             #region Services
             services.AddScoped<Application.Interfaces.Services.IBaseAccountService, RealEstateApp.Infraestructure.Identity.Services.BaseAccountService>();
             services.AddScoped<Application.Interfaces.IAccountServiceForWebApi, RealEstateApp.Infraestructure.Identity.Services.AccountServiceForWebApi>();
+            services.AddScoped<IAccountApiService, AccountApiService>();
             services.AddScoped<IAdminUserService, AdminUserService>();
             services.AddScoped<IAdminUserRepository, AdminUserRepository>();
             services.AddScoped<IDeveloperUserRepository, DeveloperUserRepository>();
+            services.AddScoped<IAgentQueryService, AgentQueryService>();
+            services.AddScoped<IAgentService, AgentService>();
             #endregion
 
             #region Exception Handler
