@@ -1,0 +1,63 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: realestate_sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+      SA_PASSWORD: "${SA_PASSWORD}"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  webapi:
+    build:
+      context: .
+      dockerfile: RealEstateApp.WebApi/Dockerfile
+    container_name: realestate_webapi
+    depends_on:
+      - sqlserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=RealEstateAppDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True"
+      ConnectionStrings__IdentityConnection: "Server=sqlserver;Database=RealEstateAppDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True"
+      JwtSettings__Key: "${JWT_KEY}"
+      JwtSettings__Issuer: "RealStateApp.Api"
+      JwtSettings__Audience: "RealStateApp.Api.Client"
+      JwtSettings__DurationInMinutes: "60"
+      MailSettings__EmailFrom: "noreply@realestateapp.com"
+      MailSettings__SmtpHost: "smtp.gmail.com"
+      MailSettings__SmtpPort: "587"
+      MailSettings__SmtpUser: "${SMTP_USER}"
+      MailSettings__SmtpPass: "${SMTP_PASS}"
+      MailSettings__DisplayName: "Real Estate App"
+    ports:
+      - "5185:8080"
+
+  webapp:
+    build:
+      context: .
+      dockerfile: RealEstateApp.WebApp/Dockerfile
+    container_name: realestate_webapp
+    depends_on:
+      - sqlserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=RealEstateAppDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True"
+      ConnectionStrings__IdentityConnection: "Server=sqlserver;Database=RealEstateAppDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True"
+      JwtSettings__Key: "${JWT_KEY}"
+      JwtSettings__Issuer: "RealStateApp.Api"
+      JwtSettings__Audience: "RealStateApp.Api.Client"
+      JwtSettings__DurationInMinutes: "60"
+      MailSettings__EmailFrom: "noreply@realestateapp.com"
+      MailSettings__SmtpHost: "smtp.gmail.com"
+      MailSettings__SmtpPort: "587"
+      MailSettings__SmtpUser: "${SMTP_USER}"
+      MailSettings__SmtpPass: "${SMTP_PASS}"
+      MailSettings__DisplayName: "RealStateApp"
+    ports:
+      - "5111:8080"
+
+volumes:
+  sqlserver_data:

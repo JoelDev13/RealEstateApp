@@ -29,6 +29,11 @@ project.nuget.cache
 wwwroot/lib/
 node_modules/
 
+# Env files (secrets)
+.env
+.env.*
+!.env.example
+
 /.git
 *.dll
 *.pdb
